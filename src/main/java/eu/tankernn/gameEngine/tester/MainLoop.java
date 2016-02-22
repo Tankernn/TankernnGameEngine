@@ -36,13 +36,16 @@ import eu.tankernn.gameEngine.particles.ParticleTexture;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
+import eu.tankernn.gameEngine.renderEngine.Scene;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 import eu.tankernn.gameEngine.textures.ModelTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.util.MousePicker;
+import eu.tankernn.gameEngine.util.Sorter;
 import eu.tankernn.gameEngine.water.WaterFrameBuffers;
+import eu.tankernn.gameEngine.water.WaterMaster;
 import eu.tankernn.gameEngine.water.WaterRenderer;
 import eu.tankernn.gameEngine.water.WaterShader;
 import eu.tankernn.gameEngine.water.WaterTile;
@@ -72,8 +75,6 @@ public class MainLoop {
 //		AL10.alSourceQueueBuffers(source, buffer);
 //		AL10.alSourcePlay(source);
 		
-		
-		
 		// Monkey
 		ModelData monkeyData = OBJFileLoader.loadOBJ("character");
 		RawModel monkeyModel = loader.loadToVAO(monkeyData);
@@ -96,20 +97,21 @@ public class MainLoop {
 		
 		FontType font = new FontType(loader.loadTexture("arial"), "arial.fnt");
 		GUIText text = new GUIText("Sample text", 3, font, new Vector2f(0.5f, 0.5f), 0.5f, true);
-		text.setColour(1, 1, 1);
+		text.setColor(1, 1, 1);
 		
 		//Barrel
 		TexturedModel barrelModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader), new ModelTexture(loader.loadTexture("barrel")));
 		barrelModel.getTexture().setNormalMap(loader.loadTexture("barrelNormal"));
 		barrelModel.getTexture().setShineDamper(10);
 		barrelModel.getTexture().setReflectivity(0.5f);
-		
-		normalMapEntities.add(new Entity(barrelModel, new Vector3f(75, 10, 75), 0, 0, 0, 1f));
+		Entity barrel = new Entity(barrelModel, new Vector3f(75, 10, 75), 0, 0, 0, 1f);
+		normalMapEntities.add(barrel);
 		
 		Light sun = new Light(new Vector3f(100000, 150000, -70000), new Vector3f(1, 1, 1));
-		List<Light> lights = new ArrayList<Light>(); //TODO Sort this list
+		Light flashLight = new Light(new Vector3f(0, 10, -10), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f));
+		List<Light> lights = new ArrayList<Light>();
 		lights.add(sun);
-		lights.add(new Light(new Vector3f(0, 10, -10), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f)));
+		lights.add(flashLight);
 		
 		// ### Terrain textures ###
 		
@@ -145,17 +147,14 @@ public class MainLoop {
 		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrainPack, entities);
 		
 		// #### Water rendering ####
-		WaterFrameBuffers buffers = new WaterFrameBuffers();
-		WaterShader waterShader = new WaterShader();
-		WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), buffers);
-		List<WaterTile> waterTiles = new ArrayList<WaterTile>();
+		WaterMaster waterMaster = new WaterMaster(loader, renderer);
 		WaterTile water = new WaterTile(75, 75, 0);
-		waterTiles.add(water);
+		waterMaster.addWaterTile(water);
 		
 		// #### Gui rendering ####
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
-		GuiTexture depth = new GuiTexture(buffers.getRefractionDepthTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-		GuiTexture refraction = new GuiTexture(renderer.getShadowMapTexture(), new Vector2f(-0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+		GuiTexture depth = new GuiTexture(waterMaster.getBuffers().getRefractionDepthTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+		GuiTexture refraction = new GuiTexture(waterMaster.getBuffers().getRefractionTexture(), new Vector2f(-0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 		guis.add(depth);
 		guis.add(refraction);
 		
@@ -165,14 +164,16 @@ public class MainLoop {
 		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 4);
 		
 		while (!Display.isCloseRequested()) {
-			entity.increaseRotation(0, 1, 0);
+			barrel.increaseRotation(0, 1, 0);
 			player.move(terrainPack);
 			camera.move();
 			picker.update();
 			
 			if (picker.getCurrentTerrainPoint() != null) {
-				lights.get(1).getPosition().x = picker.getCurrentTerrainPoint().x;
-				lights.get(1).getPosition().z = picker.getCurrentTerrainPoint().z;
+				Vector3f currentPoint = picker.getCurrentTerrainPoint();
+				flashLight.getPosition().x = currentPoint.x;
+				flashLight.getPosition().z = currentPoint.z;
+				flashLight.getPosition().y = terrainPack.getTerrainHeightByWorldPos(currentPoint.x, currentPoint.z) + 1.0f;
 			}
 			
 			// Update debug info
@@ -184,33 +185,20 @@ public class MainLoop {
 				String textString = "X: " + Math.floor(pos.x) + " Y: " + Math.floor(pos.y) + " Z: " + Math.floor(pos.z);
 				text = new GUIText(textString, 1, font, new Vector2f(0.5f, 0f), 0.5f, false);
 			}
+			
+			//Sort list of lights
+			lights = Sorter.sortByDistance(camera, lights);
+			
 			renderer.renderShadowMap(entities, sun);
 			
 			ps.generateParticles(player.getPosition());
 			ParticleMaster.update(camera);
 			
-			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+			Scene scene = new Scene(entities, normalMapEntities, terrainPack, lights, camera);
 			
-			// Reflection
-			buffers.bindReflectionFrameBuffer();
-			float distance = 2 * (camera.getPosition().y - water.getHeight());
-			camera.getPosition().y -= distance;
-			camera.invertPitch();
-			camera.invertRoll();
-			renderer.renderScene(entities, normalMapEntities, terrainPack, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()));
-			camera.getPosition().y += distance;
-			camera.invertPitch();
-			camera.invertRoll();
-			
-			// Refraction
-			buffers.bindRefractionFrameBuffer();
-			renderer.renderScene(entities, normalMapEntities, terrainPack, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
-			
-			// Screen
-			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-			buffers.unbindCurrentFrameBuffer();
-			renderer.renderScene(entities, normalMapEntities, terrainPack, lights, camera, new Vector4f(0, 1, 0, Float.MAX_VALUE));
-			waterRenderer.render(waterTiles, camera, lights);
+			waterMaster.renderBuffers(renderer, scene);
+			renderer.renderScene(scene, new Vector4f(0, 1, 0, Float.MAX_VALUE));
+			waterMaster.renderWater(camera, lights);
 			ParticleMaster.renderParticles(camera);
 			guiRenderer.render(guis);
 			TextMaster.render();
@@ -220,8 +208,7 @@ public class MainLoop {
 		
 		ParticleMaster.cleanUp();
 		TextMaster.cleanUp();
-		buffers.cleanUp();
-		waterShader.cleanUp();
+		waterMaster.cleanUp();
 		guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();

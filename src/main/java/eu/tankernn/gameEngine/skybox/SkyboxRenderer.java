@@ -92,35 +92,35 @@ public class SkyboxRenderer {
 		shader.stop();
 	}
 	
-	private void bindTextures(){ //TODO make day/night cycle better
+	private void bindTextures() {
 		time += DisplayManager.getFrameTimeSeconds() * 1000;
 		time %= DAY_LENGTH;
 		
-		int morning = (int) (DAY_LENGTH/4.8);
-		int noon = (int) (DAY_LENGTH/3);
-		int evening = (int) (DAY_LENGTH/1.14);
+		int morning = (int) (DAY_LENGTH / 4.8);
+		int noon = (int) (DAY_LENGTH / 3);
+		int evening = (int) (DAY_LENGTH / 1.14);
 		
 		int texture1;
 		int texture2;
 		float blendFactor;
-		if(time >= 0 && time < morning){
+		if (time >= 0 && time < morning) {
 			texture1 = nightTexture;
 			texture2 = nightTexture;
-			blendFactor = (time - 0)/(morning - 0);
-		}else if(time >= morning && time < noon){
+			blendFactor = (time - 0) / (morning - 0);
+		} else if (time >= morning && time < noon) {
 			texture1 = nightTexture;
 			texture2 = texture;
-			blendFactor = (time - morning)/(noon - morning);
-		}else if(time >= noon && time < evening){
+			blendFactor = (time - morning) / (noon - morning);
+		} else if (time >= noon && time < evening) {
 			texture1 = texture;
 			texture2 = texture;
-			blendFactor = (time - noon)/(evening - noon);
-		}else{
+			blendFactor = (time - noon) / (evening - noon);
+		} else {
 			texture1 = texture;
 			texture2 = nightTexture;
-			blendFactor = (time - evening)/(DAY_LENGTH - evening);
+			blendFactor = (time - evening) / (DAY_LENGTH - evening);
 		}
-
+		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture1);
 		GL13.glActiveTexture(GL13.GL_TEXTURE1);

@@ -8,6 +8,17 @@ import org.lwjgl.util.vector.Vector4f;
 import eu.tankernn.gameEngine.entities.Camera;
 
 public class Maths {
+	public static float distanceBetweenPoints(Vector3f pos1, Vector3f pos2) {
+		float baseWidth = pos1.x - pos2.x;
+		float baseDepth = pos1.z - pos2.z;
+		
+		float baseDiagonal = (float) Math.sqrt(Math.pow(baseWidth, 2) + Math.pow(baseDepth, 2));
+		
+		float cubeHeight = pos1.y - pos2.y;
+		float cubeDiagonal = (float) Math.sqrt(Math.pow(baseDiagonal, 2) + Math.pow(cubeHeight, 2));
+		return cubeDiagonal;
+	}
+	
 	public static Vector4f slerp(Vector4f qa, Vector4f qb, double time) {
 		// quaternion to return
 		Vector4f qm = new Vector4f();

@@ -5,7 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.models.AABB;
 import eu.tankernn.gameEngine.models.TexturedModel;
 
-public class Entity {
+public class Entity implements Positionable {
 	private static final Vector3f SIZE = new Vector3f(2, 4, 2);
 	
 	private TexturedModel model;

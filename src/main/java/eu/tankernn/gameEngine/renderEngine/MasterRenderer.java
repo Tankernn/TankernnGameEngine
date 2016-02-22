@@ -30,7 +30,6 @@ import eu.tankernn.gameEngine.shaders.TerrainShader;
 import eu.tankernn.gameEngine.shadows.ShadowMapMasterRenderer;
 import eu.tankernn.gameEngine.skybox.SkyboxRenderer;
 import eu.tankernn.gameEngine.terrains.Terrain;
-import eu.tankernn.gameEngine.terrains.TerrainPack;
 
 public class MasterRenderer {
 	private StaticShader staticShader = new StaticShader();
@@ -69,15 +68,15 @@ public class MasterRenderer {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 	
-	public void renderScene(List<Entity> entities, List<Entity> normalEntities, TerrainPack terrainPack, List<Light> lights, Camera camera, Vector4f clipPlane) {
-		terrainPack.prepareRenderTerrains(this);
-		for (Entity e : entities) {
+	public void renderScene(Scene scene, Vector4f clipPlane) {
+		scene.getTerrainPack().prepareRenderTerrains(this);
+		for (Entity e : scene.getEntities()) {
 			processEntity(e);
 		}
-		for (Entity e : normalEntities) {
+		for (Entity e : scene.getNormalEntities()) {
 			processNormalMappedEntity(e);
 		}
-		render(lights, camera, clipPlane);
+		render(scene.getLights(), scene.getCamera(), clipPlane);
 	}
 	
 	public void render(List<Light> lights, Camera camera, Vector4f clipPlane) {

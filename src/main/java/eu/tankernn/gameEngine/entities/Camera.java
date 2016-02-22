@@ -10,7 +10,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 
-public class Camera {
+public class Camera implements Positionable {
 	
 	private float distanceFromPlayer = 50;
 	private float angleAroundPlayer = 0;
@@ -47,8 +47,8 @@ public class Camera {
 			calculateAngleAroundPlayer();
 			
 			if (Mouse.isButtonDown(1)) {
+				float targetRot = this.angleAroundPlayer + this.lockedPosition;
 				this.lockedPosition = 0;
-				float targetRot = this.angleAroundPlayer;
 				float delta = targetRot - player.getRotY();
 				player.increaseRotation(0, delta, 0);
 			}
