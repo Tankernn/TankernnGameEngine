@@ -4,11 +4,12 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.entities.Camera;
+import eu.tankernn.gameEngine.entities.Positionable;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.settings.Physics;
 
 
-public class Particle {
+public class Particle implements Positionable {
 	private Vector3f position;
 	private Vector3f velocity;
 	private float gravityEffect;

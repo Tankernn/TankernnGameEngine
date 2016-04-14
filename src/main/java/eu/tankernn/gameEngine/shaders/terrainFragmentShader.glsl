@@ -15,6 +15,7 @@ uniform sampler2D gTexture;
 uniform sampler2D bTexture;
 uniform sampler2D blendMap;
 uniform sampler2D shadowMap;
+uniform float shadowMapSize;
 
 uniform vec3 lightColor[4]; //4 max light sources
 uniform vec3 attenuation[4];
@@ -22,13 +23,25 @@ uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColor;
 
+const int pcfCount = 2;
+const float totalTexels = (pcfCount * 2.0 + 1.0) * (pcfCount * 2.0 + 1.0);
+
 void main(void) {
 	
-	float objectNearestLight = texture(shadowMap, shadowCoords.xy).r;
-	float lightFactor = 1.0;
-	if (shadowCoords.z > objectNearestLight) {
-		lightFactor = 1.0 - (shadowCoords.w * 0.4);
+	float texelSize = 1.0 / shadowMapSize;
+	float total = 0.0;
+	
+	for (int x = -pcfCount; x <= pcfCount; x++) {
+		for (int y = -pcfCount; y <= pcfCount; y++) {
+			float objectNearestLight = texture(shadowMap, shadowCoords.xy + vec2(x, y) * texelSize).r;
+			if (shadowCoords.z > objectNearestLight) {
+				total += 1.0;
+			}
+		}
 	}
+	
+	total /= totalTexels;
+	float lightFactor = 1.0 - (total * shadowCoords.w);
 	
 	vec3 unitNormal = normalize(surfaceNormal);
 	vec3 unitVectorToCamera = normalize(toCameraVector);
@@ -64,7 +77,7 @@ void main(void) {
 		totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColor[i])/attFactor;
 	}
 	
-	totalDiffuse = max(totalDiffuse, 0.2) * lightFactor; //Ambient lighting 2.0
+	totalDiffuse = max(totalDiffuse * lightFactor, 0.2); //Ambient lighting 2.0
 	
 	out_Color = vec4(totalDiffuse, 1.0) * totalColor + vec4(totalSpecular, 1.0);
 	out_Color = mix(vec4(skyColor, 1.0), out_Color, visibility);

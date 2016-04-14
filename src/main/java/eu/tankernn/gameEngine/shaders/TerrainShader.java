@@ -35,6 +35,7 @@ public class TerrainShader extends ShaderProgram {
 	private int location_toShadowMapSpace;
 	private int location_shadowMap;
 	private int location_shadowDistance;
+	private int location_shadowMapSize;
 	
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -64,6 +65,7 @@ public class TerrainShader extends ShaderProgram {
 		location_toShadowMapSpace = super.getUniformLocation("toShadowMapSpace");
 		location_shadowMap = super.getUniformLocation("shadowMap");
 		location_shadowDistance = super.getUniformLocation("shadowDistance");
+		location_shadowMapSize = super.getUniformLocation("shadowMapSize");
 		
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColor = new int[MAX_LIGHTS];
@@ -82,6 +84,10 @@ public class TerrainShader extends ShaderProgram {
 		super.loadInt(location_bTexture, 3);
 		super.loadInt(location_blendMap, 4);
 		super.loadInt(location_shadowMap, 5);
+	}
+	
+	public void loadShadowMapSize(float size) {
+		super.loadFloat(location_shadowMapSize, size);
 	}
 	
 	public void loadShadowDistance(float distance) {

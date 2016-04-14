@@ -1,8 +1,8 @@
-package eu.tankernn.gameEngine.renderEngine;
+package eu.tankernn.gameEngine.settings;
 
 public class Settings {
 	public static final boolean DEBUG = true;
-	public static final String GAME_NAME = "Tankernn game";
+	public static final String GAME_NAME = "Tankernn game engine tester";
 	
 	//Display settings
 	public static final float FOV = 70;
@@ -13,4 +13,6 @@ public class Settings {
 	public static final float RED = 0.7f;
 	public static final float GREEN = 0.75f;
 	public static final float BLUE = 0.8f;
+	
+	public static final float ANISOTROPIC_FILTERING_AMOUNT = 4f;
 }

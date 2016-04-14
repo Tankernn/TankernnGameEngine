@@ -14,22 +14,39 @@ import eu.tankernn.gameEngine.models.TexturedModel;
 import eu.tankernn.gameEngine.shaders.StaticShader;
 import eu.tankernn.gameEngine.textures.ModelTexture;
 import eu.tankernn.gameEngine.util.Maths;
-
+/**
+ * Renderer for entities.
+ * @author Frans
+ *
+ */
 public class EntityRenderer {
 	private StaticShader shader;
-	
+	/**
+	 * Starts shader and loads initial values.
+	 * @param shader The shader to use when rendering entities
+	 * @param projectionMatrix The projection matrix to use when rendering entities
+	 */
 	public EntityRenderer(StaticShader shader, Matrix4f projectionMatrix) {
 		this.shader = shader;
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
+		shader.connectTextureUnits();
 		shader.stop();
 	}
 	
-	public void render(Map<TexturedModel,List<Entity>> entities) {
-		for (TexturedModel model : entities.keySet()) {
+	/**
+	 * Renders entities to the current frame buffer.
+	 * 
+	 * @param entities The entities to render.
+	 * @param toShadowSpace Transformation matrix to shadow space. Used for
+	 *        applying shadows.
+	 */
+	public void render(Map<TexturedModel, List<Entity>> entities, Matrix4f toShadowSpace) {
+		shader.loadToShadowSpaceMatrix(toShadowSpace);
+		for (TexturedModel model: entities.keySet()) {
 			prepareTexturedModel(model);
 			List<Entity> batch = entities.get(model);
-			for (Entity entity : batch) {
+			for (Entity entity: batch) {
 				prepareInstance(entity);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}

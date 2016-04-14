@@ -9,6 +9,7 @@ out vec3 surfaceNormal;
 out vec3 toLightVector[4]; //4 max light sources
 out vec3 toCameraVector;
 out float visibility;
+out vec4 shadowCoords;
 
 uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
@@ -20,6 +21,9 @@ uniform float useFakeLighting;
 uniform float numberOfRows;
 uniform vec2 offset;
 
+uniform mat4 toShadowMapSpace;
+uniform float shadowDistance;
+
 const float density = 0.004;
 const float gradient = 2.0;
 
@@ -27,7 +31,7 @@ uniform vec4 plane;
 
 void main(void) {
 	vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
-	
+	shadowCoords = toShadowMapSpace * worldPosition;
 	gl_ClipDistance[0] = dot(worldPosition, plane);
 	
 	vec4 positionRelativeToCam = viewMatrix * worldPosition;

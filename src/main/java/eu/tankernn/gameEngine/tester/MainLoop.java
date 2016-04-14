@@ -1,17 +1,11 @@
 package eu.tankernn.gameEngine.tester;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
@@ -20,6 +14,7 @@ import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
+import eu.tankernn.gameEngine.entities.PlayerCamera;
 import eu.tankernn.gameEngine.font.meshCreator.FontType;
 import eu.tankernn.gameEngine.font.meshCreator.GUIText;
 import eu.tankernn.gameEngine.font.rendering.TextMaster;
@@ -44,10 +39,7 @@ import eu.tankernn.gameEngine.textures.TerrainTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.util.MousePicker;
 import eu.tankernn.gameEngine.util.Sorter;
-import eu.tankernn.gameEngine.water.WaterFrameBuffers;
 import eu.tankernn.gameEngine.water.WaterMaster;
-import eu.tankernn.gameEngine.water.WaterRenderer;
-import eu.tankernn.gameEngine.water.WaterShader;
 import eu.tankernn.gameEngine.water.WaterTile;
 
 public class MainLoop {
@@ -55,25 +47,13 @@ public class MainLoop {
 	private static final int SEED = 1235;
 	
 	public static void main(String[] args) {
+		System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
 		List<Entity> entities = new ArrayList<Entity>();
 		List<Entity> normalMapEntities = new ArrayList<Entity>();
 		TerrainPack terrainPack = new TerrainPack();
 		
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();
-		System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
-		
-//		try {
-//			AL.create();
-//		} catch (LWJGLException e) {
-//			e.printStackTrace();
-//		}
-//		int source = AL10.alGenSources();
-//		int buffer = AL10.alGenBuffers();
-//		AL10.alBufferData(buffer, AL10.AL_FORMAT_STEREO16, ByteBuffer.allocate(100), 10);
-//		AL10.alSource3f(source, AL10.AL_POSITION, 1, 1, 1);
-//		AL10.alSourceQueueBuffers(source, buffer);
-//		AL10.alSourcePlay(source);
 		
 		// Monkey
 		ModelData monkeyData = OBJFileLoader.loadOBJ("character");
@@ -89,7 +69,7 @@ public class MainLoop {
 		TexturedModel monkey = new TexturedModel(monkeyModel, new ModelTexture(loader.loadTexture("white")));
 		Player player = new Player(monkey, new Vector3f(10, 0, 50), 0, 0, 0, 1, terrainPack);
 		entities.add(player);
-		Camera camera = new Camera(player, terrainPack);
+		Camera camera = new PlayerCamera(player, terrainPack);
 		
 		MasterRenderer renderer = new MasterRenderer(loader, camera);
 		ParticleMaster.init(loader, renderer.getProjectionMatrix());
@@ -112,6 +92,10 @@ public class MainLoop {
 		List<Light> lights = new ArrayList<Light>();
 		lights.add(sun);
 		lights.add(flashLight);
+		lights.add(new Light(new Vector3f(10, 100,0), new Vector3f(0,1,0)));
+		lights.add(new Light(new Vector3f(20, 100,0), new Vector3f(0,0,1)));
+		lights.add(new Light(new Vector3f(30, 100,0), new Vector3f(1,0,0)));
+		lights.add(new Light(new Vector3f(40, 100,0), new Vector3f(1,1,0)));
 		
 		// ### Terrain textures ###
 		
@@ -166,7 +150,7 @@ public class MainLoop {
 		while (!Display.isCloseRequested()) {
 			barrel.increaseRotation(0, 1, 0);
 			player.move(terrainPack);
-			camera.move();
+			camera.update();
 			picker.update();
 			
 			if (picker.getCurrentTerrainPoint() != null) {
@@ -187,7 +171,7 @@ public class MainLoop {
 			}
 			
 			//Sort list of lights
-			lights = Sorter.sortByDistance(camera, lights);
+			lights = new Sorter<Light>(lights, camera).sortByDistance();
 			
 			renderer.renderShadowMap(entities, sun);
 			

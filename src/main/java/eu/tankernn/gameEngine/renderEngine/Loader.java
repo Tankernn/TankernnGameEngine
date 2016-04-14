@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
@@ -16,12 +17,19 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
+import org.lwjgl.opengl.GLContext;
+
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import eu.tankernn.gameEngine.models.RawModel;
 import eu.tankernn.gameEngine.objLoader.ModelData;
+import eu.tankernn.gameEngine.settings.Settings;
 import eu.tankernn.gameEngine.textures.TextureData;
-
+/**
+ * General purpose loader
+ * @author Frans
+ *
+ */
 public class Loader {
 	private List<Integer> vaos = new ArrayList<Integer>();
 	private List<Integer> vbos = new ArrayList<Integer>();
@@ -94,12 +102,22 @@ public class Loader {
 	public RawModel loadToVAO(ModelData data) {
 		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
 	}
-	
+	/**
+	 * Loads a texture to the GPU.
+	 * @param filename The path, relative to the root of the jar file, of the file to load.
+	 * @return The texture ID
+	 */
 	public int loadTexture(String filename) {
 		int textureID = 0;
 		try {
 			textureID = loadPNGTexture(getClass().getResourceAsStream("/" + filename + ".png"), GL13.GL_TEXTURE0);
-			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -2.4f);
+			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0f);
+			if (GLContext.getCapabilities().GL_EXT_texture_filter_anisotropic) {
+				float amount = Math.min(Settings.ANISOTROPIC_FILTERING_AMOUNT, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
+				GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, amount);
+			} else {
+				System.out.println("Anisotropic filtering not supported.");
+			}
 		} catch (NullPointerException e) {
 			System.err.println("Could not load texture: " + filename);
 			e.printStackTrace();

@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
-import eu.tankernn.gameEngine.renderEngine.Settings;
+import eu.tankernn.gameEngine.settings.Settings;
 
 /**
  * Represents the 3D cuboidal area of the world in which objects will cast

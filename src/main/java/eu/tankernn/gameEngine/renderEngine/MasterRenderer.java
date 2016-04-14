@@ -1,11 +1,11 @@
 package eu.tankernn.gameEngine.renderEngine;
 
-import static eu.tankernn.gameEngine.renderEngine.Settings.BLUE;
-import static eu.tankernn.gameEngine.renderEngine.Settings.FAR_PLANE;
-import static eu.tankernn.gameEngine.renderEngine.Settings.FOV;
-import static eu.tankernn.gameEngine.renderEngine.Settings.GREEN;
-import static eu.tankernn.gameEngine.renderEngine.Settings.NEAR_PLANE;
-import static eu.tankernn.gameEngine.renderEngine.Settings.RED;
+import static eu.tankernn.gameEngine.settings.Settings.BLUE;
+import static eu.tankernn.gameEngine.settings.Settings.FAR_PLANE;
+import static eu.tankernn.gameEngine.settings.Settings.FOV;
+import static eu.tankernn.gameEngine.settings.Settings.GREEN;
+import static eu.tankernn.gameEngine.settings.Settings.NEAR_PLANE;
+import static eu.tankernn.gameEngine.settings.Settings.RED;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
@@ -31,6 +31,11 @@ import eu.tankernn.gameEngine.shadows.ShadowMapMasterRenderer;
 import eu.tankernn.gameEngine.skybox.SkyboxRenderer;
 import eu.tankernn.gameEngine.terrains.Terrain;
 
+/**
+ * Handles most of the rendering in the game.
+ * 
+ * @author Frans
+ */
 public class MasterRenderer {
 	private StaticShader staticShader = new StaticShader();
 	private TerrainShader terrainShader = new TerrainShader();
@@ -43,12 +48,16 @@ public class MasterRenderer {
 	
 	private Matrix4f projectionMatrix;
 	
-	private Map<TexturedModel,List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
-	private Map<TexturedModel,List<Entity>> normalMapEntities = new HashMap<TexturedModel, List<Entity>>();
+	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
+	private Map<TexturedModel, List<Entity>> normalMapEntities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	
-	
-	
+	/**
+	 * Sets up most other renderers for rendering.
+	 * 
+	 * @param loader The main <code>Loader</code>, used by some other renderers
+	 * @param camera The main <code>Camera</code>
+	 */
 	public MasterRenderer(Loader loader, Camera camera) {
 		enableCulling();
 		createProjectionMatrix();
@@ -59,26 +68,46 @@ public class MasterRenderer {
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
 	}
 	
+	/**
+	 * Enables culling of faces facing away from the camera.
+	 */
 	public static void enableCulling() {
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
 	}
 	
+	/**
+	 * Disables culling of faces facing away from the camera. Used when
+	 * rendering flat objects.
+	 */
 	public static void disableCulling() {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 	
+	/**
+	 * Renders a scene.
+	 * 
+	 * @param scene The <code>Scene</code> to render.
+	 * @param clipPlane The clip plane.
+	 */
 	public void renderScene(Scene scene, Vector4f clipPlane) {
 		scene.getTerrainPack().prepareRenderTerrains(this);
-		for (Entity e : scene.getEntities()) {
+		for (Entity e: scene.getEntities()) {
 			processEntity(e);
 		}
-		for (Entity e : scene.getNormalEntities()) {
+		for (Entity e: scene.getNormalEntities()) {
 			processNormalMappedEntity(e);
 		}
 		render(scene.getLights(), scene.getCamera(), clipPlane);
 	}
 	
+	/**
+	 * Renders the current scene to the current buffer.
+	 * 
+	 * @param lights List of lights in the scene.
+	 * @param camera The main camera.
+	 * @param clipPlane The clip plane.
+	 */
 	public void render(List<Light> lights, Camera camera, Vector4f clipPlane) {
 		prepare();
 		staticShader.start();
@@ -86,7 +115,7 @@ public class MasterRenderer {
 		staticShader.loadSkyColor(RED, GREEN, BLUE);
 		staticShader.loadLights(lights);
 		staticShader.loadViewMatrix(camera);
-		entityRenderer.render(entities);
+		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		staticShader.stop();
 		
 		normalMapRenderer.render(normalMapEntities, clipPlane, lights, camera);
@@ -94,6 +123,7 @@ public class MasterRenderer {
 		terrainShader.start();
 		terrainShader.loadClipPlane(clipPlane);
 		terrainShader.loadSkyColor(RED, GREEN, BLUE);
+		terrainShader.loadShadowMapSize(ShadowMapMasterRenderer.SHADOW_MAP_SIZE);
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix());
@@ -106,10 +136,15 @@ public class MasterRenderer {
 		normalMapEntities.clear();
 	}
 	
+	/**
+	 * Adds an entity to the list of entities.
+	 * 
+	 * @param entity Entity to add to the list
+	 */
 	public void processEntity(Entity entity) {
 		TexturedModel entityModel = entity.getModel();
 		List<Entity> batch = entities.get(entityModel);
-		if (batch!=null) {
+		if (batch != null) {
 			batch.add(entity);
 		} else {
 			List<Entity> newBatch = new ArrayList<Entity>();
@@ -118,10 +153,15 @@ public class MasterRenderer {
 		}
 	}
 	
+	/**
+	 * Same as {@link #processEntity(Entity)}, but for normal-mapped entities.
+	 * 
+	 * @param entity Entity to add to the list
+	 */
 	public void processNormalMappedEntity(Entity entity) {
 		TexturedModel entityModel = entity.getModel();
 		List<Entity> batch = normalMapEntities.get(entityModel);
-		if (batch!=null) {
+		if (batch != null) {
 			batch.add(entity);
 		} else {
 			List<Entity> newBatch = new ArrayList<Entity>();
@@ -130,22 +170,35 @@ public class MasterRenderer {
 		}
 	}
 	
+	/**
+	 * Adds specified terrain to the terrain list.
+	 * 
+	 * @param terrain Terrain object to add to list
+	 */
 	public void processTerrain(Terrain terrain) {
 		terrains.add(terrain);
 	}
 	
 	public void renderShadowMap(List<Entity> entityList, Light sun) {
-		for (Entity e : entityList) {
+		for (Entity e: entityList) {
 			processEntity(e);
 		}
 		shadowMapRenderer.render(entities, sun);
 		entities.clear();
 	}
 	
+	/**
+	 * Gets the shadow map texture from the <code>shadowMapRenderer</code>.
+	 * 
+	 * @return
+	 */
 	public int getShadowMapTexture() {
 		return shadowMapRenderer.getShadowMap();
 	}
 	
+	/**
+	 * Runs the cleanup method for the other renderers.
+	 */
 	public void cleanUp() {
 		staticShader.cleanUp();
 		terrainShader.cleanUp();
@@ -153,6 +206,9 @@ public class MasterRenderer {
 		shadowMapRenderer.cleanUp();
 	}
 	
+	/**
+	 * Prepares the current buffer for rendering.
+	 */
 	public void prepare() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(RED, GREEN, BLUE, 1);
@@ -175,7 +231,10 @@ public class MasterRenderer {
 		projectionMatrix.m32 = -((2 * FAR_PLANE * NEAR_PLANE) / frustum_length);
 		projectionMatrix.m33 = 0;
 	}
-
+	/**
+	 * Gets the current projection matrix.
+	 * @return The current projection matrix
+	 */
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
 	}
