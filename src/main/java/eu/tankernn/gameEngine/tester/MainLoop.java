@@ -28,6 +28,8 @@ import eu.tankernn.gameEngine.objLoader.OBJFileLoader;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.particles.ParticleSystem;
 import eu.tankernn.gameEngine.particles.ParticleTexture;
+import eu.tankernn.gameEngine.postProcessing.Fbo;
+import eu.tankernn.gameEngine.postProcessing.PostProcessing;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
@@ -47,7 +49,12 @@ public class MainLoop {
 	private static final int SEED = 1235;
 	
 	public static void main(String[] args) {
-		System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
+		File nativeDir = new File("natives");
+		if (nativeDir.exists()) {
+			System.setProperty("org.lwjgl.librarypath", nativeDir.getAbsolutePath());
+		}
+		
+			
 		List<Entity> entities = new ArrayList<Entity>();
 		List<Entity> normalMapEntities = new ArrayList<Entity>();
 		TerrainPack terrainPack = new TerrainPack();
@@ -147,6 +154,10 @@ public class MainLoop {
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic"), 4, true);
 		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 4);
 		
+		Fbo fbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_RENDER_BUFFER);
+		
+		PostProcessing.init(loader);
+		
 		while (!Display.isCloseRequested()) {
 			barrel.increaseRotation(0, 1, 0);
 			player.move(terrainPack);
@@ -181,15 +192,25 @@ public class MainLoop {
 			Scene scene = new Scene(entities, normalMapEntities, terrainPack, lights, camera);
 			
 			waterMaster.renderBuffers(renderer, scene);
+			
+			fbo.bindFrameBuffer();
+			
 			renderer.renderScene(scene, new Vector4f(0, 1, 0, Float.MAX_VALUE));
 			waterMaster.renderWater(camera, lights);
 			ParticleMaster.renderParticles(camera);
+			
+			fbo.unbindFrameBuffer();
+			
+			PostProcessing.doPostProcessing(fbo.getColourTexture());
+			
 			guiRenderer.render(guis);
 			TextMaster.render();
 			
 			DisplayManager.updateDisplay();
 		}
 		
+		PostProcessing.cleanUp();
+		fbo.cleanUp();
 		ParticleMaster.cleanUp();
 		TextMaster.cleanUp();
 		waterMaster.cleanUp();
