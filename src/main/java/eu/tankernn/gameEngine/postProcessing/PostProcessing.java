@@ -5,9 +5,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import eu.tankernn.gameEngine.gaussianBlur.HorizontalBlur;
-import eu.tankernn.gameEngine.gaussianBlur.VerticalBlur;
 import eu.tankernn.gameEngine.models.RawModel;
+import eu.tankernn.gameEngine.postProcessing.gaussianBlur.HorizontalBlur;
+import eu.tankernn.gameEngine.postProcessing.gaussianBlur.VerticalBlur;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 
 public class PostProcessing {

@@ -25,9 +25,9 @@ public class Camera implements Positionable {
 	/**
 	 * Points the camera so that that <code>entity</code> is in the center.
 	 * 
-	 * @param entity The <code>Entity</code> to point towards
+	 * @param entity The object to point towards
 	 */
-	public void pointToEntity(Entity entity) {
+	public void pointToEntity(Positionable entity) {
 		Vector3f targetPos = entity.getPosition();
 		Vector3f delta = new Vector3f();
 		Vector3f.sub(position, targetPos, delta);

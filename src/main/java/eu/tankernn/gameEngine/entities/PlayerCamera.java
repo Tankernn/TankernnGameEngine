@@ -19,7 +19,6 @@ public class PlayerCamera extends Camera {
 	private Player player;
 	private TerrainPack terrainPack;
 	
-	
 	public PlayerCamera(Player player, TerrainPack terrainPack) {
 		this.player = player;
 		this.terrainPack = terrainPack;
@@ -32,22 +31,17 @@ public class PlayerCamera extends Camera {
 	public void update() {
 		calculateZoom();
 		if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
-			if (!this.isLocked) {
+			if (!this.isLocked) { // Happens first frame mouse held down
 				this.isLocked = true;
 				this.lockedPosition = player.getRotY();
 			}
-			try {
-				Mouse.setNativeCursor(new Cursor(1, 1, 0, 0, 1, IntBuffer.allocate(1), null)); //Hide the cursor
-			} catch (LWJGLException e) {
-				e.printStackTrace();
-			}
+			hideCursor();
 			
 			calculatePitch();
 			calculateAngleAroundPlayer();
 			
-			if (Mouse.isButtonDown(1)) {
+			if (Mouse.isButtonDown(1)) { // Right click
 				float targetRot = this.angleAroundPlayer + this.lockedPosition;
-				this.lockedPosition = 0;
 				float delta = targetRot - player.getRotY();
 				player.increaseRotation(0, delta, 0);
 			}
@@ -56,11 +50,7 @@ public class PlayerCamera extends Camera {
 				this.isLocked = false;
 				this.angleAroundPlayer -= (player.getRotY() - lockedPosition);
 			}
-			try {
-				Mouse.setNativeCursor(null);
-			} catch (LWJGLException e) {
-				e.printStackTrace();
-			}
+			showCursor();
 		}
 		
 		if (!this.isLocked) {
@@ -134,5 +124,21 @@ public class PlayerCamera extends Camera {
 	private void calculateAngleAroundPlayer() {
 		float angleChange = Mouse.getDX() * 0.3f;
 		angleAroundPlayer -= angleChange;
+	}
+	
+	private void hideCursor() {
+		try {
+			Mouse.setNativeCursor(new Cursor(1, 1, 0, 0, 1, IntBuffer.allocate(1), null)); //Hide the cursor
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void showCursor() {
+		try {
+			Mouse.setNativeCursor(null);
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -1,11 +1,11 @@
-package eu.tankernn.gameEngine.gaussianBlur;
+package eu.tankernn.gameEngine.postProcessing.gaussianBlur;
 
 import eu.tankernn.gameEngine.shaders.ShaderProgram;
 
 public class VerticalBlurShader extends ShaderProgram{
 
-	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/gaussianBlur/verticalBlurVertex.glsl";
-	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/gaussianBlur/blurFragment.glsl";
+	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/postProcessing/gaussianBlur/verticalBlurVertex.glsl";
+	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/postProcessing/gaussianBlur/blurFragment.glsl";
 	
 	private int location_targetHeight;
 	

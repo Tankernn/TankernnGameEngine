@@ -1,23 +1,22 @@
-package eu.tankernn.gameEngine.gaussianBlur;
+package eu.tankernn.gameEngine.postProcessing.gaussianBlur;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
 import eu.tankernn.gameEngine.postProcessing.ImageRenderer;
 
-public class VerticalBlur {
+public class HorizontalBlur {
 	
 	private ImageRenderer renderer;
-	private VerticalBlurShader shader;
+	private HorizontalBlurShader shader;
 	
-	public VerticalBlur(int targetFboWidth, int targetFboHeight){
-		shader = new VerticalBlurShader();
-		renderer = new ImageRenderer(targetFboWidth, targetFboHeight);
+	public HorizontalBlur(int targetFboWidth, int targetFboHeight){
+		shader = new HorizontalBlurShader();
 		shader.start();
-		shader.loadTargetHeight(targetFboHeight);
+		shader.loadTargetWidth(targetFboWidth);
 		shader.stop();
+		renderer = new ImageRenderer(targetFboWidth, targetFboHeight);
 	}
-
 	
 	public void render(int texture){
 		shader.start();
@@ -35,4 +34,5 @@ public class VerticalBlur {
 		renderer.cleanUp();
 		shader.cleanUp();
 	}
+
 }
