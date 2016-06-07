@@ -12,7 +12,7 @@ import eu.tankernn.gameEngine.renderEngine.Loader;
 
 public class PostProcessing {
 	
-	private static final int blurFactor = 1;
+	private static final int blurFactor = 0;
 	
 	private static final float[] POSITIONS = {-1, 1, -1, -1, 1, 1, 1, -1};
 	private static RawModel quad;

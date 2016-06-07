@@ -15,6 +15,7 @@ import java.util.jar.JarFile;
 
 import javax.swing.JOptionPane;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -39,6 +40,7 @@ import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.particles.ParticleSystem;
 import eu.tankernn.gameEngine.particles.ParticleTexture;
 import eu.tankernn.gameEngine.postProcessing.Fbo;
+import eu.tankernn.gameEngine.postProcessing.MultisampleFbo;
 import eu.tankernn.gameEngine.postProcessing.PostProcessing;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
@@ -141,7 +143,7 @@ public class MainLoop {
 			entities.add(new Entity(grassModel, rand.nextInt(4), new Vector3f(x, terrainPack.getTerrainHeightByWorldPos(x, z), z), 0, 0, 0, 1));
 		}
 		
-		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrainPack, entities);
+		
 		
 		// #### Water rendering ####
 		WaterMaster waterMaster = new WaterMaster(loader, renderer);
@@ -160,9 +162,12 @@ public class MainLoop {
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic"), 4, true);
 		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 4);
 		
-		Fbo fbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_RENDER_BUFFER);
+		MultisampleFbo multisampleFbo = new MultisampleFbo(Display.getWidth(), Display.getHeight());
+		Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 		
 		PostProcessing.init(loader);
+		
+		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrainPack, entities, guis);
 		
 		while (!Display.isCloseRequested()) {
 			barrel.increaseRotation(0, 1, 0);
@@ -175,6 +180,13 @@ public class MainLoop {
 				flashLight.getPosition().x = currentPoint.x;
 				flashLight.getPosition().z = currentPoint.z;
 				flashLight.getPosition().y = terrainPack.getTerrainHeightByWorldPos(currentPoint.x, currentPoint.z) + 1.0f;
+			}
+			
+			if (picker.getCurrentGui() != null) {
+				if (Mouse.isButtonDown(0)) {
+					System.out.println("Clicked gui.");
+					picker.getCurrentGui().getPosition().x += 0.1f;
+				}
 			}
 			
 			// Update debug info
@@ -199,15 +211,16 @@ public class MainLoop {
 			
 			waterMaster.renderBuffers(renderer, scene);
 			
-			fbo.bindFrameBuffer();
+			multisampleFbo.bindFrameBuffer();
 			
 			renderer.renderScene(scene, new Vector4f(0, 1, 0, Float.MAX_VALUE));
 			waterMaster.renderWater(camera, lights);
 			ParticleMaster.renderParticles(camera);
 			
-			fbo.unbindFrameBuffer();
+			multisampleFbo.unbindFrameBuffer();
 			
-			PostProcessing.doPostProcessing(fbo.getColourTexture());
+			multisampleFbo.resolveToFbo(outputFbo);
+			PostProcessing.doPostProcessing(outputFbo.getColourTexture());
 			
 			guiRenderer.render(guis);
 			TextMaster.render();
@@ -216,7 +229,8 @@ public class MainLoop {
 		}
 		
 		PostProcessing.cleanUp();
-		fbo.cleanUp();
+		outputFbo.cleanUp();
+		multisampleFbo.cleanUp();
 		ParticleMaster.cleanUp();
 		TextMaster.cleanUp();
 		waterMaster.cleanUp();
@@ -261,6 +275,8 @@ public class MainLoop {
 				JOptionPane.showMessageDialog(null, "Could not export natives. Execute in terminal to see full error output.", "Export natives", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+		} else {
+			System.setProperty("org.lwjgl.librarypath", nativeDir.getAbsolutePath());
 		}
 	}
 	

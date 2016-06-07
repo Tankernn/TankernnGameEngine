@@ -11,6 +11,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity;
+import eu.tankernn.gameEngine.gui.GuiTexture;
 import eu.tankernn.gameEngine.models.AABB;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
@@ -30,12 +31,16 @@ public class MousePicker {
 	private List<Entity> entities;
 	private Entity currentEntity;
 	
-	public MousePicker(Camera cam, Matrix4f projection, TerrainPack terrains, List<Entity> entities) {
+	private List<GuiTexture> guis;
+	private GuiTexture currentGui;
+	
+	public MousePicker(Camera cam, Matrix4f projection, TerrainPack terrains, List<Entity> entities, List<GuiTexture> guis) {
 		camera = cam;
 		projectionMatrix = projection;
 		viewMatrix = Maths.createViewMatrix(camera);
 		this.terrains = terrains;
 		this.entities = entities;
+		this.guis = guis;
 	}
 	
 	public Entity getCurrentEntity() {
@@ -50,9 +55,14 @@ public class MousePicker {
 		return currentRay;
 	}
 	
+	public GuiTexture getCurrentGui() {
+		return currentGui;
+	}
+	
 	public void update() {
 		viewMatrix = Maths.createViewMatrix(camera);
 		currentRay = calculateMouseRay();
+		currentGui = calculateGuiTexture();
 		if (intersectionInRange(0, RAY_RANGE, currentRay)) {
 			currentTerrainPoint = binarySearch(0, 0, RAY_RANGE, currentRay);
 		} else {
@@ -98,6 +108,26 @@ public class MousePicker {
 		float x = (2.0f * mouseX) / Display.getWidth() - 1f;
 		float y = (2.0f * mouseY) / Display.getHeight() - 1f;
 		return new Vector2f(x, y);
+	}
+	
+	// GUI Intersect
+	
+	private GuiTexture calculateGuiTexture() {
+		float mouseX = Mouse.getX();
+		float mouseY = Mouse.getY();
+		Vector2f mouseCoords = getNormalisedDeviceCoordinates(mouseX, mouseY);
+		
+		for (GuiTexture gui : guis) {
+			float posX = gui.getPosition().x;
+			float posY = gui.getPosition().y;
+			float scaleX = gui.getScale().x;
+			float scaleY = gui.getScale().y;
+			
+			if (mouseCoords.x > posX - scaleX && mouseCoords.x < posX + scaleX && mouseCoords.y > posY - scaleY && mouseCoords.y < posY + scaleY) {
+				return gui;
+			}
+		}
+		return null;
 	}
 	
 	// #### Entity intersect ####

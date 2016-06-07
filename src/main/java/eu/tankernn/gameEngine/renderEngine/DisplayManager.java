@@ -25,7 +25,7 @@ public class DisplayManager {
 	private static final int WIDTH = 1600;
 	private static final int HEIGHT = 900;
 	private static final int FPS_CAP = 60;
-	private static final int MULTISAMPLING = 8;
+	public static final int MULTISAMPLING = 8;
 	
 	private static long lastFrameTime;
 	private static float delta;
@@ -42,7 +42,7 @@ public class DisplayManager {
 		try {
 			setDisplayMode(WIDTH, HEIGHT, fullscreen);
 			Display.setResizable(true);
-			Display.create(new PixelFormat().withSamples(MULTISAMPLING).withDepthBits(24), attribs);
+			Display.create(new PixelFormat().withDepthBits(24), attribs);
 			GL11.glEnable(GL13.GL_MULTISAMPLE);
 		} catch (LWJGLException e) {
 			e.printStackTrace();
