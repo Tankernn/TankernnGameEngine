@@ -13,14 +13,14 @@ import eu.tankernn.gameEngine.settings.Physics;
 public class Player extends Entity {
 	
 	private static final float RUN_SPEED = 20;
-	private static final float TURN_SPEED = 160;
+	protected static final float TURN_MAX = 160;
 	private static final float JUMP_POWER = 30;
 	
 	private TerrainPack terrainPack;
 	
-	private float currentSpeed = 0;
-	private float currentTurnSpeed = 0;
-	private float upwardsSpeed = 0;
+	protected float currentSpeed = 0;
+	protected float currentTurnSpeed = 0;
+	protected float upwardsSpeed = 0;
 	private boolean isInAir = false;
 	
 	private float height = 2.0f;
@@ -61,7 +61,7 @@ public class Player extends Entity {
 		}
 	}
 	
-	private void checkInputs() {
+	protected void checkInputs() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_W) || (Mouse.isButtonDown(0) && Mouse.isButtonDown(1))) {
 			this.currentSpeed = RUN_SPEED;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
@@ -71,9 +71,9 @@ public class Player extends Entity {
 		}
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			this.currentTurnSpeed = TURN_SPEED;
+			this.currentTurnSpeed = TURN_MAX;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			this.currentTurnSpeed = -TURN_SPEED;
+			this.currentTurnSpeed = -TURN_MAX;
 		} else {
 			this.currentTurnSpeed = 0;
 		}

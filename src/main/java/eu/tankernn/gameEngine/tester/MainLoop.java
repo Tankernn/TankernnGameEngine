@@ -1,20 +1,8 @@
 package eu.tankernn.gameEngine.tester;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-import javax.swing.JOptionPane;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
@@ -22,6 +10,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
+import eu.tankernn.gameEngine.entities.Car;
 import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
@@ -52,6 +41,7 @@ import eu.tankernn.gameEngine.textures.ModelTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.util.MousePicker;
+import eu.tankernn.gameEngine.util.NativesExporter;
 import eu.tankernn.gameEngine.util.Sorter;
 import eu.tankernn.gameEngine.water.WaterMaster;
 import eu.tankernn.gameEngine.water.WaterTile;
@@ -61,7 +51,7 @@ public class MainLoop {
 	private static final int SEED = 1235;
 	
 	public static void main(String[] args) {
-		exportNatives();
+		NativesExporter.exportNatives();
 		
 		List<Entity> entities = new ArrayList<Entity>();
 		List<Entity> normalMapEntities = new ArrayList<Entity>();
@@ -82,7 +72,7 @@ public class MainLoop {
 		Entity entity = new Entity(texturedMonkeyModel, new Vector3f(0, 0, 20), 0, 0, 0, 1);
 		entities.add(entity);
 		TexturedModel monkey = new TexturedModel(monkeyModel, new ModelTexture(loader.loadTexture("white")));
-		Player player = new Player(monkey, new Vector3f(10, 0, 50), 0, 0, 0, 1, terrainPack);
+		Player player = new Car(monkey, new Vector3f(10, 0, 50), 0, 0, 0, 1, terrainPack);
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
 		
@@ -238,71 +228,5 @@ public class MainLoop {
 		renderer.cleanUp();
 		loader.cleanUp();
 		DisplayManager.closeDisplay();
-	}
-	
-	private static void exportNatives() {
-		File nativeDir = new File("natives");
-		if (!nativeDir.isDirectory() || nativeDir.list().length == 0) {
-			try {
-				nativeDir.mkdir();
-				
-				File jarFile = null;
-				try {
-					jarFile = new File(MainLoop.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-				} catch (URISyntaxException e1) {
-					e1.printStackTrace();
-				}
-				
-				if (jarFile != null && jarFile.isFile()) { // Run with JAR file
-					final JarFile jar = new JarFile(jarFile);
-					final Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
-					while (entries.hasMoreElements()) {
-						final String name = entries.nextElement().getName();
-						if (name.endsWith(".dll") || name.endsWith(".so") || name.endsWith(".dylib") || name.endsWith(".jnilb")) { //filter according to the path
-							System.out.println(name);
-							try {
-								exportFile(name, "natives");
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					}
-					jar.close();
-					System.setProperty("org.lwjgl.librarypath", nativeDir.getAbsolutePath());
-				} else { // Run with IDE
-				}
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Could not export natives. Execute in terminal to see full error output.", "Export natives", JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-		} else {
-			System.setProperty("org.lwjgl.librarypath", nativeDir.getAbsolutePath());
-		}
-	}
-	
-	private static String exportFile(String classPath, String targetDir) throws Exception {
-		InputStream stream = null;
-		OutputStream resStreamOut = null;
-		try {
-			stream = MainLoop.class.getResourceAsStream("/" + classPath);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
-			if (stream == null) {
-				throw new Exception("Cannot get resource \"" + classPath + "\" from Jar file.");
-			}
-			
-			int readBytes;
-			byte[] buffer = new byte[4096];
-			File outFile = new File(targetDir + "/" + classPath);
-			outFile.getParentFile().mkdirs();
-			resStreamOut = new FileOutputStream(outFile);
-			while ((readBytes = stream.read(buffer)) > 0) {
-				resStreamOut.write(buffer, 0, readBytes);
-			}
-			stream.close();
-			resStreamOut.close();
-		} catch (Exception ex) {
-			throw ex;
-		}
-		
-		return classPath;
 	}
 }
