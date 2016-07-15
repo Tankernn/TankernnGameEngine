@@ -6,19 +6,23 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import eu.tankernn.gameEngine.models.RawModel;
+import eu.tankernn.gameEngine.postProcessing.bloom.BrightFilter;
+import eu.tankernn.gameEngine.postProcessing.bloom.CombineFilter;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.HorizontalBlur;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.VerticalBlur;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 
 public class PostProcessing {
 	
-	private static final int blurFactor = 0;
+	private static final int blurFactor = 2;
 	
 	private static final float[] POSITIONS = {-1, 1, -1, -1, 1, 1, 1, -1};
 	private static RawModel quad;
 	private static ContrastChanger contrastChanger;
 	private static HorizontalBlur hBlur[] = new HorizontalBlur[blurFactor];
 	private static VerticalBlur vBlur[] = new VerticalBlur[blurFactor];
+	private static BrightFilter brightFilter;
+	private static CombineFilter combineFilter;
 	
 	public static void init(Loader loader) {
 		quad = loader.loadToVAO(POSITIONS, 2);
@@ -28,17 +32,21 @@ public class PostProcessing {
 			hBlur[i] = new HorizontalBlur(Display.getWidth() / temp, Display.getHeight() / temp);
 			vBlur[i] = new VerticalBlur(Display.getWidth() / temp, Display.getHeight() / temp);
 		}
+		brightFilter = new BrightFilter(Display.getWidth() / 2, Display.getHeight() / 2);
+		combineFilter = new CombineFilter();
 	}
 	
 	public static void doPostProcessing(int colorTexture) {
 		start();
-		int currentTexture = colorTexture;
+		brightFilter.render(colorTexture);
+		int bloomTexture = brightFilter.getOutputTexture();
 		for (int i = 0; i < blurFactor; i++) {
-			hBlur[i].render(currentTexture);
+			hBlur[i].render(bloomTexture);
 			vBlur[i].render(hBlur[i].getOutputTexture());
-			currentTexture = vBlur[i].getOutputTexture();
+			bloomTexture = vBlur[i].getOutputTexture();
 		}
-		contrastChanger.render(currentTexture);
+		combineFilter.render(colorTexture, bloomTexture);
+		//contrastChanger.render(bloomTexture);
 		end();
 	}
 	
@@ -48,6 +56,8 @@ public class PostProcessing {
 			hBlur[i].cleanUp();
 			vBlur[i].cleanUp();
 		}
+		brightFilter.cleanUp();
+		combineFilter.cleanUp();
 	}
 	
 	private static void start() {

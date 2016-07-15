@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Matrix4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.renderEngine.Loader;
-import eu.tankernn.gameEngine.util.Sorter;
+import eu.tankernn.gameEngine.util.DistanceSorter;
 
 public class ParticleMaster {
 	private static Map<ParticleTexture, List<Particle>> particles = new HashMap<ParticleTexture, List<Particle>>();
@@ -38,7 +38,7 @@ public class ParticleMaster {
 				}
 			}
 			if (!entry.getKey().usesAdditiveBlending())
-				new Sorter<Particle>(list, camera).sortByDistance();
+				DistanceSorter.sort(list, camera);
 		}
 	}
 	
