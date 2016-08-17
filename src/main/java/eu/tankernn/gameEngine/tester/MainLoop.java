@@ -1,13 +1,12 @@
 package eu.tankernn.gameEngine.tester;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
@@ -31,19 +30,19 @@ import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.particles.ParticleSystem;
 import eu.tankernn.gameEngine.particles.ParticleTexture;
 import eu.tankernn.gameEngine.postProcessing.Fbo;
-import eu.tankernn.gameEngine.postProcessing.MultisampleFbo;
+import eu.tankernn.gameEngine.postProcessing.MultisampleMultitargetFbo;
 import eu.tankernn.gameEngine.postProcessing.PostProcessing;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
+import eu.tankernn.gameEngine.settings.Settings;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 import eu.tankernn.gameEngine.textures.ModelTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.util.DistanceSorter;
-import eu.tankernn.gameEngine.util.Maths;
 import eu.tankernn.gameEngine.util.MousePicker;
 import eu.tankernn.gameEngine.util.NativesExporter;
 import eu.tankernn.gameEngine.water.WaterMaster;
@@ -150,20 +149,24 @@ public class MainLoop {
 
 		// #### Gui rendering ####
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
-		GuiTexture depth = new GuiTexture(waterMaster.getBuffers().getRefractionDepthTexture(),
-				new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-		GuiTexture refraction = new GuiTexture(waterMaster.getBuffers().getRefractionTexture(),
-				new Vector2f(-0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-		guis.add(depth);
-		guis.add(refraction);
+		if (Settings.DEBUG) {
+			GuiTexture depth = new GuiTexture(waterMaster.getBuffers().getRefractionDepthTexture(),
+					new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+			GuiTexture refraction = new GuiTexture(waterMaster.getBuffers().getRefractionTexture(),
+					new Vector2f(-0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+			guis.add(depth);
+			guis.add(refraction);
+		}
 
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic"), 4, true);
 		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 4);
 
-		MultisampleFbo multisampleFbo = new MultisampleFbo(Display.getWidth(), Display.getHeight());
+		MultisampleMultitargetFbo multisampleFbo = new MultisampleMultitargetFbo(Display.getWidth(),
+				Display.getHeight());
 		Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
+		Fbo outputFbo2 = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 
 		PostProcessing.init(loader);
 
@@ -191,13 +194,16 @@ public class MainLoop {
 			}
 
 			// Update debug info
-
-			Terrain currentTerrain = terrainPack.getTerrainByWorldPos(player.getPosition().x, player.getPosition().z);
-			if (currentTerrain != null) {
-				text.remove();
-				Vector3f pos = player.getPosition();
-				String textString = "X: " + Math.floor(pos.x) + " Y: " + Math.floor(pos.y) + " Z: " + Math.floor(pos.z);
-				text = new GUIText(textString, 1, font, new Vector2f(0.5f, 0f), 0.5f, false);
+			if (Settings.DEBUG) {
+				Terrain currentTerrain = terrainPack.getTerrainByWorldPos(player.getPosition().x,
+						player.getPosition().z);
+				if (currentTerrain != null) {
+					text.remove();
+					Vector3f pos = player.getPosition();
+					String textString = "X: " + Math.floor(pos.x) + " Y: " + Math.floor(pos.y) + " Z: "
+							+ Math.floor(pos.z);
+					text = new GUIText(textString, 1, font, new Vector2f(0.5f, 0f), 0.5f, false);
+				}
 			}
 
 			// Sort list of lights
@@ -220,8 +226,9 @@ public class MainLoop {
 
 			multisampleFbo.unbindFrameBuffer();
 
-			multisampleFbo.resolveToFbo(outputFbo);
-			PostProcessing.doPostProcessing(outputFbo.getColourTexture());
+			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT0, outputFbo);
+			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT1, outputFbo2);
+			PostProcessing.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
 
 			guiRenderer.render(guis);
 			TextMaster.render();
@@ -231,6 +238,7 @@ public class MainLoop {
 
 		PostProcessing.cleanUp();
 		outputFbo.cleanUp();
+		outputFbo2.cleanUp();
 		multisampleFbo.cleanUp();
 		ParticleMaster.cleanUp();
 		TextMaster.cleanUp();

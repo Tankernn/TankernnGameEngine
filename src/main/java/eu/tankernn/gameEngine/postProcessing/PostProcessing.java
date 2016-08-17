@@ -36,10 +36,10 @@ public class PostProcessing {
 		combineFilter = new CombineFilter();
 	}
 	
-	public static void doPostProcessing(int colorTexture) {
+	public static void doPostProcessing(int colorTexture, int brightTexture) {
 		start();
-		brightFilter.render(colorTexture);
-		int bloomTexture = brightFilter.getOutputTexture();
+		//brightFilter.render(colorTexture);
+		int bloomTexture = brightTexture;
 		for (int i = 0; i < blurFactor; i++) {
 			hBlur[i].render(bloomTexture);
 			vBlur[i].render(hBlur[i].getOutputTexture());

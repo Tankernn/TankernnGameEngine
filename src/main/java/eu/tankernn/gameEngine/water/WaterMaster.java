@@ -44,7 +44,7 @@ public class WaterMaster {
 		
 		// Refraction
 		buffers.bindRefractionFrameBuffer();
-		renderer.renderScene(scene, new Vector4f(0, -1, 0, waterHeight));
+		renderer.renderScene(scene, new Vector4f(0, -1, 0, waterHeight + 1f));
 		
 		// Screen
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);

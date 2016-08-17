@@ -13,7 +13,7 @@ uniform mat4 modelMatrix;
 uniform vec3 cameraPosition;
 uniform vec3 lightPosition[4]; //4 max light sources
 
-const float tiling = 10.0;
+const float tiling = 4.0;
 
 void main(void) {
 	
