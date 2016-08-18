@@ -5,7 +5,7 @@
 
 	<groupId>eu.tankernn.gameEngine</groupId>
 	<artifactId>tankernn-game-engine</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<url>http://tankernn.eu</url>
@@ -36,6 +36,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${project.artifactId}-${project.version}.${build.number}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -51,6 +52,11 @@
 									<addClasspath>true</addClasspath>
 									<mainClass>eu.tankernn.gameEngine.tester.MainLoop</mainClass>
 								</manifest>
+								<manifestEntries>
+			                        <Specification-Title>${project.name}</Specification-Title>
+			                        <Specification-Version>${project.version}</Specification-Version>
+			                        <Implementation-Version>${build.number}</Implementation-Version>
+			                    </manifestEntries>
 							</archive>
 							<!-- The filename of the assembled distribution file defualt ${project.build.finalName} -->
 							<finalName>${project.build.finalName}</finalName>
@@ -97,5 +103,6 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<build.number>SNAPSHOT</build.number>
 	</properties>
 </project>
