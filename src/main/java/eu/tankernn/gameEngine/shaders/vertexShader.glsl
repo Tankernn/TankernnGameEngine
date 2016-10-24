@@ -10,6 +10,8 @@ out vec3 toLightVector[4]; //4 max light sources
 out vec3 toCameraVector;
 out float visibility;
 out vec4 shadowCoords;
+out vec3 reflectedVector;
+out vec3 refractedVector;
 
 uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
@@ -23,6 +25,8 @@ uniform vec2 offset;
 
 uniform mat4 toShadowMapSpace;
 uniform float shadowDistance;
+
+uniform vec3 cameraPosition;
 
 const float density = 0.004;
 const float gradient = 2.0;
@@ -47,6 +51,11 @@ void main(void) {
 	for (int i = 0; i < 4; i++) {
 		toLightVector[i] = lightPosition[i] - worldPosition.xyz;
 	}
+	
+	vec3 unitNormal = normalize(normal);
+	vec3 viewVector = normalize(worldPosition.xyz - cameraPosition);
+	reflectedVector = reflect(viewVector, unitNormal);
+	refractedVector = refract(viewVector, unitNormal, 1.0/1.33);
 	
 	toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
 	

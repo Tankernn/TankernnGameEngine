@@ -99,6 +99,13 @@ public class Loader {
 		return new RawModel(vaoID, positions.length / 2);
 	}
 	
+	public RawModel loadToVAO(float[] positions) {
+		int vaoID = createVAO();
+		this.storeDataInAttributeList(0, 3, positions);
+		unbindVAO();
+		return new RawModel(vaoID, positions.length / 3);
+	}
+	
 	public RawModel loadToVAO(ModelData data) {
 		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
 	}

@@ -28,6 +28,7 @@ import eu.tankernn.gameEngine.normalMapping.renderer.NormalMappingRenderer;
 import eu.tankernn.gameEngine.shaders.StaticShader;
 import eu.tankernn.gameEngine.shaders.TerrainShader;
 import eu.tankernn.gameEngine.shadows.ShadowMapMasterRenderer;
+import eu.tankernn.gameEngine.skybox.CubeMap;
 import eu.tankernn.gameEngine.skybox.SkyboxRenderer;
 import eu.tankernn.gameEngine.terrains.Terrain;
 
@@ -61,11 +62,11 @@ public class MasterRenderer {
 	public MasterRenderer(Loader loader, Camera camera) {
 		enableCulling();
 		createProjectionMatrix();
-		entityRenderer = new EntityRenderer(staticShader, projectionMatrix);
 		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 		normalMapRenderer = new NormalMappingRenderer(projectionMatrix);
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
+		entityRenderer = new EntityRenderer(staticShader, projectionMatrix, skyboxRenderer.getCubeMap());
 	}
 	
 	/**
@@ -115,7 +116,7 @@ public class MasterRenderer {
 		staticShader.loadSkyColor(RED, GREEN, BLUE);
 		staticShader.loadLights(lights);
 		staticShader.loadViewMatrix(camera);
-		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix());
+		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera);
 		staticShader.stop();
 		
 		normalMapRenderer.render(normalMapEntities, clipPlane, lights, camera);

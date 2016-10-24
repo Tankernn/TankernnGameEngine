@@ -9,9 +9,11 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
+import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.models.TexturedModel;
 import eu.tankernn.gameEngine.shaders.StaticShader;
+import eu.tankernn.gameEngine.skybox.CubeMap;
 import eu.tankernn.gameEngine.textures.ModelTexture;
 import eu.tankernn.gameEngine.util.Maths;
 /**
@@ -21,13 +23,16 @@ import eu.tankernn.gameEngine.util.Maths;
  */
 public class EntityRenderer {
 	private StaticShader shader;
+	private CubeMap environmentMap;
+	
 	/**
 	 * Starts shader and loads initial values.
 	 * @param shader The shader to use when rendering entities
 	 * @param projectionMatrix The projection matrix to use when rendering entities
 	 */
-	public EntityRenderer(StaticShader shader, Matrix4f projectionMatrix) {
+	public EntityRenderer(StaticShader shader, Matrix4f projectionMatrix, CubeMap environmentMap) {
 		this.shader = shader;
+		this.environmentMap = environmentMap;
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.connectTextureUnits();
@@ -41,8 +46,9 @@ public class EntityRenderer {
 	 * @param toShadowSpace Transformation matrix to shadow space. Used for
 	 *        applying shadows.
 	 */
-	public void render(Map<TexturedModel, List<Entity>> entities, Matrix4f toShadowSpace) {
+	public void render(Map<TexturedModel, List<Entity>> entities, Matrix4f toShadowSpace, Camera cam) {
 		shader.loadToShadowSpaceMatrix(toShadowSpace);
+		shader.loadCameraPosition(cam.getPosition());
 		for (TexturedModel model: entities.keySet()) {
 			prepareTexturedModel(model);
 			List<Entity> batch = entities.get(model);
@@ -72,6 +78,12 @@ public class EntityRenderer {
 			GL13.glActiveTexture(GL13.GL_TEXTURE1);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getSpecularMap());
 		}
+		bindEnvironmentMap();
+	}
+	
+	private void bindEnvironmentMap() {
+		GL13.glActiveTexture(GL13.GL_TEXTURE10);
+		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, environmentMap.getTexture());
 	}
 	
 	private void unbindTexturedModel() {

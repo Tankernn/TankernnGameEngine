@@ -6,6 +6,8 @@ in vec3 toLightVector[4]; //4 max light sources
 in vec3 toCameraVector;
 in float visibility;
 in vec4 shadowCoords;
+in vec3 reflectedVector;
+in vec3 refractedVector;
 
 layout (location = 0) out vec4 out_Color;
 layout (location = 1) out vec4 out_BrightColor;
@@ -13,6 +15,7 @@ layout (location = 1) out vec4 out_BrightColor;
 uniform sampler2D shadowMap;
 uniform sampler2D textureSampler;
 uniform sampler2D specularMap;
+uniform samplerCube enviroMap;
 uniform float usesSpecularMap;
 uniform vec3 lightColor[4]; //4 max light sources
 uniform vec3 attenuation[4];
@@ -75,5 +78,9 @@ void main(void){
 	out_Color = vec4(totalDiffuse, 1.0) * textureColor + vec4(totalSpecular, 1.0);
 	out_Color = mix(vec4(skyColor, 1.0), out_Color, visibility);
 	
+	vec4 reflectedColor = texture(enviroMap, reflectedVector);
+	vec4 refractedColor = texture(enviroMap, refractedVector);
+	vec4 enviroColor = mix(reflectedColor, refractedColor, 0.5);
 	
+	out_Color = mix(out_Color, enviroColor, 0.3);
 }
