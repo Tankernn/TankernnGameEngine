@@ -28,7 +28,6 @@ import eu.tankernn.gameEngine.normalMapping.renderer.NormalMappingRenderer;
 import eu.tankernn.gameEngine.shaders.StaticShader;
 import eu.tankernn.gameEngine.shaders.TerrainShader;
 import eu.tankernn.gameEngine.shadows.ShadowMapMasterRenderer;
-import eu.tankernn.gameEngine.skybox.CubeMap;
 import eu.tankernn.gameEngine.skybox.SkyboxRenderer;
 import eu.tankernn.gameEngine.terrains.Terrain;
 
@@ -59,13 +58,13 @@ public class MasterRenderer {
 	 * @param loader The main <code>Loader</code>, used by some other renderers
 	 * @param camera The main <code>Camera</code>
 	 */
-	public MasterRenderer(Loader loader, Camera camera) {
+	public MasterRenderer(Loader loader, Camera camera, String[] dayTextureFiles, String[] nightTextureFiles) {
 		enableCulling();
 		createProjectionMatrix();
 		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
-		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 		normalMapRenderer = new NormalMappingRenderer(projectionMatrix);
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
+		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix, dayTextureFiles, nightTextureFiles);
 		entityRenderer = new EntityRenderer(staticShader, projectionMatrix, skyboxRenderer.getCubeMap());
 	}
 	

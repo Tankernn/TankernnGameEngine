@@ -13,16 +13,13 @@ import eu.tankernn.gameEngine.renderEngine.Loader;
 public class SkyboxRenderer {
 	private static final int DAY_LENGTH = 24000;
 	
-	private static final String[] TEXTURE_FILES = {"alps_rt", "alps_lf", "alps_up", "alps_dn", "alps_bk", "alps_ft"};
-	private static final String[] NIGHT_TEXTURE_FILES = {"midnight_rt", "midnight_lf", "midnight_up", "midnight_dn", "midnight_bk", "midnight_ft"};
-	
 	private CubeMap dayCube, nightCube;
 	private SkyboxShader shader;
 	private float time = 0;
 	
-	public SkyboxRenderer(Loader loader, Matrix4f projectionmatrix) {
-		dayCube = new CubeMap(TEXTURE_FILES, "skybox/", loader);
-		nightCube = new CubeMap(NIGHT_TEXTURE_FILES, "skybox/", loader);
+	public SkyboxRenderer(Loader loader, Matrix4f projectionmatrix, String[] dayTextureFiles, String[] nightTextureFiles) {
+		dayCube = new CubeMap(dayTextureFiles, "skybox/", loader);
+		nightCube = new CubeMap(nightTextureFiles, "skybox/", loader);
 		shader = new SkyboxShader();
 		shader.start();
 		shader.connectTextureUnits();

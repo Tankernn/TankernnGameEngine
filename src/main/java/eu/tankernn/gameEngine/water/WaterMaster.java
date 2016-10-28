@@ -19,8 +19,8 @@ public class WaterMaster {
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private WaterRenderer waterRenderer;
 	
-	public WaterMaster(Loader loader, MasterRenderer renderer) {
-		waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), buffers);
+	public WaterMaster(Loader loader, String dudvTexture, String normalMap, MasterRenderer renderer) {
+		waterRenderer = new WaterRenderer(loader, dudvTexture, normalMap, waterShader, renderer.getProjectionMatrix(), buffers);
 	}
 	
 	public void addWaterTile(WaterTile water) {

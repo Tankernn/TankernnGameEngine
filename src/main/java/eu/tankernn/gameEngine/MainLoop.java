@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.tester;
+package eu.tankernn.gameEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,6 @@ import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
-import eu.tankernn.gameEngine.settings.Settings;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 import eu.tankernn.gameEngine.textures.ModelTexture;
@@ -44,22 +43,30 @@ import eu.tankernn.gameEngine.textures.TerrainTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.util.DistanceSorter;
 import eu.tankernn.gameEngine.util.MousePicker;
-import eu.tankernn.gameEngine.util.NativesExporter;
 import eu.tankernn.gameEngine.water.WaterMaster;
 import eu.tankernn.gameEngine.water.WaterTile;
 
 public class MainLoop {
 
 	private static final int SEED = 1235;
+	
+	// Skybox settings
+	public static final String[] TEXTURE_FILES = {"alps_rt", "alps_lf", "alps_up", "alps_dn", "alps_bk", "alps_ft"};
+	public static final String[] NIGHT_TEXTURE_FILES = {"midnight_rt", "midnight_lf", "midnight_up", "midnight_dn", "midnight_bk", "midnight_ft"};
+	
+	// Water settings
+	public static final String DUDV_MAP = "waterDUDV";
+	public static final String NORMAL_MAP = "waterNormalMap";
+
+	private static final boolean DEBUG = true;
 
 	public static void main(String[] args) {
-		NativesExporter.exportNatives();
-
+		
 		List<Entity> entities = new ArrayList<Entity>();
 		List<Entity> normalMapEntities = new ArrayList<Entity>();
 		TerrainPack terrainPack = new TerrainPack();
 
-		DisplayManager.createDisplay();
+		DisplayManager.createDisplay("Tankernn Game Engine tester");
 		Loader loader = new Loader();
 
 		// Monkey
@@ -79,7 +86,7 @@ public class MainLoop {
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
 
-		MasterRenderer renderer = new MasterRenderer(loader, camera);
+		MasterRenderer renderer = new MasterRenderer(loader, camera, TEXTURE_FILES, NIGHT_TEXTURE_FILES);
 		ParticleMaster.init(loader, renderer.getProjectionMatrix());
 		TextMaster.init(loader);
 
@@ -143,20 +150,12 @@ public class MainLoop {
 		}
 
 		// #### Water rendering ####
-		WaterMaster waterMaster = new WaterMaster(loader, renderer);
+		WaterMaster waterMaster = new WaterMaster(loader, DUDV_MAP, NORMAL_MAP, renderer);
 		WaterTile water = new WaterTile(75, 75, 0);
 		waterMaster.addWaterTile(water);
 
 		// #### Gui rendering ####
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
-		if (Settings.DEBUG) {
-			GuiTexture depth = new GuiTexture(waterMaster.getBuffers().getRefractionDepthTexture(),
-					new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-			GuiTexture refraction = new GuiTexture(waterMaster.getBuffers().getRefractionTexture(),
-					new Vector2f(-0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-			guis.add(depth);
-			guis.add(refraction);
-		}
 
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
@@ -194,7 +193,7 @@ public class MainLoop {
 			}
 
 			// Update debug info
-			if (Settings.DEBUG) {
+			if (DEBUG) {
 				Terrain currentTerrain = terrainPack.getTerrainByWorldPos(player.getPosition().x,
 						player.getPosition().z);
 				if (currentTerrain != null) {

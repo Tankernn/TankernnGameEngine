@@ -1,3 +1,2 @@
-1. Make text variables uniform/ change text rendering method
-2. Sort light list depending om distance from player
-3. Fix player movement
+Make text variables uniform/ change text rendering method
+Fix player movement

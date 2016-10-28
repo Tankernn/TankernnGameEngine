@@ -13,8 +13,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.PixelFormat;
 
-import eu.tankernn.gameEngine.settings.Settings;
-
 /**
  * Handles the OpenGL display.
  * 
@@ -34,7 +32,7 @@ public class DisplayManager {
 	/**
 	 * Creates a new display.
 	 */
-	public static void createDisplay() {
+	public static void createDisplay(String title) {
 		ContextAttribs attribs = new ContextAttribs(3, 3)
 				.withForwardCompatible(true)
 				.withProfileCore(true);
@@ -51,7 +49,7 @@ public class DisplayManager {
 		GL11.glViewport(0, 0, WIDTH, HEIGHT);
 		lastFrameTime = getCurrentTime();
 		
-		Display.setTitle(Settings.GAME_NAME);
+		Display.setTitle(title);
 	}
 	
 	/**

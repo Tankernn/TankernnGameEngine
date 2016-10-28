@@ -12,8 +12,6 @@ import java.util.jar.JarFile;
 
 import javax.swing.JOptionPane;
 
-import eu.tankernn.gameEngine.tester.MainLoop;
-
 public class NativesExporter {
 	public static void exportNatives() {
 		File nativeDir = new File("natives");
@@ -24,7 +22,7 @@ public class NativesExporter {
 				File jarFile = null;
 				try {
 					jarFile = new File(
-							MainLoop.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+							NativesExporter.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
 				} catch (URISyntaxException e1) {
 					e1.printStackTrace();
 				}
@@ -69,7 +67,7 @@ public class NativesExporter {
 		InputStream stream = null;
 		OutputStream resStreamOut = null;
 		try {
-			stream = MainLoop.class.getResourceAsStream("/" + classPath);// note
+			stream = NativesExporter.class.getResourceAsStream("/" + classPath);// note
 																			// that
 																			// each
 																			// /

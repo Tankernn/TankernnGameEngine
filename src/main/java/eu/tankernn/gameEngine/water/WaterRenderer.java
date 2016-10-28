@@ -18,8 +18,6 @@ import eu.tankernn.gameEngine.util.Maths;
 
 public class WaterRenderer {
 	
-	private static final String DUDV_MAP = "waterDUDV";
-	private static final String NORMAL_MAP = "waterNormalMap";
 	private static final float WAVE_SPEED = 0.03f;
 	
 	private RawModel quad;
@@ -31,11 +29,11 @@ public class WaterRenderer {
 	private int dudvTexture;
 	private int normalMap;
 
-	public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers buffers) {
+	public WaterRenderer(Loader loader, String dudvTexture, String normalMap, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers buffers) {
 		this.shader = shader;
 		this.buffers = buffers;
-		this.dudvTexture = loader.loadTexture(DUDV_MAP);
-		this.normalMap = loader.loadTexture(NORMAL_MAP);
+		this.dudvTexture = loader.loadTexture(dudvTexture);
+		this.normalMap = loader.loadTexture(normalMap);
 		shader.start();
 		shader.connectTextureUnits();
 		shader.loadProjectionMatrix(projectionMatrix);

@@ -10,10 +10,10 @@ public class TankernnGame {
 	protected MasterRenderer renderer;
 	protected Camera camera;
 	
-	public TankernnGame() {
+	public TankernnGame(String[] dayTextureFiles, String[] nightTextureFiles) {
 		loader = new Loader();
 		camera = new Camera();
-		renderer = new MasterRenderer(loader, camera);
+		renderer = new MasterRenderer(loader, camera, dayTextureFiles, nightTextureFiles);
 	}
 	
 	public void update() {
