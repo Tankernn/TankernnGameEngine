@@ -12,7 +12,7 @@ uniform sampler2D modelTexture;
 uniform sampler2D normalMap;
 uniform sampler2D specularMap;
 uniform float usesSpecularMap;
-uniform vec3 lightColour[4];
+uniform vec3 lightColor[4];
 uniform vec3 attenuation[4];
 uniform float shineDamper;
 uniform float reflectivity;
@@ -39,8 +39,8 @@ void main(void){
 		float specularFactor = dot(reflectedLightDirection , unitVectorToCamera);
 		specularFactor = max(specularFactor,0.0);
 		float dampedFactor = pow(specularFactor,shineDamper);
-		totalDiffuse = totalDiffuse + (brightness * lightColour[i])/attFactor;
-		totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColour[i])/attFactor;
+		totalDiffuse = totalDiffuse + (brightness * lightColor[i])/attFactor;
+		totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColor[i])/attFactor;
 	}
 	totalDiffuse = max(totalDiffuse, 0.2);
 	

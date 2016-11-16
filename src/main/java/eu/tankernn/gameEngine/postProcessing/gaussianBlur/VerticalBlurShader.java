@@ -1,29 +1,17 @@
 package eu.tankernn.gameEngine.postProcessing.gaussianBlur;
 
 import eu.tankernn.gameEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.shaders.UniformFloat;
 
 public class VerticalBlurShader extends ShaderProgram{
 
 	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/postProcessing/gaussianBlur/verticalBlurVertex.glsl";
 	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/postProcessing/gaussianBlur/blurFragment.glsl";
 	
-	private int location_targetHeight;
+	protected UniformFloat targetHeight = new UniformFloat("targetHeight");
 	
 	protected VerticalBlurShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE);
-	}
-	
-	protected void loadTargetHeight(float height){
-		super.loadFloat(location_targetHeight, height);
-	}
-
-	@Override
-	protected void getAllUniformLocations() {	
-		location_targetHeight = super.getUniformLocation("targetHeight");
-	}
-
-	@Override
-	protected void bindAttributes() {
-		super.bindAttribute(0, "position");
+		super(VERTEX_FILE, FRAGMENT_FILE, "position");
+		super.storeAllUniformLocations(targetHeight);
 	}
 }

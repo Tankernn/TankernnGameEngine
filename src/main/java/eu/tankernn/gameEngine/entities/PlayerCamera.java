@@ -20,6 +20,7 @@ public class PlayerCamera extends Camera {
 	private TerrainPack terrainPack;
 	
 	public PlayerCamera(Player player, TerrainPack terrainPack) {
+		super();
 		this.player = player;
 		this.terrainPack = terrainPack;
 	}
@@ -65,6 +66,8 @@ public class PlayerCamera extends Camera {
 			this.yaw = 180 - (lockedPosition + angleAroundPlayer);
 		} else
 			this.yaw = 180 - (player.getRotY() + angleAroundPlayer);
+		
+		super.update();
 	}
 	
 	private void adjustToCenter() {

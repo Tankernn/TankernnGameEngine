@@ -36,7 +36,7 @@ public class WaterRenderer {
 		this.normalMap = loader.loadTexture(normalMap);
 		shader.start();
 		shader.connectTextureUnits();
-		shader.loadProjectionMatrix(projectionMatrix);
+		shader.projectionMatrix.loadMatrix(projectionMatrix);
 		shader.stop();
 		setUpVAO(loader);
 	}
@@ -47,7 +47,7 @@ public class WaterRenderer {
 			Matrix4f modelMatrix = Maths.createTransformationMatrix(
 					new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
 					WaterTile.TILE_SIZE);
-			shader.loadModelMatrix(modelMatrix);
+			shader.modelMatrix.loadMatrix(modelMatrix);
 			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getVertexCount());
 		}
 		unbind();
@@ -55,10 +55,11 @@ public class WaterRenderer {
 	
 	private void prepareRender(Camera camera, List<Light> lights){
 		shader.start();
-		shader.loadViewMatrix(camera);
+		shader.viewMatrix.loadCamera(camera);
+		shader.cameraPosition.loadVec3(camera.getPosition());
 		moveFactor += WAVE_SPEED * DisplayManager.getFrameTimeSeconds();
 		moveFactor %= 1;
-		shader.loadMoveFactor(moveFactor);
+		shader.moveFactor.loadFloat(moveFactor);
 		shader.loadLights(lights);
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);

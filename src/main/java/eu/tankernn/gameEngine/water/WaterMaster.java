@@ -12,6 +12,7 @@ import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
+import eu.tankernn.gameEngine.util.ICamera;
 
 public class WaterMaster {
 	private WaterFrameBuffers buffers = new WaterFrameBuffers();
@@ -19,8 +20,8 @@ public class WaterMaster {
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private WaterRenderer waterRenderer;
 	
-	public WaterMaster(Loader loader, String dudvTexture, String normalMap, MasterRenderer renderer) {
-		waterRenderer = new WaterRenderer(loader, dudvTexture, normalMap, waterShader, renderer.getProjectionMatrix(), buffers);
+	public WaterMaster(Loader loader, String dudvTexture, String normalMap, ICamera camera) {
+		waterRenderer = new WaterRenderer(loader, dudvTexture, normalMap, waterShader, camera.getProjectionMatrix(), buffers);
 	}
 	
 	public void addWaterTile(WaterTile water) {

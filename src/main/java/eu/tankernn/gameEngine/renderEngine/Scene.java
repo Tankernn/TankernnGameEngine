@@ -5,7 +5,9 @@ import java.util.List;
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
+import eu.tankernn.gameEngine.textures.Texture;
 
 public class Scene {
 	private List<Entity> entities;
@@ -13,13 +15,18 @@ public class Scene {
 	private TerrainPack terrainPack;
 	private List<Light> lights;
 	private Camera camera;
+	private Skybox sky;
 	
-	public Scene(List<Entity> entities, List<Entity> normalEntities, TerrainPack terrainPack, List<Light> lights, Camera camera) {
+	private Texture environmentMap;
+	
+	public Scene(List<Entity> entities, List<Entity> normalEntities, TerrainPack terrainPack, List<Light> lights, Camera camera, Skybox sky) {
 		this.entities = entities;
 		this.normalEntities = normalEntities;
 		this.terrainPack = terrainPack;
 		this.lights = lights;
 		this.camera = camera;
+		this.sky = sky;
+		this.environmentMap = Texture.newEmptyCubeMap(128);
 	}
 
 	public List<Entity> getEntities() {
@@ -40,5 +47,17 @@ public class Scene {
 
 	public Camera getCamera() {
 		return camera;
+	}
+	
+	public Skybox getSkybox() {
+		return sky;
+	}
+	
+	public Texture getEnvironmentMap() {
+		return environmentMap;
+	}
+	
+	public void delete() {
+		environmentMap.delete();
 	}
 }

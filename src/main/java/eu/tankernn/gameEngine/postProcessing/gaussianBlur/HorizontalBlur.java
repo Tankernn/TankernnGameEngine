@@ -13,7 +13,7 @@ public class HorizontalBlur {
 	public HorizontalBlur(int targetFboWidth, int targetFboHeight){
 		shader = new HorizontalBlurShader();
 		shader.start();
-		shader.loadTargetWidth(targetFboWidth);
+		shader.targetWidth.loadFloat(targetFboWidth);
 		shader.stop();
 		renderer = new ImageRenderer(targetFboWidth, targetFboHeight);
 	}

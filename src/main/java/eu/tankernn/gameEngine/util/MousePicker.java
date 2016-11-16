@@ -37,7 +37,7 @@ public class MousePicker {
 	public MousePicker(Camera cam, Matrix4f projection, TerrainPack terrains, List<Entity> entities, List<GuiTexture> guis) {
 		camera = cam;
 		projectionMatrix = projection;
-		viewMatrix = Maths.createViewMatrix(camera);
+		viewMatrix = camera.getViewMatrix();
 		this.terrains = terrains;
 		this.entities = entities;
 		this.guis = guis;
@@ -60,7 +60,7 @@ public class MousePicker {
 	}
 	
 	public void update() {
-		viewMatrix = Maths.createViewMatrix(camera);
+		viewMatrix = camera.getViewMatrix();
 		currentRay = calculateMouseRay();
 		currentGui = calculateGuiTexture();
 		if (intersectionInRange(0, RAY_RANGE, currentRay)) {

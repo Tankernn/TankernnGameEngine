@@ -1,33 +1,24 @@
 package eu.tankernn.gameEngine.postProcessing.bloom;
 
 import eu.tankernn.gameEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.shaders.UniformSampler;
 
 public class CombineShader extends ShaderProgram {
 
 	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/postProcessing/bloom/simpleVertex.glsl";
 	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/postProcessing/bloom/combineFragment.glsl";
 	
-	private int location_colourTexture;
-	private int location_highlightTexture;
+	protected UniformSampler colourTexture = new UniformSampler("colourTexture");
+	protected UniformSampler highlightTexture = new UniformSampler("highlightTexture");
 	
 	protected CombineShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE);
-	}
-	
-	@Override
-	protected void getAllUniformLocations() {
-		location_colourTexture = super.getUniformLocation("colourTexture");
-		location_highlightTexture = super.getUniformLocation("highlightTexture");
+		super(VERTEX_FILE, FRAGMENT_FILE, "position");
+		connectTextureUnits();
 	}
 	
 	protected void connectTextureUnits(){
-		super.loadInt(location_colourTexture, 0);
-		super.loadInt(location_highlightTexture, 1);
-	}
-
-	@Override
-	protected void bindAttributes() {
-		super.bindAttribute(0, "position");
+		colourTexture.loadTexUnit(0);
+		highlightTexture.loadTexUnit(1);
 	}
 	
 }

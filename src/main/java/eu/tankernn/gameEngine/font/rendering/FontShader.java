@@ -1,40 +1,20 @@
 package eu.tankernn.gameEngine.font.rendering;
 
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-
 import eu.tankernn.gameEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.shaders.UniformVec2;
+import eu.tankernn.gameEngine.shaders.UniformVec3;
 
 public class FontShader extends ShaderProgram{
 
 	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/font/rendering/fontVertex.glsl";
 	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/font/rendering/fontFragment.glsl";
 	
-	private int location_color;
-	private int location_translation;
+	protected UniformVec3 color = new UniformVec3("color");
+	protected UniformVec2 translation = new UniformVec2("translation");
 	
 	public FontShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE);
-	}
-
-	@Override
-	protected void getAllUniformLocations() {
-		location_color = super.getUniformLocation("color");
-		location_translation = super.getUniformLocation("translation");
-	}
-
-	@Override
-	protected void bindAttributes() {
-		super.bindAttribute(0, "position");
-		super.bindAttribute(1, "textureCoords");
-	}
-	
-	protected void loadColor(Vector3f color) {
-		super.loadVector(location_color, color);
-	}
-	
-	protected void loadTranslation(Vector2f translation) {
-		super.load2DVector(location_translation, translation);
+		super(VERTEX_FILE, FRAGMENT_FILE, "position", "textureCoords");
+		super.storeAllUniformLocations(color, translation);
 	}
 	
 }

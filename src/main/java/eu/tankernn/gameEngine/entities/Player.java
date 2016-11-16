@@ -6,9 +6,9 @@ import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
+import eu.tankernn.gameEngine.settings.Physics;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
-import eu.tankernn.gameEngine.settings.Physics;
 
 public class Player extends Entity {
 	

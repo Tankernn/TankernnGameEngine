@@ -24,7 +24,6 @@ uniform float numberOfRows;
 uniform vec2 offset;
 
 uniform mat4 toShadowMapSpace;
-uniform float shadowDistance;
 
 uniform vec3 cameraPosition;
 

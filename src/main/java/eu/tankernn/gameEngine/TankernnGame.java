@@ -4,6 +4,7 @@ import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
+import eu.tankernn.gameEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.water.WaterMaster;
 
 public class TankernnGame {
@@ -12,11 +13,11 @@ public class TankernnGame {
 	protected WaterMaster waterMaster;
 	protected Camera camera;
 	
-	public TankernnGame(String[] dayTextureFiles, String[] nightTextureFiles, String dudvMap, String normalMap) {
+	public TankernnGame(Skybox skybox, String dudvMap, String normalMap) {
 		loader = new Loader();
 		camera = new Camera();
-		renderer = new MasterRenderer(loader, camera, dayTextureFiles, nightTextureFiles);
-		waterMaster = new WaterMaster(loader, dudvMap, normalMap, renderer);
+		renderer = new MasterRenderer(loader, camera, skybox);
+		waterMaster = new WaterMaster(loader, dudvMap, normalMap, camera);
 	}
 	
 	public void update() {

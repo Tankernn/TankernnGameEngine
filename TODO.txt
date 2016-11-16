@@ -1,2 +1,13 @@
 Make text variables uniform/ change text rendering method
 Fix player movement
+
+Useful regex-expressions:
+
+--------------------------------
+private int location_(.*);
+to
+protected UniformMatrix $1 = new UniformMatrix("$1");
+------------------------------------
+super.loadInt\(location_(.*), (.)\);
+to
+$1.loadTexUnit($2);

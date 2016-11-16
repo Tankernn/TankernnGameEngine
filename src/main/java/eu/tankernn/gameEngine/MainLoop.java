@@ -1,10 +1,7 @@
 package eu.tankernn.gameEngine;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 
@@ -20,6 +17,7 @@ import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
 import eu.tankernn.gameEngine.entities.PlayerCamera;
+import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.font.meshCreator.FontType;
 import eu.tankernn.gameEngine.font.meshCreator.GUIText;
 import eu.tankernn.gameEngine.font.rendering.TextMaster;
@@ -40,13 +38,16 @@ import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
+import eu.tankernn.gameEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 import eu.tankernn.gameEngine.textures.ModelTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexture;
 import eu.tankernn.gameEngine.textures.TerrainTexturePack;
+import eu.tankernn.gameEngine.textures.Texture;
 import eu.tankernn.gameEngine.util.DistanceSorter;
 import eu.tankernn.gameEngine.util.MousePicker;
+import eu.tankernn.gameEngine.util.MyFile;
 import eu.tankernn.gameEngine.water.WaterMaster;
 import eu.tankernn.gameEngine.water.WaterTile;
 
@@ -73,14 +74,6 @@ public class MainLoop {
 		DisplayManager.createDisplay("Tankernn Game Engine tester");
 		Loader loader = new Loader();
 		
-		try {
-			Enumeration<URL> urls = MainLoop.class.getClassLoader().getResources("");
-			while (urls.hasMoreElements())
-				System.out.println(urls.nextElement().toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 		// Monkey
 		ModelData monkeyData = OBJFileLoader.loadOBJ("character");
 		RawModel monkeyModel = loader.loadToVAO(monkeyData);
@@ -97,9 +90,18 @@ public class MainLoop {
 		Player player = new Player(monkey, new Vector3f(10, 0, 50), 0, 0, 0, 1, terrainPack);
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
-
-		MasterRenderer renderer = new MasterRenderer(loader, camera, TEXTURE_FILES, NIGHT_TEXTURE_FILES);
-		ParticleMaster.init(loader, renderer.getProjectionMatrix());
+		
+		MyFile[] dayTextures = new MyFile[TEXTURE_FILES.length], nightTextures = new MyFile[NIGHT_TEXTURE_FILES.length];
+		
+		for (int i = 0; i < TEXTURE_FILES.length; i++)
+			dayTextures[i] = new MyFile("skybox/" + TEXTURE_FILES[i] + ".png");
+		for (int i = 0; i < NIGHT_TEXTURE_FILES.length; i++)
+			nightTextures[i] = new MyFile("skybox/" + NIGHT_TEXTURE_FILES[i] + ".png");
+		
+		Skybox skybox = new Skybox(Texture.newCubeMap(dayTextures, 500), Texture.newCubeMap(nightTextures, 500), 500);
+		
+		MasterRenderer renderer = new MasterRenderer(loader, camera, skybox);
+		ParticleMaster.init(loader, camera.getProjectionMatrix());
 		TextMaster.init(loader);
 
 		FontType font = new FontType(loader.loadTexture("arial"), "arial.fnt");
@@ -162,12 +164,16 @@ public class MainLoop {
 		}
 
 		// #### Water rendering ####
-		WaterMaster waterMaster = new WaterMaster(loader, DUDV_MAP, NORMAL_MAP, renderer);
+		WaterMaster waterMaster = new WaterMaster(loader, DUDV_MAP, NORMAL_MAP, camera);
 		WaterTile water = new WaterTile(75, 75, 0);
 		waterMaster.addWaterTile(water);
 
 		// #### Gui rendering ####
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
+		
+		GuiTexture debug = new GuiTexture(0, new Vector2f(1, 1), new Vector2f(1, 1));
+		
+		guis.add(debug);
 
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
@@ -181,8 +187,8 @@ public class MainLoop {
 
 		PostProcessing.init(loader);
 
-		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrainPack, entities, guis);
-
+		MousePicker picker = new MousePicker(camera, camera.getProjectionMatrix(), terrainPack, entities, guis);
+		
 		while (!Display.isCloseRequested()) {
 			barrel.increaseRotation(0, 1, 0);
 			player.move(terrainPack);
@@ -225,8 +231,12 @@ public class MainLoop {
 			ps.generateParticles(player.getPosition());
 			ParticleMaster.update(camera);
 
-			Scene scene = new Scene(entities, normalMapEntities, terrainPack, lights, camera);
-
+			Scene scene = new Scene(entities, normalMapEntities, terrainPack, lights, camera, skybox);
+			
+			EnvironmentMapRenderer.renderEnvironmentMap(scene.getEnvironmentMap(), scene, player.getPosition(), renderer);
+			
+			debug = new GuiTexture(scene.getEnvironmentMap().textureId, new Vector2f(1, 1), new Vector2f(1, 1));
+			
 			waterMaster.renderBuffers(renderer, scene);
 
 			multisampleFbo.bindFrameBuffer();

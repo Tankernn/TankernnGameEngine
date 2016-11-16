@@ -13,7 +13,7 @@ layout (location = 0) out vec4 out_Color;
 layout (location = 1) out vec4 out_BrightColor;
 
 uniform sampler2D shadowMap;
-uniform sampler2D textureSampler;
+uniform sampler2D modelTexture;
 uniform sampler2D specularMap;
 uniform samplerCube enviroMap;
 uniform float usesSpecularMap;
@@ -60,7 +60,7 @@ void main(void){
 	
 	totalDiffuse = max(totalDiffuse * lightFactor, 0.2); //Ambient lighting 2.0
 	
-	vec4 textureColor = texture(textureSampler, pass_textureCoords);
+	vec4 textureColor = texture(modelTexture, pass_textureCoords);
 	if (textureColor.a < 0.5) {
 		discard;
 	}

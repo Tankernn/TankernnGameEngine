@@ -3,137 +3,90 @@ package eu.tankernn.gameEngine.normalMapping.renderer;
 import java.util.List;
 
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.shaders.UniformBoolean;
+import eu.tankernn.gameEngine.shaders.UniformFloat;
+import eu.tankernn.gameEngine.shaders.UniformMatrix;
+import eu.tankernn.gameEngine.shaders.UniformSampler;
+import eu.tankernn.gameEngine.shaders.UniformVec2;
+import eu.tankernn.gameEngine.shaders.UniformVec3;
+import eu.tankernn.gameEngine.shaders.UniformVec4;
 
 public class NormalMappingShader extends ShaderProgram {
-	
-	private static final int MAX_LIGHTS = 4;
-	
+
 	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/normalMapping/renderer/normalMapVShader.glsl";
 	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/normalMapping/renderer/normalMapFShader.glsl";
-	
-	private int location_transformationMatrix;
-	private int location_projectionMatrix;
-	private int location_viewMatrix;
-	private int location_lightPositionEyeSpace[];
-	private int location_lightColour[];
-	private int location_attenuation[];
-	private int location_shineDamper;
-	private int location_reflectivity;
-	private int location_skyColour;
-	private int location_numberOfRows;
-	private int location_offset;
-	private int location_plane;
-	private int location_modelTexture;
-	private int location_normalMap;
-	private int location_specularMap;
-	private int location_usesSpecularMap;
-	
+
+	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
+	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");
+	protected UniformMatrix viewMatrix = new UniformMatrix("viewMatrix");
+	private UniformVec3[] lightPositionEyeSpace;
+	protected UniformFloat shineDamper = new UniformFloat("shineDamper");
+	protected UniformFloat reflectivity = new UniformFloat("reflectivity");
+	protected UniformVec3 skyColour = new UniformVec3("skyColour");
+	protected UniformFloat numberOfRows = new UniformFloat("numberOfRows");
+	protected UniformVec2 offset = new UniformVec2("offset");
+	protected UniformVec4 plane = new UniformVec4("plane");
+	protected UniformSampler modelTexture = new UniformSampler("modelTexture");
+	protected UniformSampler normalMap = new UniformSampler("normalMap");
+	protected UniformSampler specularMap = new UniformSampler("specularMap");
+	protected UniformBoolean usesSpecularMap = new UniformBoolean("usesSpecularMap");
+
 	public NormalMappingShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE);
+		super(VERTEX_FILE, FRAGMENT_FILE, "position", "textureCoordinates", "normal", "tangent");
+		this.getLightUniformLocations();
+		super.storeAllUniformLocations(transformationMatrix, projectionMatrix, viewMatrix, viewMatrix, shineDamper,
+				reflectivity, skyColour, numberOfRows, offset, plane, modelTexture, normalMap, specularMap,
+				usesSpecularMap);
+		super.storeAllUniformLocations(lightPositionEyeSpace);
 	}
 	
 	@Override
-	protected void bindAttributes() {
-		super.bindAttribute(0, "position");
-		super.bindAttribute(1, "textureCoordinates");
-		super.bindAttribute(2, "normal");
-		super.bindAttribute(3, "tangent");
-	}
-	
-	@Override
-	protected void getAllUniformLocations() {
-		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
-		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
-		location_viewMatrix = super.getUniformLocation("viewMatrix");
-		location_shineDamper = super.getUniformLocation("shineDamper");
-		location_reflectivity = super.getUniformLocation("reflectivity");
-		location_skyColour = super.getUniformLocation("skyColour");
-		location_numberOfRows = super.getUniformLocation("numberOfRows");
-		location_offset = super.getUniformLocation("offset");
-		location_plane = super.getUniformLocation("plane");
-		location_modelTexture = super.getUniformLocation("modelTexture");
-		location_normalMap = super.getUniformLocation("normalMap");
-		location_specularMap = super.getUniformLocation("specularMap");
-		location_usesSpecularMap = super.getUniformLocation("usesSpecularMap");
-		
-		location_lightPositionEyeSpace = new int[MAX_LIGHTS];
-		location_lightColour = new int[MAX_LIGHTS];
-		location_attenuation = new int[MAX_LIGHTS];
+	protected void getLightUniformLocations() {
+		lightPositionEyeSpace = new UniformVec3[MAX_LIGHTS];
+		lightColor = new UniformVec3[MAX_LIGHTS];
+		attenuation = new UniformVec3[MAX_LIGHTS];
 		for (int i = 0; i < MAX_LIGHTS; i++) {
-			location_lightPositionEyeSpace[i] = super.getUniformLocation("lightPositionEyeSpace[" + i + "]");
-			location_lightColour[i] = super.getUniformLocation("lightColour[" + i + "]");
-			location_attenuation[i] = super.getUniformLocation("attenuation[" + i + "]");
+			lightPositionEyeSpace[i] = new UniformVec3("lightPositionEyeSpace[" + i + "]");
+			lightColor[i] = new UniformVec3("lightColor[" + i + "]");
+			attenuation[i] = new UniformVec3("attenuation[" + i + "]");
 		}
 	}
 	
-	protected void connectTextureUnits() {
-		super.loadInt(location_modelTexture, 0);
-		super.loadInt(location_normalMap, 1);
-		super.loadInt(location_specularMap, 2);
-	}
-	
-	public void loadUseSpecularMap(boolean useSpecularMap) {
-		super.loadBoolean(location_usesSpecularMap, useSpecularMap);
-	}
-	
-	protected void loadClipPlane(Vector4f plane) {
-		super.loadVector(location_plane, plane);
-	}
-	
-	protected void loadNumberOfRows(int numberOfRows) {
-		super.loadFloat(location_numberOfRows, numberOfRows);
-	}
-	
-	protected void loadOffset(float x, float y) {
-		super.load2DVector(location_offset, new Vector2f(x, y));
-	}
-	
-	protected void loadSkyColour(float r, float g, float b) {
-		super.loadVector(location_skyColour, new Vector3f(r, g, b));
-	}
-	
-	protected void loadShineVariables(float damper, float reflectivity) {
-		super.loadFloat(location_shineDamper, damper);
-		super.loadFloat(location_reflectivity, reflectivity);
-	}
-	
-	protected void loadTransformationMatrix(Matrix4f matrix) {
-		super.loadMatrix(location_transformationMatrix, matrix);
-	}
-	
-	protected void loadLights(List<Light> lights, Matrix4f viewMatrix) {
+	public void loadLights(List<Light> lights, Matrix4f viewMatrix) {
 		for (int i = 0; i < MAX_LIGHTS; i++) {
 			if (i < lights.size()) {
-				super.loadVector(location_lightPositionEyeSpace[i], getEyeSpacePosition(lights.get(i), viewMatrix));
-				super.loadVector(location_lightColour[i], lights.get(i).getColor());
-				super.loadVector(location_attenuation[i], lights.get(i).getAttenuation());
+				lightPositionEyeSpace[i].loadVec3(getEyeSpacePosition(lights.get(i), viewMatrix));
+				lightColor[i].loadVec3(lights.get(i).getColor());
+				attenuation[i].loadVec3(lights.get(i).getAttenuation());
 			} else {
-				super.loadVector(location_lightPositionEyeSpace[i], new Vector3f(0, 0, 0));
-				super.loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
-				super.loadVector(location_attenuation[i], new Vector3f(1, 0, 0));
+				lightPositionEyeSpace[i].loadVec3(new Vector3f(0, 0, 0));
+				lightColor[i].loadVec3(new Vector3f(0, 0, 0));
+				attenuation[i].loadVec3(new Vector3f(1, 0, 0));
 			}
 		}
 	}
 	
-	protected void loadViewMatrix(Matrix4f viewMatrix) {
-		super.loadMatrix(location_viewMatrix, viewMatrix);
+	@Override
+	public void loadLights(List<Light> lights) {
+		throw new NullPointerException("Use loadLights(List<Light> lights, Matrix4f viewMatrix) instead.");
 	}
-	
-	protected void loadProjectionMatrix(Matrix4f projection) {
-		super.loadMatrix(location_projectionMatrix, projection);
+
+	protected void connectTextureUnits() {
+		modelTexture.loadTexUnit(0);
+		normalMap.loadTexUnit(1);
+		specularMap.loadTexUnit(2);
 	}
-	
+
 	private Vector3f getEyeSpacePosition(Light light, Matrix4f viewMatrix) {
 		Vector3f position = light.getPosition();
 		Vector4f eyeSpacePos = new Vector4f(position.x, position.y, position.z, 1f);
 		Matrix4f.transform(viewMatrix, eyeSpacePos, eyeSpacePos);
 		return new Vector3f(eyeSpacePos);
 	}
-	
+
 }

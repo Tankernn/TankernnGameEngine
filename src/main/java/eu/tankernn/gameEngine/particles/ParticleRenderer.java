@@ -42,12 +42,12 @@ public class ParticleRenderer {
 		loader.addInstacedAttribute(quad.getVaoID(), vbo, 6, 1, INSTANCE_DATA_LENGTH, 20);
 		shader = new ParticleShader();
 		shader.start();
-		shader.loadProjectionMatrix(projectionMatrix);
+		shader.projectionMatrix.loadMatrix(projectionMatrix);
 		shader.stop();
 	}
 	
 	protected void render(Map<ParticleTexture, List<Particle>> particles, Camera camera) {
-		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
+		Matrix4f viewMatrix = camera.getViewMatrix();
 		prepare();
 		for (ParticleTexture texture: particles.keySet()) {
 			bindTexture(texture);
@@ -81,7 +81,7 @@ public class ParticleRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, blendType);
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID());
-		shader.loadNumberOfRows(texture.getNumberOfRows());
+		shader.numberOfRows.loadFloat(texture.getNumberOfRows());
 	}
 	
 	private void updateModelViewMatrix(Vector3f position, float rotation, float scale, Matrix4f viewMatrix, float[] vboData) {
