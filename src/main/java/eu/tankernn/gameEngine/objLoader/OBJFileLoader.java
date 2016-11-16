@@ -1,6 +1,7 @@
 package eu.tankernn.gameEngine.objLoader;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -13,13 +14,14 @@ public class OBJFileLoader {
 	
 	private static final String OBJ_LOC = "/";
 	
-	public static ModelData loadOBJ(String objFileName) {
+	public static ModelData loadOBJ(String objFileName) throws FileNotFoundException {
 		InputStreamReader isr = null;
 		String objFile = OBJ_LOC + objFileName + ".obj";
 		try {
 			isr = new InputStreamReader(OBJFileLoader.class.getResourceAsStream(objFile));
 		} catch (NullPointerException e) {
 			System.err.println("File not found in res; don't use any extension");
+			throw new FileNotFoundException();
 		}
 		BufferedReader reader = new BufferedReader(isr);
 		String line;

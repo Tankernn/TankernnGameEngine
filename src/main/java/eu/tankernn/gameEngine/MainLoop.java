@@ -1,6 +1,10 @@
 package eu.tankernn.gameEngine;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 
@@ -60,7 +64,7 @@ public class MainLoop {
 
 	private static final boolean DEBUG = true;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		
 		List<Entity> entities = new ArrayList<Entity>();
 		List<Entity> normalMapEntities = new ArrayList<Entity>();
@@ -68,7 +72,15 @@ public class MainLoop {
 
 		DisplayManager.createDisplay("Tankernn Game Engine tester");
 		Loader loader = new Loader();
-
+		
+		try {
+			Enumeration<URL> urls = MainLoop.class.getClassLoader().getResources("");
+			while (urls.hasMoreElements())
+				System.out.println(urls.nextElement().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		// Monkey
 		ModelData monkeyData = OBJFileLoader.loadOBJ("character");
 		RawModel monkeyModel = loader.loadToVAO(monkeyData);
