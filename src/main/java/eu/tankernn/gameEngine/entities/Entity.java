@@ -2,10 +2,11 @@ package eu.tankernn.gameEngine.entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.models.AABB;
-import eu.tankernn.gameEngine.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.models.AABB;
+import eu.tankernn.gameEngine.loader.models.TexturedModel;
+import eu.tankernn.gameEngine.util.IPositionable;
 
-public class Entity implements Positionable {
+public class Entity implements IPositionable {
 	private static final Vector3f SIZE = new Vector3f(2, 4, 2);
 	
 	private TexturedModel model;

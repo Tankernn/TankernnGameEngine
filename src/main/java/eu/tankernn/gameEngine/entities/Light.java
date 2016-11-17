@@ -2,7 +2,9 @@ package eu.tankernn.gameEngine.entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public class Light implements Positionable {
+import eu.tankernn.gameEngine.util.IPositionable;
+
+public class Light implements IPositionable {
 	private Vector3f position;
 	private Vector3f color;
 	private Vector3f attenuation = new Vector3f(1, 0, 0);

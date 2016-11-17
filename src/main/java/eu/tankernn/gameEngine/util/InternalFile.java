@@ -4,20 +4,20 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class MyFile {
+public class InternalFile {
 	
 	private static final String FILE_SEPARATOR = "/";
 
 	private String path;
 	private String name;
 
-	public MyFile(String path) {
+	public InternalFile(String path) {
 		this.path = FILE_SEPARATOR + path;
 		String[] dirs = path.split(FILE_SEPARATOR);
 		this.name = dirs[dirs.length - 1];
 	}
 
-	public MyFile(String... paths) {
+	public InternalFile(String... paths) {
 		this.path = "";
 		for (String part : paths) {
 			this.path += (FILE_SEPARATOR + part);
@@ -26,12 +26,12 @@ public class MyFile {
 		this.name = dirs[dirs.length - 1];
 	}
 
-	public MyFile(MyFile file, String subFile) {
+	public InternalFile(InternalFile file, String subFile) {
 		this.path = file.path + FILE_SEPARATOR + subFile;
 		this.name = subFile;
 	}
 	
-	public MyFile(MyFile file, String... subFiles) {
+	public InternalFile(InternalFile file, String... subFiles) {
 		this.path = file.path;
 		for (String part : subFiles) {
 			this.path += (FILE_SEPARATOR + part);

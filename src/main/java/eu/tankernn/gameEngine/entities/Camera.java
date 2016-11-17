@@ -9,6 +9,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.util.ICamera;
+import eu.tankernn.gameEngine.util.IPositionable;
 import eu.tankernn.gameEngine.util.Maths;
 
 /**
@@ -16,7 +17,7 @@ import eu.tankernn.gameEngine.util.Maths;
  * 
  * @author Frans
  */
-public class Camera implements Positionable, ICamera {
+public class Camera implements IPositionable, ICamera {
 	
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
@@ -40,7 +41,7 @@ public class Camera implements Positionable, ICamera {
 	 * 
 	 * @param entity The object to point towards
 	 */
-	public void pointToEntity(Positionable entity) {
+	public void pointToEntity(IPositionable entity) {
 		Vector3f targetPos = entity.getPosition();
 		Vector3f delta = new Vector3f();
 		Vector3f.sub(position, targetPos, delta);

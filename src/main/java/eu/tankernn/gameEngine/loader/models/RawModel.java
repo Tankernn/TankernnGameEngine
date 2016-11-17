@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.models;
+package eu.tankernn.gameEngine.loader.models;
 
 public class RawModel {
 	

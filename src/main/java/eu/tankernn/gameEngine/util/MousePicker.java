@@ -11,8 +11,8 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity;
-import eu.tankernn.gameEngine.gui.GuiTexture;
-import eu.tankernn.gameEngine.models.AABB;
+import eu.tankernn.gameEngine.loader.models.AABB;
+import eu.tankernn.gameEngine.renderEngine.gui.GuiTexture;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 

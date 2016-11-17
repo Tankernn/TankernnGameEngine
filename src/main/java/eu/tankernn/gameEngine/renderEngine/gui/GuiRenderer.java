@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.gui;
+package eu.tankernn.gameEngine.renderEngine.gui;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
-import eu.tankernn.gameEngine.models.RawModel;
+import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.util.Maths;
 

@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.font.rendering;
+package eu.tankernn.gameEngine.renderEngine.font;
 
 import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec2;

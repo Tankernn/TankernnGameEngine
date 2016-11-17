@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
-import eu.tankernn.gameEngine.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.models.TexturedModel;
 
 /**
  * This class is in charge of using all of the classes in the shadows package to

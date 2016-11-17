@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import eu.tankernn.gameEngine.models.RawModel;
+import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.postProcessing.bloom.BrightFilter;
 import eu.tankernn.gameEngine.postProcessing.bloom.CombineFilter;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.HorizontalBlur;

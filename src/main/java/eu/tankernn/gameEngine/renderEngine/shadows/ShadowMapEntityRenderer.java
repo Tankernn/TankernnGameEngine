@@ -10,8 +10,8 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
 import eu.tankernn.gameEngine.entities.Entity;
-import eu.tankernn.gameEngine.models.RawModel;
-import eu.tankernn.gameEngine.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.models.RawModel;
+import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.util.Maths;
 

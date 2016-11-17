@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.normalMapping.renderer;
+package eu.tankernn.gameEngine.renderEngine.normalMap;
 
 import java.util.List;
 

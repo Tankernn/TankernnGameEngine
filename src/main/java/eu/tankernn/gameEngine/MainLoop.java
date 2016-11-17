@@ -20,14 +20,11 @@ import eu.tankernn.gameEngine.entities.PlayerCamera;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.font.meshCreator.FontType;
 import eu.tankernn.gameEngine.font.meshCreator.GUIText;
-import eu.tankernn.gameEngine.font.rendering.TextMaster;
-import eu.tankernn.gameEngine.gui.GuiRenderer;
-import eu.tankernn.gameEngine.gui.GuiTexture;
-import eu.tankernn.gameEngine.models.RawModel;
-import eu.tankernn.gameEngine.models.TexturedModel;
-import eu.tankernn.gameEngine.normalMapping.objConverter.NormalMappedObjLoader;
-import eu.tankernn.gameEngine.objLoader.ModelData;
-import eu.tankernn.gameEngine.objLoader.OBJFileLoader;
+import eu.tankernn.gameEngine.loader.models.RawModel;
+import eu.tankernn.gameEngine.loader.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.obj.ModelData;
+import eu.tankernn.gameEngine.loader.obj.OBJFileLoader;
+import eu.tankernn.gameEngine.loader.obj.normalMapped.NormalMappedObjLoader;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.particles.ParticleSystem;
 import eu.tankernn.gameEngine.particles.ParticleTexture;
@@ -38,6 +35,9 @@ import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
+import eu.tankernn.gameEngine.renderEngine.font.TextMaster;
+import eu.tankernn.gameEngine.renderEngine.gui.GuiRenderer;
+import eu.tankernn.gameEngine.renderEngine.gui.GuiTexture;
 import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.renderEngine.water.WaterMaster;
 import eu.tankernn.gameEngine.renderEngine.water.WaterTile;
@@ -49,7 +49,7 @@ import eu.tankernn.gameEngine.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.textures.Texture;
 import eu.tankernn.gameEngine.util.DistanceSorter;
 import eu.tankernn.gameEngine.util.MousePicker;
-import eu.tankernn.gameEngine.util.MyFile;
+import eu.tankernn.gameEngine.util.InternalFile;
 
 public class MainLoop {
 
@@ -91,12 +91,12 @@ public class MainLoop {
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
 		
-		MyFile[] dayTextures = new MyFile[TEXTURE_FILES.length], nightTextures = new MyFile[NIGHT_TEXTURE_FILES.length];
+		InternalFile[] dayTextures = new InternalFile[TEXTURE_FILES.length], nightTextures = new InternalFile[NIGHT_TEXTURE_FILES.length];
 		
 		for (int i = 0; i < TEXTURE_FILES.length; i++)
-			dayTextures[i] = new MyFile("skybox/" + TEXTURE_FILES[i] + ".png");
+			dayTextures[i] = new InternalFile("skybox/" + TEXTURE_FILES[i] + ".png");
 		for (int i = 0; i < NIGHT_TEXTURE_FILES.length; i++)
-			nightTextures[i] = new MyFile("skybox/" + NIGHT_TEXTURE_FILES[i] + ".png");
+			nightTextures[i] = new InternalFile("skybox/" + NIGHT_TEXTURE_FILES[i] + ".png");
 		
 		Skybox skybox = new Skybox(Texture.newCubeMap(dayTextures, 500), Texture.newCubeMap(nightTextures, 500), 500);
 		

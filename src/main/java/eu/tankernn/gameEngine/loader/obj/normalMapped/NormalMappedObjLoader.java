@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.normalMapping.objConverter;
+package eu.tankernn.gameEngine.loader.obj.normalMapped;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.models.RawModel;
+import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 
 public class NormalMappedObjLoader {

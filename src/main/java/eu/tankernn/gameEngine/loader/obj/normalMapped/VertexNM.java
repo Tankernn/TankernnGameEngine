@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.normalMapping.objConverter;
+package eu.tankernn.gameEngine.loader.obj.normalMapped;
 
 import java.util.ArrayList;
 import java.util.List;

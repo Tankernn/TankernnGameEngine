@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.gui;
+package eu.tankernn.gameEngine.renderEngine.gui;
 
 import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;

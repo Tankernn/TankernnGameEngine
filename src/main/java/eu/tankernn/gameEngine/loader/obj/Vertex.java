@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.objLoader;
+package eu.tankernn.gameEngine.loader.obj;
 
 import org.lwjgl.util.vector.Vector3f;
 

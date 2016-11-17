@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.objLoader;
+package eu.tankernn.gameEngine.loader.obj;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

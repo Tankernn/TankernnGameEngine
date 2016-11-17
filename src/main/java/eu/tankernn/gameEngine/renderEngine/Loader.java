@@ -21,8 +21,8 @@ import org.lwjgl.opengl.GLContext;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
-import eu.tankernn.gameEngine.models.RawModel;
-import eu.tankernn.gameEngine.objLoader.ModelData;
+import eu.tankernn.gameEngine.loader.models.RawModel;
+import eu.tankernn.gameEngine.loader.obj.ModelData;
 import eu.tankernn.gameEngine.settings.Settings;
 import eu.tankernn.gameEngine.textures.TextureData;
 /**

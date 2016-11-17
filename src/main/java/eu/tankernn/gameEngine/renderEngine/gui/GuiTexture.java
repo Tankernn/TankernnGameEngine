@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.gui;
+package eu.tankernn.gameEngine.renderEngine.gui;
 
 import org.lwjgl.util.vector.Vector2f;
 

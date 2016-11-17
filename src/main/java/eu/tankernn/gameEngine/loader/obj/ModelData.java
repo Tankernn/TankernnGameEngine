@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.objLoader;
+package eu.tankernn.gameEngine.loader.obj;
 
 public class ModelData {
 

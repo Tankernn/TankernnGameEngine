@@ -4,10 +4,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import eu.tankernn.gameEngine.entities.Positionable;
-
 public class DistanceSorter {
-	public static <T extends Positionable> void sort(List<T> list, Positionable centerPoint) {
+	public static <T extends IPositionable> void sort(List<T> list, IPositionable centerPoint) {
 		Collections.sort(list, new Comparator<T>() {
 			@Override
 			public int compare(T t1, T t2) {

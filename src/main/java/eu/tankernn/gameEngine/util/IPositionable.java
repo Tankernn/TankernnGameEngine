@@ -1,7 +1,7 @@
-package eu.tankernn.gameEngine.entities;
+package eu.tankernn.gameEngine.util;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public interface Positionable {
+public interface IPositionable {
 	public Vector3f getPosition();
 }

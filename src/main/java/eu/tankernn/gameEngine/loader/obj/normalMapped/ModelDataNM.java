@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.normalMapping.objConverter;
+package eu.tankernn.gameEngine.loader.obj.normalMapped;
 
 public class ModelDataNM {
 

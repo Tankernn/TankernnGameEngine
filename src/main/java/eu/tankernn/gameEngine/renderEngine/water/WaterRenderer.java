@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Light;
-import eu.tankernn.gameEngine.models.RawModel;
+import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.util.Maths;

@@ -3,7 +3,7 @@ package eu.tankernn.gameEngine.textures;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
-import eu.tankernn.gameEngine.util.MyFile;
+import eu.tankernn.gameEngine.util.InternalFile;
 
 
 public class Texture {
@@ -33,11 +33,11 @@ public class Texture {
 		GL11.glDeleteTextures(textureId);
 	}
 
-	public static TextureBuilder newTexture(MyFile textureFile) {
+	public static TextureBuilder newTexture(InternalFile textureFile) {
 		return new TextureBuilder(textureFile);
 	}
 
-	public static Texture newCubeMap(MyFile[] textureFiles, int size) {
+	public static Texture newCubeMap(InternalFile[] textureFiles, int size) {
 		int cubeMapId = TextureUtils.loadCubeMap(textureFiles);
 		return new Texture(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, size);
 	}

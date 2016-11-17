@@ -1,6 +1,6 @@
 package eu.tankernn.gameEngine.textures;
 
-import eu.tankernn.gameEngine.util.MyFile;
+import eu.tankernn.gameEngine.util.InternalFile;
 
 public class TextureBuilder {
 	
@@ -9,9 +9,9 @@ public class TextureBuilder {
 	private boolean anisotropic = true;
 	private boolean nearest = false;
 	
-	private MyFile file;
+	private InternalFile file;
 	
-	protected TextureBuilder(MyFile textureFile){
+	protected TextureBuilder(InternalFile textureFile){
 		this.file = textureFile;
 	}
 	

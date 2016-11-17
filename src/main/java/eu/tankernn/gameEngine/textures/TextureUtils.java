@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GLContext;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
-import eu.tankernn.gameEngine.util.MyFile;
+import eu.tankernn.gameEngine.util.InternalFile;
 
 public class TextureUtils {
 
@@ -33,7 +33,7 @@ public class TextureUtils {
 		return texID;
 	}
 
-	public static int loadCubeMap(MyFile[] textureFiles) {
+	public static int loadCubeMap(InternalFile[] textureFiles) {
 		int texID = GL11.glGenTextures();
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texID);
@@ -51,7 +51,7 @@ public class TextureUtils {
 		return texID;
 	}
 
-	protected static TextureData decodeTextureFile(MyFile file) {
+	protected static TextureData decodeTextureFile(InternalFile file) {
 		int width = 0;
 		int height = 0;
 		ByteBuffer buffer = null;

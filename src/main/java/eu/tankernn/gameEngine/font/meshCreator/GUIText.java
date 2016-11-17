@@ -3,7 +3,7 @@ package eu.tankernn.gameEngine.font.meshCreator;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.font.rendering.TextMaster;
+import eu.tankernn.gameEngine.renderEngine.font.TextMaster;
 
 /**
  * Represents a piece of text in the game.
