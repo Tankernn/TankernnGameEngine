@@ -1,8 +1,8 @@
 package eu.tankernn.gameEngine.particles;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformFloat;
-import eu.tankernn.gameEngine.shaders.UniformMatrix;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
 
 public class ParticleShader extends ShaderProgram {
 

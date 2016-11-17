@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.water;
+package eu.tankernn.gameEngine.renderEngine.water;
 
 public class WaterTile {
 	

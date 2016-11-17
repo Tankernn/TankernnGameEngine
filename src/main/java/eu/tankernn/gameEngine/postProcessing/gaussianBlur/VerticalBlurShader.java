@@ -1,7 +1,7 @@
 package eu.tankernn.gameEngine.postProcessing.gaussianBlur;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformFloat;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
 
 public class VerticalBlurShader extends ShaderProgram{
 

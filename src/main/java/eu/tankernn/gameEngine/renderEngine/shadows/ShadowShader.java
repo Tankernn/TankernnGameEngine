@@ -1,7 +1,7 @@
-package eu.tankernn.gameEngine.shadows;
+package eu.tankernn.gameEngine.renderEngine.shadows;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformMatrix;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
 
 public class ShadowShader extends ShaderProgram {
 	

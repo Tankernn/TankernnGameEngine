@@ -1,6 +1,6 @@
 package eu.tankernn.gameEngine.postProcessing;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
 
 public class ContrastShader extends ShaderProgram {
 	

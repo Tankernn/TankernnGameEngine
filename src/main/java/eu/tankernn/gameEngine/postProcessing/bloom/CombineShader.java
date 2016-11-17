@@ -1,7 +1,7 @@
 package eu.tankernn.gameEngine.postProcessing.bloom;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformSampler;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformSampler;
 
 public class CombineShader extends ShaderProgram {
 

@@ -5,7 +5,7 @@ import java.util.List;
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
-import eu.tankernn.gameEngine.skybox.Skybox;
+import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 import eu.tankernn.gameEngine.textures.Texture;
 

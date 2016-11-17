@@ -1,11 +1,11 @@
-package eu.tankernn.gameEngine.water;
+package eu.tankernn.gameEngine.renderEngine.water;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformFloat;
-import eu.tankernn.gameEngine.shaders.UniformMatrix;
-import eu.tankernn.gameEngine.shaders.UniformSampler;
-import eu.tankernn.gameEngine.shaders.UniformVec3;
-import eu.tankernn.gameEngine.shaders.UniformViewMatrix;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformSampler;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec3;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformViewMatrix;
 
 public class WaterShader extends ShaderProgram {
 

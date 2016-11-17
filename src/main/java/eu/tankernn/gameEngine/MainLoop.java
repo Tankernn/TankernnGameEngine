@@ -38,7 +38,9 @@ import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
-import eu.tankernn.gameEngine.skybox.Skybox;
+import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
+import eu.tankernn.gameEngine.renderEngine.water.WaterMaster;
+import eu.tankernn.gameEngine.renderEngine.water.WaterTile;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 import eu.tankernn.gameEngine.textures.ModelTexture;
@@ -48,8 +50,6 @@ import eu.tankernn.gameEngine.textures.Texture;
 import eu.tankernn.gameEngine.util.DistanceSorter;
 import eu.tankernn.gameEngine.util.MousePicker;
 import eu.tankernn.gameEngine.util.MyFile;
-import eu.tankernn.gameEngine.water.WaterMaster;
-import eu.tankernn.gameEngine.water.WaterTile;
 
 public class MainLoop {
 

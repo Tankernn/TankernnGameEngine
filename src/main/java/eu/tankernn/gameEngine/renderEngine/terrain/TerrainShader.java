@@ -1,12 +1,12 @@
 package eu.tankernn.gameEngine.renderEngine.terrain;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformFloat;
-import eu.tankernn.gameEngine.shaders.UniformMatrix;
-import eu.tankernn.gameEngine.shaders.UniformSampler;
-import eu.tankernn.gameEngine.shaders.UniformVec3;
-import eu.tankernn.gameEngine.shaders.UniformVec4;
-import eu.tankernn.gameEngine.shaders.UniformViewMatrix;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformSampler;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec3;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec4;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformViewMatrix;
 
 public class TerrainShader extends ShaderProgram {
 

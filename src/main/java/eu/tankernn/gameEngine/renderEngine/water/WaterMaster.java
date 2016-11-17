@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.water;
+package eu.tankernn.gameEngine.renderEngine.water;
 
 import java.util.ArrayList;
 import java.util.List;

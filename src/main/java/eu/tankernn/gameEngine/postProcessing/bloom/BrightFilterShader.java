@@ -1,6 +1,6 @@
 package eu.tankernn.gameEngine.postProcessing.bloom;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
 
 public class BrightFilterShader extends ShaderProgram{
 	

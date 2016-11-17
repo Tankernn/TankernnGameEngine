@@ -7,14 +7,14 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Light;
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformBoolean;
-import eu.tankernn.gameEngine.shaders.UniformFloat;
-import eu.tankernn.gameEngine.shaders.UniformMatrix;
-import eu.tankernn.gameEngine.shaders.UniformSampler;
-import eu.tankernn.gameEngine.shaders.UniformVec2;
-import eu.tankernn.gameEngine.shaders.UniformVec3;
-import eu.tankernn.gameEngine.shaders.UniformVec4;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformBoolean;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformSampler;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec2;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec3;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec4;
 
 public class NormalMappingShader extends ShaderProgram {
 

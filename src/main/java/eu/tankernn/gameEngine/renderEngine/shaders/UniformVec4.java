@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.shaders;
+package eu.tankernn.gameEngine.renderEngine.shaders;
 
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Vector4f;

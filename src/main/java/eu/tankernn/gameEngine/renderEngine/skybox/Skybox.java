@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.skybox;
+package eu.tankernn.gameEngine.renderEngine.skybox;
 
 import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.textures.Texture;

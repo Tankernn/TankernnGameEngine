@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.shadows;
+package eu.tankernn.gameEngine.renderEngine.shadows;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Matrix4f;

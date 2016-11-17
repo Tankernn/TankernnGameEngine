@@ -4,8 +4,8 @@ import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
-import eu.tankernn.gameEngine.skybox.Skybox;
-import eu.tankernn.gameEngine.water.WaterMaster;
+import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
+import eu.tankernn.gameEngine.renderEngine.water.WaterMaster;
 
 public class TankernnGame {
 	protected Loader loader;

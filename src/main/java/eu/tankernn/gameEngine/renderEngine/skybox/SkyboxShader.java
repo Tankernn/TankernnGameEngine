@@ -1,14 +1,14 @@
-package eu.tankernn.gameEngine.skybox;
+package eu.tankernn.gameEngine.renderEngine.skybox;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformFloat;
-import eu.tankernn.gameEngine.shaders.UniformMatrix;
-import eu.tankernn.gameEngine.shaders.UniformSampler;
-import eu.tankernn.gameEngine.shaders.UniformVec3;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformSampler;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec3;
 import eu.tankernn.gameEngine.util.ICamera;
 
 public class SkyboxShader extends ShaderProgram {

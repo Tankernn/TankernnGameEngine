@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.skybox;
+package eu.tankernn.gameEngine.renderEngine.skybox;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;

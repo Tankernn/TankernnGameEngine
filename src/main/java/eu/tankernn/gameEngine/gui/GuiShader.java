@@ -1,7 +1,7 @@
 package eu.tankernn.gameEngine.gui;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformMatrix;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
 
 public class GuiShader extends ShaderProgram {
 	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/gui/guiVertexShader.glsl";

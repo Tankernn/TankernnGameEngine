@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.shaders;
+package eu.tankernn.gameEngine.renderEngine.shaders;
 
 import java.nio.FloatBuffer;
 

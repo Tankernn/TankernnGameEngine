@@ -1,8 +1,8 @@
 package eu.tankernn.gameEngine.font.rendering;
 
-import eu.tankernn.gameEngine.shaders.ShaderProgram;
-import eu.tankernn.gameEngine.shaders.UniformVec2;
-import eu.tankernn.gameEngine.shaders.UniformVec3;
+import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec2;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec3;
 
 public class FontShader extends ShaderProgram{
 
