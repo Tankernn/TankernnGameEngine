@@ -1,7 +1,7 @@
 package eu.tankernn.gameEngine.renderEngine.skybox;
 
+import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.Vao;
-import eu.tankernn.gameEngine.textures.Texture;
 
 public class Skybox {
 	

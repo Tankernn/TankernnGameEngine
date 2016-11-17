@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.textures;
+package eu.tankernn.gameEngine.loader.textures;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;

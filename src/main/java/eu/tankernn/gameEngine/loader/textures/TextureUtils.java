@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.textures;
+package eu.tankernn.gameEngine.loader.textures;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;

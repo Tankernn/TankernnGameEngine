@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.textures;
+package eu.tankernn.gameEngine.loader.textures;
 
 import eu.tankernn.gameEngine.util.InternalFile;
 

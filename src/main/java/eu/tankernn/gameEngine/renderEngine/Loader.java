@@ -23,8 +23,8 @@ import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
+import eu.tankernn.gameEngine.loader.textures.TextureData;
 import eu.tankernn.gameEngine.settings.Settings;
-import eu.tankernn.gameEngine.textures.TextureData;
 /**
  * General purpose loader
  * @author Frans

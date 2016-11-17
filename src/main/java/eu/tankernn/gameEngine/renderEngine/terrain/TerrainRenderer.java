@@ -15,10 +15,10 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.renderEngine.shadows.ShadowBox;
 import eu.tankernn.gameEngine.renderEngine.shadows.ShadowMapMasterRenderer;
 import eu.tankernn.gameEngine.terrains.Terrain;
-import eu.tankernn.gameEngine.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.util.ICamera;
 import eu.tankernn.gameEngine.util.Maths;
 

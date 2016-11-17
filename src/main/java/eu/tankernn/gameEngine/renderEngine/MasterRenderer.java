@@ -19,6 +19,7 @@ import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.entities.EntityRenderer;
 import eu.tankernn.gameEngine.renderEngine.normalMap.NormalMappingRenderer;
 import eu.tankernn.gameEngine.renderEngine.shadows.ShadowMapMasterRenderer;
@@ -26,7 +27,6 @@ import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.renderEngine.skybox.SkyboxRenderer;
 import eu.tankernn.gameEngine.renderEngine.terrain.TerrainRenderer;
 import eu.tankernn.gameEngine.terrains.Terrain;
-import eu.tankernn.gameEngine.textures.Texture;
 import eu.tankernn.gameEngine.util.ICamera;
 
 /**

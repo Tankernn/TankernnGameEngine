@@ -14,9 +14,9 @@ import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.settings.Settings;
-import eu.tankernn.gameEngine.textures.ModelTexture;
 import eu.tankernn.gameEngine.util.ICamera;
 import eu.tankernn.gameEngine.util.Maths;
 
