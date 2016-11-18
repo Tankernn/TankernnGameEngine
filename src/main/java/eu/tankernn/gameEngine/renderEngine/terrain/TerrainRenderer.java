@@ -7,7 +7,6 @@ import static eu.tankernn.gameEngine.settings.Settings.RED;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
@@ -70,16 +69,11 @@ public class TerrainRenderer {
 
 	private void bindTexture(Terrain terrain) {
 		TerrainTexturePack texturePack = terrain.getTexturePack();
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getBackgroundTexture().getTextureID());
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getrTexture().getTextureID());
-		GL13.glActiveTexture(GL13.GL_TEXTURE2);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getgTexture().getTextureID());
-		GL13.glActiveTexture(GL13.GL_TEXTURE3);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getbTexture().getTextureID());
-		GL13.glActiveTexture(GL13.GL_TEXTURE4);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, terrain.getBlendMap().getTextureID());
+		texturePack.getBackgroundTexture().bindToUnit(0);
+		texturePack.getrTexture().bindToUnit(1);
+		texturePack.getgTexture().bindToUnit(2);
+		texturePack.getbTexture().bindToUnit(3);
+		terrain.getBlendMap().bindToUnit(4);
 	}
 
 	private void unbindTexturedModel() {

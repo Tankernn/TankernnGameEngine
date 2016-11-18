@@ -1,8 +1,6 @@
 package eu.tankernn.gameEngine.postProcessing.bloom;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-
+import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.postProcessing.ImageRenderer;
 
 public class CombineFilter {
@@ -18,12 +16,10 @@ public class CombineFilter {
 		renderer = new ImageRenderer();
 	}
 	
-	public void render(int colourTexture, int highlightTexture){
+	public void render(Texture colorTexture, Texture bloomTexture){
 		shader.start();
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, colourTexture);
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, highlightTexture);
+		colorTexture.bindToUnit(0);
+		bloomTexture.bindToUnit(1);
 		renderer.renderQuad();
 		shader.stop();
 	}

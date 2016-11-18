@@ -2,29 +2,26 @@ package eu.tankernn.gameEngine.loader.obj.normalMapped;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.RawModel;
-import eu.tankernn.gameEngine.renderEngine.Loader;
+import eu.tankernn.gameEngine.util.InternalFile;
 
 public class NormalMappedObjLoader {
 
-	private static final String RES_LOC = "/";
-
-	public static RawModel loadOBJ(String objFileName, Loader loader) {
-		InputStreamReader isr = null;
-		String objFile = RES_LOC + objFileName + ".obj";
+	public static RawModel loadOBJ(InternalFile objFile, Loader loader) {
+		BufferedReader reader;
 		try {
-			isr = new InputStreamReader(NormalMappedObjLoader.class.getResourceAsStream(objFile));
-		} catch (NullPointerException e) {
-			System.err.println("File not found in res; don't use any extention");
+			reader = objFile.getReader();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return null;
 		}
-		BufferedReader reader = new BufferedReader(isr);
 		String line;
 		List<VertexNM> vertices = new ArrayList<VertexNM>();
 		List<Vector2f> textures = new ArrayList<Vector2f>();

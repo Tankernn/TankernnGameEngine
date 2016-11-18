@@ -13,8 +13,8 @@ import eu.tankernn.gameEngine.util.ICamera;
 
 public class SkyboxShader extends ShaderProgram {
 	
-	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/skybox/skyboxVertexShader.glsl";
-	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/skybox/skyboxFragmentShader.glsl";
+	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/renderEngine/skybox/skyboxVertexShader.glsl";
+	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/renderEngine/skybox/skyboxFragmentShader.glsl";
 	
 	private static final float ROTATE_SPEED = 1f;
 	

@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Light;
-import eu.tankernn.gameEngine.renderEngine.Loader;
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
 import eu.tankernn.gameEngine.util.ICamera;

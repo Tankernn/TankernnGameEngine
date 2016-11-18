@@ -8,7 +8,7 @@ import java.util.Map;
 import eu.tankernn.gameEngine.font.meshCreator.FontType;
 import eu.tankernn.gameEngine.font.meshCreator.GUIText;
 import eu.tankernn.gameEngine.font.meshCreator.TextMeshData;
-import eu.tankernn.gameEngine.renderEngine.Loader;
+import eu.tankernn.gameEngine.loader.Loader;
 
 public class TextMaster {
 	

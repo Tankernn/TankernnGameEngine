@@ -1,9 +1,9 @@
 package eu.tankernn.gameEngine.loader.textures;
 
 public class ModelTexture {
-	private int textureID;
-	private int normalMap;
-	private int specularMap;
+	private Texture textureID;
+	private Texture normalMap;
+	private Texture specularMap;
 
 	private float shineDemper = 1;
 	private float reflectivity = 0;
@@ -14,11 +14,11 @@ public class ModelTexture {
 
 	private int numberOfRows = 1;
 
-	public ModelTexture(int id) {
+	public ModelTexture(Texture id) {
 		this.textureID = id;
 	}
 
-	public int getID() {
+	public Texture getTexture() {
 		return textureID;
 	}
 
@@ -46,40 +46,44 @@ public class ModelTexture {
 		this.numberOfRows = numberOfRows;
 	}
 
-	public int getNormalMap() {
+	public Texture getNormalMap() {
 		return normalMap;
 	}
 
-	public void setNormalMap(int normalMap) {
+	public ModelTexture setNormalMap(Texture normalMap) {
 		this.normalMap = normalMap;
+		return this;
 	}
 
 	public float getShineDamper() {
 		return shineDemper;
 	}
 
-	public void setShineDamper(float shineDemper) {
+	public ModelTexture setShineDamper(float shineDemper) {
 		this.shineDemper = shineDemper;
+		return this;
 	}
 
 	public float getReflectivity() {
 		return reflectivity;
 	}
 
-	public void setReflectivity(float reflectivity) {
+	public ModelTexture setReflectivity(float reflectivity) {
 		this.reflectivity = reflectivity;
+		return this;
 	}
 	
-	public void setSpecularMap(int textureId) {
-		this.specularMap = textureId;
+	public ModelTexture setSpecularMap(Texture texture) {
+		this.specularMap = texture;
 		this.hasSpecularMap = true;
+		return this;
 	}
 	
 	public boolean hasSpecularMap() {
 		return this.hasSpecularMap;
 	}
 	
-	public int getSpecularMap() {
+	public Texture getSpecularMap() {
 		return this.specularMap;
 	}
 }

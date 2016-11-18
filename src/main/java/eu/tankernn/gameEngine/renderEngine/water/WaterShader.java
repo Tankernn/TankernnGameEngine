@@ -9,8 +9,8 @@ import eu.tankernn.gameEngine.renderEngine.shaders.UniformViewMatrix;
 
 public class WaterShader extends ShaderProgram {
 
-	private final static String VERTEX_FILE = "/eu/tankernn/gameEngine/water/waterVertex.glsl";
-	private final static String FRAGMENT_FILE = "/eu/tankernn/gameEngine/water/waterFragment.glsl";
+	private final static String VERTEX_FILE = "/eu/tankernn/gameEngine/renderEngine/water/waterVertex.glsl";
+	private final static String FRAGMENT_FILE = "/eu/tankernn/gameEngine/renderEngine/water/waterFragment.glsl";
 
 	protected UniformMatrix modelMatrix = new UniformMatrix("modelMatrix");
 	protected UniformViewMatrix viewMatrix = new UniformViewMatrix("viewMatrix");

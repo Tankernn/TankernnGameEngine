@@ -2,31 +2,31 @@ package eu.tankernn.gameEngine.loader.textures;
 
 public class TerrainTexturePack {
 	
-	private TerrainTexture backgroundTexture;
-	private TerrainTexture rTexture;
-	private TerrainTexture gTexture;
-	private TerrainTexture bTexture;
+	private Texture backgroundTexture;
+	private Texture rTexture;
+	private Texture gTexture;
+	private Texture bTexture;
 	
-	public TerrainTexturePack(TerrainTexture backgroundTexture, TerrainTexture rTexture, TerrainTexture gTexture, TerrainTexture bTexture) {
+	public TerrainTexturePack(Texture backgroundTexture, Texture rTexture, Texture gTexture, Texture bTexture) {
 		this.backgroundTexture = backgroundTexture;
 		this.rTexture = rTexture;
 		this.gTexture = gTexture;
 		this.bTexture = bTexture;
 	}
 
-	public TerrainTexture getBackgroundTexture() {
+	public Texture getBackgroundTexture() {
 		return backgroundTexture;
 	}
 
-	public TerrainTexture getrTexture() {
+	public Texture getrTexture() {
 		return rTexture;
 	}
 
-	public TerrainTexture getgTexture() {
+	public Texture getgTexture() {
 		return gTexture;
 	}
 
-	public TerrainTexture getbTexture() {
+	public Texture getbTexture() {
 		return bTexture;
 	}
 	

@@ -5,12 +5,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.RawModel;
+import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.postProcessing.bloom.BrightFilter;
 import eu.tankernn.gameEngine.postProcessing.bloom.CombineFilter;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.HorizontalBlur;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.VerticalBlur;
-import eu.tankernn.gameEngine.renderEngine.Loader;
 
 public class PostProcessing {
 	
@@ -36,10 +37,10 @@ public class PostProcessing {
 		combineFilter = new CombineFilter();
 	}
 	
-	public static void doPostProcessing(int colorTexture, int brightTexture) {
+	public static void doPostProcessing(Texture colorTexture, Texture brightTexture) {
 		start();
 		//brightFilter.render(colorTexture);
-		int bloomTexture = brightTexture;
+		Texture bloomTexture = brightTexture;
 		for (int i = 0; i < blurFactor; i++) {
 			hBlur[i].render(bloomTexture);
 			vBlur[i].render(hBlur[i].getOutputTexture());

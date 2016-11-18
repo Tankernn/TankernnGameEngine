@@ -18,8 +18,8 @@ import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec4;
 
 public class NormalMappingShader extends ShaderProgram {
 
-	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/normalMapping/renderer/normalMapVShader.glsl";
-	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/normalMapping/renderer/normalMapFShader.glsl";
+	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/renderEngine/normalMap/normalMapVShader.glsl";
+	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/renderEngine/normalMap/normalMapFShader.glsl";
 
 	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
 	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");

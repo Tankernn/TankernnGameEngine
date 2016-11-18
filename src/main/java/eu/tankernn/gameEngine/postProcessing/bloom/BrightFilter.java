@@ -1,11 +1,10 @@
 package eu.tankernn.gameEngine.postProcessing.bloom;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-
+import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.postProcessing.IPostProcessingEffect;
 import eu.tankernn.gameEngine.postProcessing.ImageRenderer;
 
-public class BrightFilter {
+public class BrightFilter implements IPostProcessingEffect {
 
 	private ImageRenderer renderer;
 	private BrightFilterShader shader;
@@ -15,15 +14,14 @@ public class BrightFilter {
 		renderer = new ImageRenderer(width, height);
 	}
 	
-	public void render(int texture){
+	public void render(Texture texture){
 		shader.start();
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+		texture.bindToUnit(0);
 		renderer.renderQuad();
 		shader.stop();
 	}
 	
-	public int getOutputTexture(){
+	public Texture getOutputTexture(){
 		return renderer.getOutputTexture();
 	}
 	

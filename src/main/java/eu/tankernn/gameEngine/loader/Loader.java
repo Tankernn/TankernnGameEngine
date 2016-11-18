@@ -1,30 +1,22 @@
-package eu.tankernn.gameEngine.renderEngine;
+package eu.tankernn.gameEngine.loader;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
-import org.lwjgl.opengl.GLContext;
 
-import de.matthiasmann.twl.utils.PNGDecoder;
-import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
-import eu.tankernn.gameEngine.loader.textures.TextureData;
-import eu.tankernn.gameEngine.settings.Settings;
+import eu.tankernn.gameEngine.loader.obj.normalMapped.NormalMappedObjLoader;
+import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.util.InternalFile;
 /**
  * General purpose loader
  * @author Frans
@@ -33,7 +25,7 @@ import eu.tankernn.gameEngine.settings.Settings;
 public class Loader {
 	private List<Integer> vaos = new ArrayList<Integer>();
 	private List<Integer> vbos = new ArrayList<Integer>();
-	private List<Integer> textures = new ArrayList<Integer>();
+	private List<Texture> textures = new ArrayList<Texture>();
 	
 	public RawModel loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
@@ -114,75 +106,10 @@ public class Loader {
 	 * @param filename The path, relative to the root of the jar file, of the file to load.
 	 * @return The texture ID
 	 */
-	public int loadTexture(String filename) {
-		int textureID = 0;
-		try {
-			textureID = loadPNGTexture(getClass().getResourceAsStream("/" + filename + ".png"), GL13.GL_TEXTURE0);
-			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0f);
-			if (GLContext.getCapabilities().GL_EXT_texture_filter_anisotropic) {
-				float amount = Math.min(Settings.ANISOTROPIC_FILTERING_AMOUNT, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
-				GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, amount);
-			} else {
-				System.out.println("Anisotropic filtering not supported.");
-			}
-		} catch (NullPointerException e) {
-			System.err.println("Could not load texture: " + filename);
-			e.printStackTrace();
-		}
-		
-		textures.add(textureID);
-		
-		return textureID;
-	}
-	
-	private int loadPNGTexture(InputStream file, int textureUnit) {
-		ByteBuffer buf = null;
-		int tWidth = 0;
-		int tHeight = 0;
-		
-		try {
-			// Link the PNG decoder to this stream
-			PNGDecoder decoder = new PNGDecoder(file);
-			
-			// Get the width and height of the texture
-			tWidth = decoder.getWidth();
-			tHeight = decoder.getHeight();
-			
-			// Decode the PNG file in a ByteBuffer
-			buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
-			decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
-			buf.flip();
-			
-			file.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		
-		// Create a new texture object in memory and bind it
-		int texId = GL11.glGenTextures();
-		GL13.glActiveTexture(textureUnit);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
-		
-		// All RGB bytes are aligned to each other and each component is 1 byte
-		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-		
-		// Upload the texture data and generate mip maps (for scaling)
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, tWidth, tHeight, 0,
-				GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
-		GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-		
-		// Setup the ST coordinate system
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-		
-		// Setup what to do when the texture has to be scaled
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER,
-				GL11.GL_NEAREST);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
-				GL11.GL_LINEAR_MIPMAP_LINEAR);
-		
-		return texId;
+	public Texture loadTexture(String filename) {
+		Texture texture = Texture.newTexture(new InternalFile(filename)).create();
+		textures.add(texture);
+		return texture;
 	}
 	
 	/**
@@ -198,40 +125,10 @@ public class Loader {
 	 * @return The ID of the new cube map
 	 */
 	
-	public int loadCubeMap(String[] textureFiles, String folder) {
-		int texID = GL11.glGenTextures();
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texID);
-		
-		for (int i = 0; i < textureFiles.length; i++) {
-			TextureData data = decodeTextureFile("/" + folder + textureFiles[i] + ".png");
-			GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL11.GL_RGBA, data.getWidth(), data.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data.getBuffer());
-		}
-		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-		textures.add(texID);
-		return texID;
-	}
-	
-	private TextureData decodeTextureFile(String filename) {
-		int width = 0;
-		int height = 0;
-		ByteBuffer buffer = null;
-		try {
-			InputStream in = getClass().getResourceAsStream(filename);
-			PNGDecoder decoder = new PNGDecoder(in);
-			width = decoder.getWidth();
-			height = decoder.getHeight();
-			buffer = ByteBuffer.allocateDirect(4 * width * height);
-			decoder.decode(buffer, width * 4, Format.RGBA);
-			buffer.flip();
-			in.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("Unable to load texture " + filename + ".");
-			System.exit(-1);
-		}
-		return new TextureData(buffer, width, height);
+	public Texture loadCubeMap(InternalFile[] textureFiles) {
+		Texture cubeMap = Texture.newCubeMap(textureFiles, 500);
+		textures.add(cubeMap);
+		return cubeMap;
 	}
 	
 	public void cleanUp() {
@@ -239,8 +136,8 @@ public class Loader {
 			GL30.glDeleteVertexArrays(vao);
 		for (int vbo: vbos)
 			GL15.glDeleteBuffers(vbo);
-		for (int tex: textures)
-			GL11.glDeleteTextures(tex);
+		for (Texture tex: textures)
+			tex.delete();
 	}
 	
 	private int createVAO() {
@@ -284,5 +181,9 @@ public class Loader {
 		buffer.put(data);
 		buffer.flip();
 		return buffer;
+	}
+
+	public RawModel loadOBJ(InternalFile objFile) {
+		return NormalMappedObjLoader.loadOBJ(objFile, this);
 	}
 }

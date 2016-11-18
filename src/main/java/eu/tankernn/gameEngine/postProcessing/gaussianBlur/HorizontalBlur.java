@@ -1,11 +1,10 @@
 package eu.tankernn.gameEngine.postProcessing.gaussianBlur;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-
+import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.postProcessing.IPostProcessingEffect;
 import eu.tankernn.gameEngine.postProcessing.ImageRenderer;
 
-public class HorizontalBlur {
+public class HorizontalBlur implements IPostProcessingEffect {
 	
 	private ImageRenderer renderer;
 	private HorizontalBlurShader shader;
@@ -18,15 +17,14 @@ public class HorizontalBlur {
 		renderer = new ImageRenderer(targetFboWidth, targetFboHeight);
 	}
 	
-	public void render(int texture){
+	public void render(Texture texture){
 		shader.start();
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+		texture.bindToUnit(0);
 		renderer.renderQuad();
 		shader.stop();
 	}
 	
-	public int getOutputTexture(){
+	public Texture getOutputTexture(){
 		return renderer.getOutputTexture();
 	}
 	

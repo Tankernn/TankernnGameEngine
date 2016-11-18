@@ -39,13 +39,13 @@ public class Entity implements IPositionable {
 	}
 	
 	public float getTextureXOffset() {
-		int column = textureIndex % model.getTexture().getNumberOfRows();
-		return (float) column / (float) model.getTexture().getNumberOfRows();
+		int column = textureIndex % model.getModelTexture().getNumberOfRows();
+		return (float) column / (float) model.getModelTexture().getNumberOfRows();
 	}
 	
 	public float getTextureYOffset() {
-		int row = textureIndex / model.getTexture().getNumberOfRows();
-		return (float) row / (float) model.getTexture().getNumberOfRows();
+		int row = textureIndex / model.getModelTexture().getNumberOfRows();
+		return (float) row / (float) model.getModelTexture().getNumberOfRows();
 	}
 	
 	public void increasePosition(float dx, float dy, float dz) {

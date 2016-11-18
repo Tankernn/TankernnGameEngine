@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
@@ -14,8 +13,8 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.entities.Camera;
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.RawModel;
-import eu.tankernn.gameEngine.renderEngine.Loader;
 
 public class ParticleRenderer {
 	
@@ -78,8 +77,7 @@ public class ParticleRenderer {
 	private void bindTexture(ParticleTexture texture) {
 		int blendType = texture.usesAdditiveBlending() ? GL11.GL_ONE : GL11.GL_ONE_MINUS_SRC_ALPHA;
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, blendType);
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID());
+		texture.getTexture().bindToUnit(0);
 		shader.numberOfRows.loadFloat(texture.getNumberOfRows());
 	}
 	

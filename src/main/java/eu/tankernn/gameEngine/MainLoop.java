@@ -20,13 +20,12 @@ import eu.tankernn.gameEngine.entities.PlayerCamera;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.font.meshCreator.FontType;
 import eu.tankernn.gameEngine.font.meshCreator.GUIText;
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
 import eu.tankernn.gameEngine.loader.obj.OBJFileLoader;
-import eu.tankernn.gameEngine.loader.obj.normalMapped.NormalMappedObjLoader;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
-import eu.tankernn.gameEngine.loader.textures.TerrainTexture;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
@@ -36,7 +35,6 @@ import eu.tankernn.gameEngine.postProcessing.Fbo;
 import eu.tankernn.gameEngine.postProcessing.MultisampleMultitargetFbo;
 import eu.tankernn.gameEngine.postProcessing.PostProcessing;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
-import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
 import eu.tankernn.gameEngine.renderEngine.font.TextMaster;
@@ -48,73 +46,76 @@ import eu.tankernn.gameEngine.renderEngine.water.WaterTile;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 import eu.tankernn.gameEngine.util.DistanceSorter;
-import eu.tankernn.gameEngine.util.MousePicker;
 import eu.tankernn.gameEngine.util.InternalFile;
+import eu.tankernn.gameEngine.util.MousePicker;
 
 public class MainLoop {
 
 	private static final int SEED = 1235;
-	
+
 	// Skybox settings
-	public static final String[] TEXTURE_FILES = {"alps_rt", "alps_lf", "alps_up", "alps_dn", "alps_bk", "alps_ft"};
-	public static final String[] NIGHT_TEXTURE_FILES = {"midnight_rt", "midnight_lf", "midnight_up", "midnight_dn", "midnight_bk", "midnight_ft"};
-	
+	public static final String[] TEXTURE_FILES = { "alps_rt", "alps_lf", "alps_up", "alps_dn", "alps_bk", "alps_ft" };
+	public static final String[] NIGHT_TEXTURE_FILES = { "midnight_rt", "midnight_lf", "midnight_up", "midnight_dn",
+			"midnight_bk", "midnight_ft" };
+
 	// Water settings
-	public static final String DUDV_MAP = "waterDUDV";
-	public static final String NORMAL_MAP = "waterNormalMap";
+	public static final String DUDV_MAP = "waterDUDV.png";
+	public static final String NORMAL_MAP = "waterNormalMap.png";
 
 	private static final boolean DEBUG = true;
 
 	public static void main(String[] args) throws FileNotFoundException {
-		
+
 		List<Entity> entities = new ArrayList<Entity>();
 		List<Entity> normalMapEntities = new ArrayList<Entity>();
 		TerrainPack terrainPack = new TerrainPack();
 
 		DisplayManager.createDisplay("Tankernn Game Engine tester");
 		Loader loader = new Loader();
-		
-		// Monkey
-		ModelData monkeyData = OBJFileLoader.loadOBJ("character");
-		RawModel monkeyModel = loader.loadToVAO(monkeyData);
-		TexturedModel texturedMonkeyModel = new TexturedModel(monkeyModel,
-				new ModelTexture(loader.loadTexture("erkky")));
 
-		ModelTexture texture = texturedMonkeyModel.getTexture();
+		// Player
+		ModelData playrModelData = OBJFileLoader.loadOBJ(new InternalFile("Soptunna.obj"));
+		RawModel playerModel = loader.loadToVAO(playrModelData);
+		TexturedModel texturedMonkeyModel = new TexturedModel(playerModel,
+				new ModelTexture(loader.loadTexture("Soptunna.png")));
+
+		ModelTexture texture = texturedMonkeyModel.getModelTexture();
 		texture.setReflectivity(3);
 		texture.setShineDamper(10);
 
 		Entity entity = new Entity(texturedMonkeyModel, new Vector3f(0, 0, 20), 0, 0, 0, 1);
 		entities.add(entity);
-		TexturedModel monkey = new TexturedModel(monkeyModel, new ModelTexture(loader.loadTexture("white")));
+		TexturedModel monkey = new TexturedModel(playerModel, new ModelTexture(loader.loadTexture("white.png")));
 		Player player = new Player(monkey, new Vector3f(10, 0, 50), 0, 0, 0, 1, terrainPack);
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
-		
-		InternalFile[] dayTextures = new InternalFile[TEXTURE_FILES.length], nightTextures = new InternalFile[NIGHT_TEXTURE_FILES.length];
-		
+
+		InternalFile[] dayTextures = new InternalFile[TEXTURE_FILES.length],
+				nightTextures = new InternalFile[NIGHT_TEXTURE_FILES.length];
+
 		for (int i = 0; i < TEXTURE_FILES.length; i++)
 			dayTextures[i] = new InternalFile("skybox/" + TEXTURE_FILES[i] + ".png");
 		for (int i = 0; i < NIGHT_TEXTURE_FILES.length; i++)
 			nightTextures[i] = new InternalFile("skybox/" + NIGHT_TEXTURE_FILES[i] + ".png");
-		
+
 		Skybox skybox = new Skybox(Texture.newCubeMap(dayTextures, 500), Texture.newCubeMap(nightTextures, 500), 500);
-		
+
 		MasterRenderer renderer = new MasterRenderer(loader, camera, skybox);
 		ParticleMaster.init(loader, camera.getProjectionMatrix());
 		TextMaster.init(loader);
 
-		FontType font = new FontType(loader.loadTexture("arial"), "arial.fnt");
-		GUIText text = new GUIText("Sample text", 3, font, new Vector2f(0.5f, 0.5f), 0.5f, true);
-		text.setColor(1, 1, 1);
+		FontType font = new FontType(loader.loadTexture("arial.png"), "arial.fnt");
+		GUIText text = new GUIText("Sample text", 3, font, new Vector2f(0.5f, 0.5f), 0.5f, true).setColor(1, 1, 1);
 
 		// Barrel
-		TexturedModel barrelModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader),
-				new ModelTexture(loader.loadTexture("barrel")));
-		barrelModel.getTexture().setNormalMap(loader.loadTexture("barrelNormal"));
-		barrelModel.getTexture().setSpecularMap(loader.loadTexture("barrelS"));
-		barrelModel.getTexture().setShineDamper(10);
-		barrelModel.getTexture().setReflectivity(0.5f);
+		TexturedModel barrelModel = new TexturedModel(loader.loadOBJ(new InternalFile("barrel.obj")),
+				new ModelTexture(loader.loadTexture("barrel.png")));
+		
+		barrelModel.getModelTexture().setNormalMap(loader.loadTexture("barrelNormal.png"))
+									.setSpecularMap(loader.loadTexture("barrelS.png"))
+									.setShineDamper(10)
+									.setReflectivity(0.5f);
+		
 		Entity barrel = new Entity(barrelModel, new Vector3f(75, 10, 75), 0, 0, 0, 1f);
 		normalMapEntities.add(barrel);
 
@@ -130,13 +131,13 @@ public class MainLoop {
 
 		// ### Terrain textures ###
 
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+		Texture backgroundTexture = loader.loadTexture("grassy.png");
+		Texture rTexture = loader.loadTexture("dirt.png");
+		Texture gTexture = loader.loadTexture("pinkFlowers.png");
+		Texture bTexture = loader.loadTexture("path.png");
 
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+		Texture blendMap = loader.loadTexture("blendMap.png");
 
 		terrainPack.addTerrain(new Terrain(0, 1, loader, texturePack, blendMap, SEED));
 		terrainPack.addTerrain(new Terrain(1, 1, loader, texturePack, blendMap, SEED));
@@ -145,13 +146,14 @@ public class MainLoop {
 
 		// ### Random grass generation ###
 
-		ModelTexture textureAtlas = new ModelTexture(loader.loadTexture("lantern"));
+		ModelTexture textureAtlas = new ModelTexture(Texture.newTexture(new InternalFile("lantern.png")).create());
 		textureAtlas.setNumberOfRows(1);
-		TexturedModel grassModel = new TexturedModel(loader.loadToVAO(OBJFileLoader.loadOBJ("lantern")), textureAtlas);
-		grassModel.getTexture().setHasTransparency(true);
-		grassModel.getTexture().setShineDamper(10);
-		grassModel.getTexture().setReflectivity(0.5f);
-		grassModel.getTexture().setSpecularMap(loader.loadTexture("lanternS"));
+		TexturedModel grassModel = new TexturedModel(
+				loader.loadToVAO(OBJFileLoader.loadOBJ(new InternalFile("lantern.obj"))), textureAtlas);
+		grassModel.getModelTexture().setHasTransparency(true);
+		grassModel.getModelTexture().setShineDamper(10);
+		grassModel.getModelTexture().setReflectivity(0.5f);
+		grassModel.getModelTexture().setSpecularMap(loader.loadTexture("lanternS.png"));
 
 		Random rand = new Random();
 
@@ -170,14 +172,14 @@ public class MainLoop {
 
 		// #### Gui rendering ####
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
-		
+
 		GuiTexture debug = new GuiTexture(0, new Vector2f(1, 1), new Vector2f(1, 1));
-		
+
 		guis.add(debug);
 
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
-		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic"), 4, true);
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic.png"), 4, true);
 		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 4);
 
 		MultisampleMultitargetFbo multisampleFbo = new MultisampleMultitargetFbo(Display.getWidth(),
@@ -188,7 +190,7 @@ public class MainLoop {
 		PostProcessing.init(loader);
 
 		MousePicker picker = new MousePicker(camera, camera.getProjectionMatrix(), terrainPack, entities, guis);
-		
+
 		while (!Display.isCloseRequested()) {
 			barrel.increaseRotation(0, 1, 0);
 			player.move(terrainPack);
@@ -232,11 +234,12 @@ public class MainLoop {
 			ParticleMaster.update(camera);
 
 			Scene scene = new Scene(entities, normalMapEntities, terrainPack, lights, camera, skybox);
-			
-			EnvironmentMapRenderer.renderEnvironmentMap(scene.getEnvironmentMap(), scene, player.getPosition(), renderer);
-			
+
+			EnvironmentMapRenderer.renderEnvironmentMap(scene.getEnvironmentMap(), scene, player.getPosition(),
+					renderer);
+
 			debug = new GuiTexture(scene.getEnvironmentMap().textureId, new Vector2f(1, 1), new Vector2f(1, 1));
-			
+
 			waterMaster.renderBuffers(renderer, scene);
 
 			multisampleFbo.bindFrameBuffer();

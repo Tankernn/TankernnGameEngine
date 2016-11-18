@@ -9,10 +9,10 @@ import javax.imageio.ImageIO;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.RawModel;
-import eu.tankernn.gameEngine.loader.textures.TerrainTexture;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
-import eu.tankernn.gameEngine.renderEngine.Loader;
+import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.util.Maths;
 
 public class Terrain {
@@ -24,11 +24,11 @@ public class Terrain {
 	private int gridX, gridZ;
 	private RawModel model;
 	private TerrainTexturePack texturePack;
-	private TerrainTexture blendMap;
+	private Texture blendMap;
 	
 	private float[][] heights;
 	
-	public Terrain(int gridX, int gridZ, Loader loader, TerrainTexturePack texturePack, TerrainTexture blendMap, String heightMap) {
+	public Terrain(int gridX, int gridZ, Loader loader, TerrainTexturePack texturePack, Texture blendMap, String heightMap) {
 		this.texturePack = texturePack;
 		this.blendMap = blendMap;
 		this.gridX = gridX;
@@ -38,7 +38,7 @@ public class Terrain {
 		this.model = generateTerrain(loader, heightMap);
 	}
 	
-	public Terrain(int gridX, int gridZ, Loader loader, TerrainTexturePack texturePack, TerrainTexture blendMap, int seed) {
+	public Terrain(int gridX, int gridZ, Loader loader, TerrainTexturePack texturePack, Texture blendMap, int seed) {
 		this.texturePack = texturePack;
 		this.blendMap = blendMap;
 		this.gridX = gridX;
@@ -199,7 +199,7 @@ public class Terrain {
 		return texturePack;
 	}
 	
-	public TerrainTexture getBlendMap() {
+	public Texture getBlendMap() {
 		return blendMap;
 	}
 	

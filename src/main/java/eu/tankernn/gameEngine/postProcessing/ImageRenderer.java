@@ -2,6 +2,8 @@ package eu.tankernn.gameEngine.postProcessing;
 
 import org.lwjgl.opengl.GL11;
 
+import eu.tankernn.gameEngine.loader.textures.Texture;
+
 public class ImageRenderer {
 
 	private Fbo fbo;
@@ -23,7 +25,7 @@ public class ImageRenderer {
 		}
 	}
 
-	public int getOutputTexture() {
+	public Texture getOutputTexture() {
 		return fbo.getColourTexture();
 	}
 

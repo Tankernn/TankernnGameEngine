@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import org.lwjgl.util.vector.Matrix4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
-import eu.tankernn.gameEngine.renderEngine.Loader;
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.util.DistanceSorter;
 
 public class ParticleMaster {

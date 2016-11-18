@@ -1,18 +1,20 @@
 package eu.tankernn.gameEngine.particles;
 
+import eu.tankernn.gameEngine.loader.textures.Texture;
+
 public class ParticleTexture {
-	private int textureID;
+	private Texture texture;
 	private int numberOfRows;
 	private boolean additive;
 	
-	public ParticleTexture(int textureID, int numberOfRows, boolean additive) {
-		this.textureID = textureID;
+	public ParticleTexture(Texture texture, int numberOfRows, boolean additive) {
+		this.texture = texture;
 		this.numberOfRows = numberOfRows;
 		this.additive = additive;
 	}
 
-	public int getTextureID() {
-		return textureID;
+	public Texture getTexture() {
+		return texture;
 	}
 
 	public int getNumberOfRows() {

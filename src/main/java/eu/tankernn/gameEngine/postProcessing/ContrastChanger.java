@@ -1,9 +1,8 @@
 package eu.tankernn.gameEngine.postProcessing;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
+import eu.tankernn.gameEngine.loader.textures.Texture;
 
-public class ContrastChanger {
+public class ContrastChanger implements IPostProcessingEffect {
 	private ImageRenderer renderer;
 	private ContrastShader shader;
 	
@@ -12,10 +11,9 @@ public class ContrastChanger {
 		renderer = new ImageRenderer();
 	}
 	
-	public void render(int texture) {
+	public void render(Texture texture) {
 		shader.start();
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+		texture.bindToUnit(0);
 		renderer.renderQuad();
 		shader.stop();
 	}

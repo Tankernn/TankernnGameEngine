@@ -5,8 +5,8 @@ import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
 
 public class ShadowShader extends ShaderProgram {
 	
-	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/shadows/shadowVertexShader.glsl";
-	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/shadows/shadowFragmentShader.glsl";
+	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/renderEngine/shadows/shadowVertexShader.glsl";
+	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/renderEngine/shadows/shadowFragmentShader.glsl";
 	
 	protected UniformMatrix mvpMatrix = new UniformMatrix("mvpMatrix");
 	

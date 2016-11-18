@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL13;
 
 import eu.tankernn.gameEngine.util.InternalFile;
 
-
 public class Texture {
 
 	public final int textureId;

@@ -3,7 +3,6 @@ package eu.tankernn.gameEngine.renderEngine.water;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
@@ -11,9 +10,10 @@ import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.RawModel;
+import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
-import eu.tankernn.gameEngine.renderEngine.Loader;
 import eu.tankernn.gameEngine.util.Maths;
 
 public class WaterRenderer {
@@ -26,8 +26,8 @@ public class WaterRenderer {
 	
 	private float moveFactor = 0;
 	
-	private int dudvTexture;
-	private int normalMap;
+	private Texture dudvTexture;
+	private Texture normalMap;
 
 	public WaterRenderer(Loader loader, String dudvTexture, String normalMap, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers buffers) {
 		this.shader = shader;
@@ -63,16 +63,11 @@ public class WaterRenderer {
 		shader.loadLights(lights);
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, buffers.getReflectionTexture());
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, buffers.getRefractionTexture());
-		GL13.glActiveTexture(GL13.GL_TEXTURE2);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, dudvTexture);
-		GL13.glActiveTexture(GL13.GL_TEXTURE3);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalMap);
-		GL13.glActiveTexture(GL13.GL_TEXTURE4);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, buffers.getRefractionDepthTexture());
+		buffers.getReflectionTexture().bindToUnit(0);
+		buffers.getRefractionTexture().bindToUnit(1);
+		dudvTexture.bindToUnit(2);
+		normalMap.bindToUnit(3);
+		buffers.getRefractionDepthTexture().bindToUnit(4);
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

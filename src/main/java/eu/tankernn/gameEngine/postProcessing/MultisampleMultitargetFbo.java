@@ -9,11 +9,11 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import eu.tankernn.gameEngine.loader.textures.TextureUtils;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 
 public class MultisampleMultitargetFbo extends Fbo {
 	
-
 	private int colorBuffer;
 	private int colorBuffer2;
 	
@@ -69,7 +69,7 @@ public class MultisampleMultitargetFbo extends Fbo {
 		if (type == DEPTH_RENDER_BUFFER) {
 			createDepthBufferAttachment();
 		} else if (type == DEPTH_TEXTURE) {
-			createDepthTextureAttachment();
+			TextureUtils.createDepthTextureAttachment(width, height);
 		}
 		unbindFrameBuffer();
 	}

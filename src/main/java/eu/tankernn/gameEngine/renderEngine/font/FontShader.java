@@ -6,8 +6,8 @@ import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec3;
 
 public class FontShader extends ShaderProgram{
 
-	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/font/rendering/fontVertex.glsl";
-	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/font/rendering/fontFragment.glsl";
+	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/renderEngine/font/fontVertex.glsl";
+	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/renderEngine/font/fontFragment.glsl";
 	
 	protected UniformVec3 color = new UniformVec3("color");
 	protected UniformVec2 translation = new UniformVec2("translation");

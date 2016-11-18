@@ -1,15 +1,16 @@
 package eu.tankernn.gameEngine.postProcessing;
 
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+
+import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.loader.textures.TextureUtils;
 
 public class Fbo {
 
@@ -20,8 +21,8 @@ public class Fbo {
 
 	protected int frameBuffer;
 
-	private int colourTexture;
-	private int depthTexture;
+	private Texture colourTexture;
+	private Texture depthTexture;
 
 	protected int depthBuffer;
 
@@ -48,8 +49,9 @@ public class Fbo {
 	 */
 	public void cleanUp() {
 		GL30.glDeleteFramebuffers(frameBuffer);
-		GL11.glDeleteTextures(colourTexture);
-		GL11.glDeleteTextures(depthTexture);
+		colourTexture.delete();
+		if (depthTexture != null)
+			depthTexture.delete();
 		GL30.glDeleteRenderbuffers(depthBuffer);
 	}
 
@@ -82,16 +84,16 @@ public class Fbo {
 	}
 
 	/**
-	 * @return The ID of the texture containing the colour buffer of the FBO.
+	 * @return The texture containing the color buffer of the FBO.
 	 */
-	public int getColourTexture() {
+	public Texture getColourTexture() {
 		return colourTexture;
 	}
 
 	/**
 	 * @return The texture containing the FBOs depth buffer.
 	 */
-	public int getDepthTexture() {
+	public Texture getDepthTexture() {
 		return depthTexture;
 	}
 
@@ -105,11 +107,11 @@ public class Fbo {
 	 */
 	protected void initialiseFrameBuffer(int type) {
 		createFrameBuffer();
-		createTextureAttachment();
+		colourTexture = TextureUtils.createTextureAttachment(width, height);
 		if (type == DEPTH_RENDER_BUFFER) {
 			createDepthBufferAttachment();
 		} else if (type == DEPTH_TEXTURE) {
-			createDepthTextureAttachment();
+			depthTexture = TextureUtils.createDepthTextureAttachment(width, height);
 		}
 		unbindFrameBuffer();
 	}
@@ -130,37 +132,6 @@ public class Fbo {
 		frameBuffer = GL30.glGenFramebuffers();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
 		determineDrawBuffers();
-	}
-
-	/**
-	 * Creates a texture and sets it as the colour buffer attachment for this
-	 * FBO.
-	 */
-	protected void createTextureAttachment() {
-		colourTexture = GL11.glGenTextures();
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, colourTexture);
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
-				(ByteBuffer) null);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, colourTexture,
-				0);
-	}
-
-	/**
-	 * Adds a depth buffer to the FBO in the form of a texture, which can later
-	 * be sampled.
-	 */
-	protected void createDepthTextureAttachment() {
-		depthTexture = GL11.glGenTextures();
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, depthTexture);
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL14.GL_DEPTH_COMPONENT24, width, height, 0, GL11.GL_DEPTH_COMPONENT,
-				GL11.GL_FLOAT, (ByteBuffer) null);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depthTexture, 0);
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package eu.tankernn.gameEngine.font.meshCreator;
 
+import eu.tankernn.gameEngine.loader.textures.Texture;
+
 /**
  * Represents a font. It holds the font's texture atlas as well as having the
  * ability to create the quad vertices for any text using this font.
@@ -9,28 +11,28 @@ package eu.tankernn.gameEngine.font.meshCreator;
  */
 public class FontType {
 
-	private int textureAtlas;
+	private Texture textureAtlas;
 	private TextMeshCreator loader;
 
 	/**
 	 * Creates a new font and loads up the data about each character from the
 	 * font file.
 	 * 
-	 * @param textureAtlas
+	 * @param texture
 	 *            - the ID of the font atlas texture.
 	 * @param fontFile
 	 *            - the font file containing information about each character in
 	 *            the texture atlas.
 	 */
-	public FontType(int textureAtlas, String fontFile) {
-		this.textureAtlas = textureAtlas;
+	public FontType(Texture texture, String fontFile) {
+		this.textureAtlas = texture;
 		this.loader = new TextMeshCreator(fontFile);
 	}
 
 	/**
 	 * @return The font texture atlas.
 	 */
-	public int getTextureAtlas() {
+	public Texture getTextureAtlas() {
 		return textureAtlas;
 	}
 

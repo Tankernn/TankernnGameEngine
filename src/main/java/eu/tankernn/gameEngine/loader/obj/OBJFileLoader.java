@@ -3,27 +3,24 @@ package eu.tankernn.gameEngine.loader.obj;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.util.InternalFile;
+
 public class OBJFileLoader {
 	
-	private static final String OBJ_LOC = "/";
-	
-	public static ModelData loadOBJ(String objFileName) throws FileNotFoundException {
-		InputStreamReader isr = null;
-		String objFile = OBJ_LOC + objFileName + ".obj";
+	public static ModelData loadOBJ(InternalFile objFile) throws FileNotFoundException {
+		BufferedReader reader;
 		try {
-			isr = new InputStreamReader(OBJFileLoader.class.getResourceAsStream(objFile));
-		} catch (NullPointerException e) {
-			System.err.println("File not found in res; don't use any extension");
-			throw new FileNotFoundException();
+			reader = objFile.getReader();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return null;
 		}
-		BufferedReader reader = new BufferedReader(isr);
 		String line;
 		List<Vertex> vertices = new ArrayList<Vertex>();
 		List<Vector2f> textures = new ArrayList<Vector2f>();
@@ -60,9 +57,14 @@ public class OBJFileLoader {
 				String[] vertex1 = currentLine[1].split("/");
 				String[] vertex2 = currentLine[2].split("/");
 				String[] vertex3 = currentLine[3].split("/");
-				processVertex(vertex1, vertices, indices);
-				processVertex(vertex2, vertices, indices);
-				processVertex(vertex3, vertices, indices);
+				try {
+					processVertex(vertex1, vertices, indices);
+					processVertex(vertex2, vertices, indices);
+					processVertex(vertex3, vertices, indices);
+				} catch (NumberFormatException e) {
+					System.err.println("No UV-coordinates found. Remember to unwrap in blender!");
+				}
+				
 				line = reader.readLine();
 			}
 			reader.close();
