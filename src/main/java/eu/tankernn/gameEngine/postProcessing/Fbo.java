@@ -49,7 +49,8 @@ public class Fbo {
 	 */
 	public void cleanUp() {
 		GL30.glDeleteFramebuffers(frameBuffer);
-		colourTexture.delete();
+		if (colourTexture != null)
+			colourTexture.delete();
 		if (depthTexture != null)
 			depthTexture.delete();
 		GL30.glDeleteRenderbuffers(depthBuffer);

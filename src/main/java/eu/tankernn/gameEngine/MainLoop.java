@@ -74,10 +74,10 @@ public class MainLoop {
 		Loader loader = new Loader();
 
 		// Player
-		ModelData playrModelData = OBJFileLoader.loadOBJ(new InternalFile("Soptunna.obj"));
+		ModelData playrModelData = OBJFileLoader.loadOBJ(new InternalFile("dragon.obj"));
 		RawModel playerModel = loader.loadToVAO(playrModelData);
 		TexturedModel texturedMonkeyModel = new TexturedModel(playerModel,
-				new ModelTexture(loader.loadTexture("Soptunna.png")));
+				new ModelTexture(loader.loadTexture("white.png")));
 
 		ModelTexture texture = texturedMonkeyModel.getModelTexture();
 		texture.setReflectivity(3);
@@ -173,10 +173,6 @@ public class MainLoop {
 		// #### Gui rendering ####
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
-		GuiTexture debug = new GuiTexture(0, new Vector2f(1, 1), new Vector2f(1, 1));
-
-		guis.add(debug);
-
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic.png"), 4, true);
@@ -237,8 +233,6 @@ public class MainLoop {
 
 			EnvironmentMapRenderer.renderEnvironmentMap(scene.getEnvironmentMap(), scene, player.getPosition(),
 					renderer);
-
-			debug = new GuiTexture(scene.getEnvironmentMap().textureId, new Vector2f(1, 1), new Vector2f(1, 1));
 
 			waterMaster.renderBuffers(renderer, scene);
 

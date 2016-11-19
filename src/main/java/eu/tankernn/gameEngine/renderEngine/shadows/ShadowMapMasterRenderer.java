@@ -12,6 +12,7 @@ import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.textures.Texture;
 
 /**
  * This class is in charge of using all of the classes in the shadows package to
@@ -103,7 +104,7 @@ public class ShadowMapMasterRenderer {
 	 *         same, even when the contents of the shadow map texture change
 	 *         each frame.
 	 */
-	public int getShadowMap() {
+	public Texture getShadowMap() {
 		return shadowFbo.getShadowMap();
 	}
 

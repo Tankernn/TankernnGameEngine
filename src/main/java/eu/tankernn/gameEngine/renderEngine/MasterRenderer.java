@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
@@ -90,21 +89,16 @@ public class MasterRenderer {
 	 *            The clip plane.
 	 */
 	public void renderScene(Scene scene, Vector4f clipPlane) {
-		scene.getTerrainPack().prepareRenderTerrains(this);
-		for (Entity e : scene.getEntities()) {
-			processEntity(e);
-		}
-		for (Entity e : scene.getNormalEntities()) {
-			processNormalMappedEntity(e);
-		}
+		prepareScene(scene);
 		render(scene.getLights(), scene.getCamera(), clipPlane, scene.getEnvironmentMap());
 	}
 	
 	public void renderLowQualityScene(Scene scene, ICamera camera) {
-		prepare();
+		prepareScene(scene);
+		prepareBuffer();
 		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, NO_CLIP, scene.getLights(), scene.getEnvironmentMap());
-		normalMapRenderer.render(normalMapEntities, NO_CLIP, scene.getLights(), camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, NO_CLIP, scene.getLights());
+		
 		
 	}
 
@@ -119,16 +113,25 @@ public class MasterRenderer {
 	 *            The clip plane.
 	 */
 	public void render(List<Light> lights, ICamera camera, Vector4f clipPlane, Texture environmentMap) {
-		prepare();
+		prepareBuffer();
 
 		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, clipPlane, lights, environmentMap);
 		normalMapRenderer.render(normalMapEntities, clipPlane, lights, camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, clipPlane, lights);
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);
-
+	}
+	
+	private void prepareScene(Scene scene) {
 		entities.clear();
 		terrains.clear();
 		normalMapEntities.clear();
+		scene.getTerrainPack().prepareRenderTerrains(this);
+		for (Entity e : scene.getEntities()) {
+			processEntity(e);
+		}
+		for (Entity e : scene.getNormalEntities()) {
+			processNormalMappedEntity(e);
+		}
 	}
 
 	/**
@@ -190,7 +193,7 @@ public class MasterRenderer {
 	 * 
 	 * @return
 	 */
-	public int getShadowMapTexture() {
+	public Texture getShadowMapTexture() {
 		return shadowMapRenderer.getShadowMap();
 	}
 
@@ -207,13 +210,13 @@ public class MasterRenderer {
 	/**
 	 * Prepares the current buffer for rendering.
 	 */
-	public void prepare() {
+	public void prepareBuffer() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(RED, GREEN, BLUE, 1);
 		GL11.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the
 																	// framebuffer
-		GL13.glActiveTexture(GL13.GL_TEXTURE5);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getShadowMapTexture());
+		getShadowMapTexture().bindToUnit(5);
 	}
-
+	
+	
 }
