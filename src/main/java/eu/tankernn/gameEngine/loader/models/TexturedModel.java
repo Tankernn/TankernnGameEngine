@@ -1,6 +1,7 @@
 package eu.tankernn.gameEngine.loader.models;
 
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
+import eu.tankernn.gameEngine.renderEngine.RawModel;
 
 public class TexturedModel {
 	private RawModel rawModel;

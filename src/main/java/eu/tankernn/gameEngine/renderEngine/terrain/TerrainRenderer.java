@@ -7,8 +7,6 @@ import static eu.tankernn.gameEngine.settings.Settings.RED;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
@@ -45,9 +43,9 @@ public class TerrainRenderer {
 		for (Terrain terrain : terrains) {
 			prepareTerrain(terrain);
 			loadModelMatrix(terrain);
-			GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+			GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 
-			unbindTexturedModel();
+			unbindTexturedModel(terrain);
 		}
 		shader.stop();
 	}
@@ -57,10 +55,7 @@ public class TerrainRenderer {
 	}
 
 	private void prepareTerrain(Terrain terrain) {
-		GL30.glBindVertexArray(terrain.getModel().getVaoID());
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glEnableVertexAttribArray(2);
+		terrain.getModel().bind(0, 1, 2);
 		bindTexture(terrain);
 		shader.shineDamper.loadFloat(1); // No shine
 		shader.reflectivity.loadFloat(0); // No shine
@@ -76,11 +71,8 @@ public class TerrainRenderer {
 		terrain.getBlendMap().bindToUnit(4);
 	}
 
-	private void unbindTexturedModel() {
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		GL20.glDisableVertexAttribArray(2);
-		GL30.glBindVertexArray(0);
+	private void unbindTexturedModel(Terrain terrain) {
+		terrain.getModel().unbind(0, 1, 2);
 	}
 
 	private void loadModelMatrix(Terrain terrain) {

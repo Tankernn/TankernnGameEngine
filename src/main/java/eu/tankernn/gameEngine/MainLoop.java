@@ -21,7 +21,6 @@ import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.font.meshCreator.FontType;
 import eu.tankernn.gameEngine.font.meshCreator.GUIText;
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
 import eu.tankernn.gameEngine.loader.obj.OBJFileLoader;
@@ -36,6 +35,7 @@ import eu.tankernn.gameEngine.postProcessing.MultisampleMultitargetFbo;
 import eu.tankernn.gameEngine.postProcessing.PostProcessing;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
+import eu.tankernn.gameEngine.renderEngine.RawModel;
 import eu.tankernn.gameEngine.renderEngine.Scene;
 import eu.tankernn.gameEngine.renderEngine.font.TextMaster;
 import eu.tankernn.gameEngine.renderEngine.gui.GuiRenderer;
@@ -43,6 +43,7 @@ import eu.tankernn.gameEngine.renderEngine.gui.GuiTexture;
 import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.renderEngine.water.WaterMaster;
 import eu.tankernn.gameEngine.renderEngine.water.WaterTile;
+import eu.tankernn.gameEngine.settings.Settings;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 import eu.tankernn.gameEngine.util.DistanceSorter;
@@ -54,9 +55,9 @@ public class MainLoop {
 	private static final int SEED = 1235;
 
 	// Skybox settings
-	public static final String[] TEXTURE_FILES = { "alps_rt", "alps_lf", "alps_up", "alps_dn", "alps_bk", "alps_ft" };
-	public static final String[] NIGHT_TEXTURE_FILES = { "midnight_rt", "midnight_lf", "midnight_up", "midnight_dn",
-			"midnight_bk", "midnight_ft" };
+	public static final String[] TEXTURE_FILES = { "alps_ft", "alps_bk", "alps_up", "alps_dn", "alps_rt", "alps_lf", };
+	public static final String[] NIGHT_TEXTURE_FILES = { "midnight_ft", "midnight_bk", "midnight_up", "midnight_dn",
+			"midnight_rt", "midnight_lf" };
 
 	// Water settings
 	public static final String DUDV_MAP = "waterDUDV.png";
@@ -64,14 +65,26 @@ public class MainLoop {
 
 	private static final boolean DEBUG = true;
 
+	static List<Entity> entities = new ArrayList<Entity>();
+	static List<Entity> normalMapEntities = new ArrayList<Entity>();
+	static List<Light> lights = new ArrayList<Light>();
+
 	public static void main(String[] args) throws FileNotFoundException {
-
-		List<Entity> entities = new ArrayList<Entity>();
-		List<Entity> normalMapEntities = new ArrayList<Entity>();
-		TerrainPack terrainPack = new TerrainPack();
-
 		DisplayManager.createDisplay("Tankernn Game Engine tester");
+
 		Loader loader = new Loader();
+
+		// ### Terrain textures ###
+
+		Texture backgroundTexture = loader.loadTexture("grassy.png");
+		Texture rTexture = loader.loadTexture("dirt.png");
+		Texture gTexture = loader.loadTexture("pinkFlowers.png");
+		Texture bTexture = loader.loadTexture("path.png");
+
+		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+		Texture blendMap = loader.loadTexture("blendMap.png");
+
+		TerrainPack terrainPack = new TerrainPack(loader, texturePack, blendMap, SEED);
 
 		// Player
 		ModelData playrModelData = OBJFileLoader.loadOBJ(new InternalFile("dragon.obj"));
@@ -110,18 +123,16 @@ public class MainLoop {
 		// Barrel
 		TexturedModel barrelModel = new TexturedModel(loader.loadOBJ(new InternalFile("barrel.obj")),
 				new ModelTexture(loader.loadTexture("barrel.png")));
-		
+
 		barrelModel.getModelTexture().setNormalMap(loader.loadTexture("barrelNormal.png"))
-									.setSpecularMap(loader.loadTexture("barrelS.png"))
-									.setShineDamper(10)
-									.setReflectivity(0.5f);
-		
+				.setSpecularMap(loader.loadTexture("barrelS.png")).setShineDamper(10).setReflectivity(0.5f);
+
 		Entity barrel = new Entity(barrelModel, new Vector3f(75, 10, 75), 0, 0, 0, 1f);
 		normalMapEntities.add(barrel);
 
 		Light sun = new Light(new Vector3f(100000, 150000, -70000), new Vector3f(1f, 1f, 1f));
 		Light flashLight = new Light(new Vector3f(0, 10, -10), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f));
-		List<Light> lights = new ArrayList<Light>();
+
 		lights.add(sun);
 		lights.add(flashLight);
 		lights.add(new Light(new Vector3f(10, 100, 0), new Vector3f(0, 1, 0)));
@@ -129,20 +140,7 @@ public class MainLoop {
 		lights.add(new Light(new Vector3f(30, 100, 0), new Vector3f(1, 0, 0)));
 		lights.add(new Light(new Vector3f(40, 100, 0), new Vector3f(1, 1, 0)));
 
-		// ### Terrain textures ###
-
-		Texture backgroundTexture = loader.loadTexture("grassy.png");
-		Texture rTexture = loader.loadTexture("dirt.png");
-		Texture gTexture = loader.loadTexture("pinkFlowers.png");
-		Texture bTexture = loader.loadTexture("path.png");
-
-		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-		Texture blendMap = loader.loadTexture("blendMap.png");
-
-		terrainPack.addTerrain(new Terrain(0, 1, loader, texturePack, blendMap, SEED));
-		terrainPack.addTerrain(new Terrain(1, 1, loader, texturePack, blendMap, SEED));
-		terrainPack.addTerrain(new Terrain(0, 0, loader, texturePack, blendMap, SEED));
-		terrainPack.addTerrain(new Terrain(1, 0, loader, texturePack, blendMap, SEED));
+		terrainPack.update(player);
 
 		// ### Random grass generation ###
 
@@ -190,6 +188,7 @@ public class MainLoop {
 		while (!Display.isCloseRequested()) {
 			barrel.increaseRotation(0, 1, 0);
 			player.move(terrainPack);
+			terrainPack.update(player);
 			camera.update();
 			picker.update();
 
@@ -216,7 +215,8 @@ public class MainLoop {
 					text.remove();
 					Vector3f pos = player.getPosition();
 					String textString = "X: " + Math.floor(pos.x) + " Y: " + Math.floor(pos.y) + " Z: "
-							+ Math.floor(pos.z);
+							+ Math.floor(pos.z) + " Current terrain: " + currentTerrain.getX() / Settings.TERRAIN_SIZE
+							+ ":" + currentTerrain.getZ() / Settings.TERRAIN_SIZE;
 					text = new GUIText(textString, 1, font, new Vector2f(0.5f, 0f), 0.5f, false);
 				}
 			}
@@ -264,6 +264,7 @@ public class MainLoop {
 		guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
+		terrainPack.cleanUp();
 		DisplayManager.closeDisplay();
 	}
 }

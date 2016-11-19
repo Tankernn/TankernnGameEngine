@@ -11,5 +11,7 @@ public class Settings {
 	public static final float GREEN = 0.75f;
 	public static final float BLUE = 0.8f;
 	
+	public static final float TERRAIN_SIZE = 800;
+	
 	public static final float ANISOTROPIC_FILTERING_AMOUNT = 4f;
 }

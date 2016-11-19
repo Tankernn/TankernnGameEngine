@@ -14,7 +14,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.loader.models.RawModel;
+import eu.tankernn.gameEngine.renderEngine.RawModel;
 
 public class ParticleRenderer {
 	
@@ -36,8 +36,8 @@ public class ParticleRenderer {
 		this.vbo = loader.createEmptyVBO(INSTANCE_DATA_LENGTH * MAX_INSTANCES);
 		quad = loader.loadToVAO(VERTICES, 2);
 		for (int i = 0; i < 5; i++)
-			loader.addInstacedAttribute(quad.getVaoID(), vbo, i + 1, 4, INSTANCE_DATA_LENGTH, i * 4);
-		loader.addInstacedAttribute(quad.getVaoID(), vbo, 6, 1, INSTANCE_DATA_LENGTH, 20);
+			loader.addInstacedAttribute(quad.id, vbo, i + 1, 4, INSTANCE_DATA_LENGTH, i * 4);
+		loader.addInstacedAttribute(quad.id, vbo, 6, 1, INSTANCE_DATA_LENGTH, 20);
 		shader = new ParticleShader();
 		shader.start();
 		shader.projectionMatrix.loadMatrix(projectionMatrix);
@@ -57,7 +57,7 @@ public class ParticleRenderer {
 				updateTexCoordInfo(p, vboData);
 			}
 			loader.updateVBO(vbo, vboData, buffer);
-			GL31.glDrawArraysInstanced(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount(), particleList.size());
+			GL31.glDrawArraysInstanced(GL11.GL_TRIANGLE_STRIP, 0, quad.getIndexCount(), particleList.size());
 		}
 		finishRendering();
 	}
@@ -122,7 +122,7 @@ public class ParticleRenderer {
 	
 	private void prepare() {
 		shader.start();
-		GL30.glBindVertexArray(quad.getVaoID());
+		GL30.glBindVertexArray(quad.id);
 		for (int i = 0; i < 7; i++)
 			GL20.glEnableVertexAttribArray(i);
 		GL11.glEnable(GL11.GL_BLEND);

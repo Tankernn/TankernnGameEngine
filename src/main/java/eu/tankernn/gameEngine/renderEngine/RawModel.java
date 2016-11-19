@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-public class Vao {
+public class RawModel {
 	
 	private static final int BYTES_PER_FLOAT = 4;
 
@@ -14,13 +14,18 @@ public class Vao {
 	private Vbo indexVbo;
 	private int indexCount;
 
-	public static Vao create() {
+	public static RawModel create() {
 		int id = GL30.glGenVertexArrays();
-		return new Vao(id);
+		return new RawModel(id);
 	}
 
-	private Vao(int id) {
+	private RawModel(int id) {
 		this.id = id;
+	}
+	
+	public RawModel(int id, int indexCount) {
+		this(id);
+		this.indexCount = indexCount;
 	}
 	
 	public int getIndexCount(){
@@ -49,11 +54,12 @@ public class Vao {
 		unbind();
 	}
 	
-	public void storeData(int[] indices, int vertexCount, float[]... data){
+	public RawModel storeData(int[] indices, int vertexCount, float[]... data){
 		bind();
 		storeData(vertexCount, data);
 		createIndexBuffer(indices);
 		unbind();
+		return this;
 	}
 	
 	public void delete() {

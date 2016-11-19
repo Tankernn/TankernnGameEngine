@@ -115,7 +115,7 @@ public class PlayerCamera extends Camera {
 		float zoomLevel = Mouse.getDWheel() * 0.1f;
 		distanceFromPlayer -= zoomLevel;
 		distanceFromPlayer = Math.max(distanceFromPlayer, 10);
-		distanceFromPlayer = Math.min(distanceFromPlayer, 100);
+		distanceFromPlayer = Math.min(distanceFromPlayer, 500);
 	}
 	
 	private void calculatePitch() {

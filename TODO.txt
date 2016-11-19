@@ -1,5 +1,7 @@
-Make text variables uniform/ change text rendering method
-Fix player movement
+Infinite terrain
+Multiplayer
+Modular GUIs
+ - Make text variables uniform/ change text rendering method
 
 Useful regex-expressions:
 

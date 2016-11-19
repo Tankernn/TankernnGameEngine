@@ -1,7 +1,6 @@
 package eu.tankernn.gameEngine.loader;
 
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,10 +11,10 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 
-import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
 import eu.tankernn.gameEngine.loader.obj.normalMapped.NormalMappedObjLoader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.renderEngine.RawModel;
 import eu.tankernn.gameEngine.util.InternalFile;
 /**
  * General purpose loader
@@ -25,27 +24,21 @@ import eu.tankernn.gameEngine.util.InternalFile;
 public class Loader {
 	private List<Integer> vaos = new ArrayList<Integer>();
 	private List<Integer> vbos = new ArrayList<Integer>();
+	private List<RawModel> rawModels = new ArrayList<RawModel>();
 	private List<Texture> textures = new ArrayList<Texture>();
 	
 	public RawModel loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
-		int vaoID = createVAO();
-		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, 3, vertices);
-		storeDataInAttributeList(1, 2, textureCoords);
-		storeDataInAttributeList(2, 3, normals);
-		unbindVAO();
-		return new RawModel(vaoID, indices.length);
+		RawModel model = RawModel.create();
+		model.storeData(indices, vertices.length / 3, vertices, textureCoords, normals);
+		rawModels.add(model);
+		return model;
 	}
 	
 	public RawModel loadToVAO(float[] vertices, float[] textureCoords, float[] normals, float[] tangents, int[] indices) {
-		int vaoID = createVAO();
-		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, 3, vertices);
-		storeDataInAttributeList(1, 2, textureCoords);
-		storeDataInAttributeList(2, 3, normals);
-		storeDataInAttributeList(3, 3, tangents);
-		unbindVAO();
-		return new RawModel(vaoID, indices.length);
+		RawModel model = RawModel.create();
+		model.storeData(indices, vertices.length / 3, vertices, textureCoords, normals, tangents);
+		rawModels.add(model);
+		return model;
 	}
 	
 	public int createEmptyVBO(int floatCount) {
@@ -99,7 +92,7 @@ public class Loader {
 	}
 	
 	public RawModel loadToVAO(ModelData data) {
-		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
+		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
 	}
 	/**
 	 * Loads a texture to the GPU.
@@ -138,6 +131,8 @@ public class Loader {
 			GL15.glDeleteBuffers(vbo);
 		for (Texture tex: textures)
 			tex.delete();
+		for (RawModel model : rawModels)
+			model.delete();
 	}
 	
 	private int createVAO() {
@@ -159,21 +154,6 @@ public class Loader {
 	
 	private void unbindVAO() {
 		GL30.glBindVertexArray(0);
-	}
-	
-	private void bindIndicesBuffer(int[] indices) {
-		int vboID = GL15.glGenBuffers();
-		vbos.add(vboID);
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
-		IntBuffer buffer = storeDataInIntBuffer(indices);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-	}
-	
-	private IntBuffer storeDataInIntBuffer(int[] data) {
-		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
-		buffer.put(data);
-		buffer.flip();
-		return buffer;
 	}
 	
 	private FloatBuffer storeDataInFloatBuffer(float[] data) {

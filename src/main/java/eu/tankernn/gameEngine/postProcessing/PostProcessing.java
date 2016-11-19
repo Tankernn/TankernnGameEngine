@@ -2,16 +2,14 @@ package eu.tankernn.gameEngine.postProcessing;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.postProcessing.bloom.BrightFilter;
 import eu.tankernn.gameEngine.postProcessing.bloom.CombineFilter;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.HorizontalBlur;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.VerticalBlur;
+import eu.tankernn.gameEngine.renderEngine.RawModel;
 
 public class PostProcessing {
 	
@@ -62,15 +60,13 @@ public class PostProcessing {
 	}
 	
 	private static void start() {
-		GL30.glBindVertexArray(quad.getVaoID());
-		GL20.glEnableVertexAttribArray(0);
+		quad.bind(0);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 	}
 	
 	private static void end() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL20.glDisableVertexAttribArray(0);
-		GL30.glBindVertexArray(0);
+		quad.unbind(0);
 	}
 	
 }

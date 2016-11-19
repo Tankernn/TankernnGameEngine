@@ -4,17 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Entity;
 import eu.tankernn.gameEngine.entities.Light;
-import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
+import eu.tankernn.gameEngine.renderEngine.RawModel;
 import eu.tankernn.gameEngine.settings.Settings;
 import eu.tankernn.gameEngine.util.ICamera;
 import eu.tankernn.gameEngine.util.Maths;
@@ -31,7 +29,8 @@ public class NormalMappingRenderer {
 		shader.stop();
 	}
 
-	public void render(Map<TexturedModel, List<Entity>> entities, Vector4f clipPlane, List<Light> lights, ICamera camera) {
+	public void render(Map<TexturedModel, List<Entity>> entities, Vector4f clipPlane, List<Light> lights,
+			ICamera camera) {
 		shader.start();
 		prepare(clipPlane, lights, camera);
 		for (TexturedModel model : entities.keySet()) {
@@ -39,24 +38,20 @@ public class NormalMappingRenderer {
 			List<Entity> batch = entities.get(model);
 			for (Entity entity : batch) {
 				prepareInstance(entity);
-				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
-			unbindTexturedModel();
+			unbindTexturedModel(model);
 		}
 		shader.stop();
 	}
-	
-	public void cleanUp(){
+
+	public void cleanUp() {
 		shader.cleanUp();
 	}
 
 	private void prepareTexturedModel(TexturedModel model) {
 		RawModel rawModel = model.getRawModel();
-		GL30.glBindVertexArray(rawModel.getVaoID());
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glEnableVertexAttribArray(2);
-		GL20.glEnableVertexAttribArray(3);
+		rawModel.bind(0, 1, 2, 3);
 		ModelTexture texture = model.getModelTexture();
 		shader.numberOfRows.loadFloat(texture.getNumberOfRows());
 		if (texture.hasTransparency()) {
@@ -72,13 +67,9 @@ public class NormalMappingRenderer {
 		}
 	}
 
-	private void unbindTexturedModel() {
+	private void unbindTexturedModel(TexturedModel model) {
 		MasterRenderer.enableCulling();
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		GL20.glDisableVertexAttribArray(2);
-		GL20.glDisableVertexAttribArray(3);
-		GL30.glBindVertexArray(0);
+		model.getRawModel().unbind(0, 1, 2, 3);
 	}
 
 	private void prepareInstance(Entity entity) {
@@ -90,10 +81,10 @@ public class NormalMappingRenderer {
 
 	private void prepare(Vector4f clipPlane, List<Light> lights, ICamera camera) {
 		shader.plane.loadVec4(clipPlane);
-		//need to be public variables in MasterRenderer
+		// need to be public variables in MasterRenderer
 		shader.skyColour.loadVec3(Settings.RED, Settings.GREEN, Settings.BLUE);
 		Matrix4f viewMatrix = camera.getViewMatrix();
-		
+
 		shader.loadLights(lights, viewMatrix);
 		shader.viewMatrix.loadMatrix(viewMatrix);
 	}

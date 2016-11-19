@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.loader.models.RawModel;
+import eu.tankernn.gameEngine.renderEngine.RawModel;
 import eu.tankernn.gameEngine.util.InternalFile;
 
 public class NormalMappedObjLoader {

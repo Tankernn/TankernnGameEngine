@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
@@ -71,9 +69,9 @@ public class EntityRenderer {
 			List<Entity> batch = entities.get(model);
 			for (Entity entity : batch) {
 				prepareInstance(entity);
-				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
-			unbindTexturedModel();
+			unbindTexturedModel(model);
 		}
 		shader.stop();
 	}
@@ -83,10 +81,7 @@ public class EntityRenderer {
 	}
 
 	private void prepareTexturedModel(TexturedModel model, Texture environmentMap) {
-		GL30.glBindVertexArray(model.getRawModel().getVaoID());
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glEnableVertexAttribArray(2);
+		model.getRawModel().bind(0, 1, 2);
 		ModelTexture texture = model.getModelTexture();
 		shader.numberOfRows.loadFloat(texture.getNumberOfRows());
 		if (texture.hasTransparency())
@@ -106,12 +101,9 @@ public class EntityRenderer {
 		environmentMap.bindToUnit(10);
 	}
 
-	private void unbindTexturedModel() {
+	private void unbindTexturedModel(TexturedModel model) {
 		MasterRenderer.enableCulling();
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		GL20.glDisableVertexAttribArray(2);
-		GL30.glBindVertexArray(0);
+		model.getRawModel().unbind(0, 1, 2);
 	}
 
 	private void prepareInstance(Entity entity) {

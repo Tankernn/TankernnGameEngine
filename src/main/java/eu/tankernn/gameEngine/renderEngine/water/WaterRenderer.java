@@ -11,9 +11,9 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.loader.models.RawModel;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
+import eu.tankernn.gameEngine.renderEngine.RawModel;
 import eu.tankernn.gameEngine.util.Maths;
 
 public class WaterRenderer {
@@ -48,7 +48,7 @@ public class WaterRenderer {
 					new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
 					WaterTile.TILE_SIZE);
 			shader.modelMatrix.loadMatrix(modelMatrix);
-			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getVertexCount());
+			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getIndexCount());
 		}
 		unbind();
 	}
@@ -61,8 +61,7 @@ public class WaterRenderer {
 		moveFactor %= 1;
 		shader.moveFactor.loadFloat(moveFactor);
 		shader.loadLights(lights);
-		GL30.glBindVertexArray(quad.getVaoID());
-		GL20.glEnableVertexAttribArray(0);
+		quad.bind(0);
 		buffers.getReflectionTexture().bindToUnit(0);
 		buffers.getRefractionTexture().bindToUnit(1);
 		dudvTexture.bindToUnit(2);
