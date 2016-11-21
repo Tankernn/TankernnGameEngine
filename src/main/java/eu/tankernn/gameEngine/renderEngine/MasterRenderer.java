@@ -21,7 +21,8 @@ import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.entities.EntityRenderer;
-import eu.tankernn.gameEngine.renderEngine.normalMap.NormalMappingRenderer;
+import eu.tankernn.gameEngine.renderEngine.entities.EntityShader;
+import eu.tankernn.gameEngine.renderEngine.entities.normalMap.NormalMappingRenderer;
 import eu.tankernn.gameEngine.renderEngine.shadows.ShadowMapMasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.renderEngine.skybox.SkyboxRenderer;
@@ -37,7 +38,7 @@ import eu.tankernn.gameEngine.util.ICamera;
 public class MasterRenderer {
 	private static final Vector4f NO_CLIP = new Vector4f(0, 0, 0, 1);
 	
-	private EntityRenderer entityRenderer;
+	private EntityRenderer<EntityShader> entityRenderer;
 	private TerrainRenderer terrainRenderer;
 	private SkyboxRenderer skyboxRenderer;
 	private NormalMappingRenderer normalMapRenderer;
@@ -61,7 +62,7 @@ public class MasterRenderer {
 		normalMapRenderer = new NormalMappingRenderer(camera.getProjectionMatrix());
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
 		skyboxRenderer = new SkyboxRenderer(loader, camera.getProjectionMatrix(), skybox);
-		entityRenderer = new EntityRenderer(camera.getProjectionMatrix());
+		entityRenderer = new EntityRenderer<EntityShader>(camera.getProjectionMatrix());
 	}
 
 	/**

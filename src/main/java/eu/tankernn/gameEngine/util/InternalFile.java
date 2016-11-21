@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class InternalFile {
 
@@ -60,12 +62,12 @@ public class InternalFile {
 		return in;
 	}
 
-	public BufferedReader getReader() throws Exception {
+	public BufferedReader getReader() throws IOException {
 		try {
 			InputStreamReader isr = new InputStreamReader(getInputStream());
 			BufferedReader reader = new BufferedReader(isr);
 			return reader;
-		} catch (Exception e) {
+		} catch (IOException e) {
 			System.err.println("Couldn't get reader for " + path);
 			throw e;
 		}
@@ -73,6 +75,10 @@ public class InternalFile {
 
 	public String getName() {
 		return name;
+	}
+	
+	public static InternalFile[] fromFilenames(String dir, String[] filenames, String extension) {
+		return Arrays.asList(filenames).stream().map(f -> new InternalFile(dir + FILE_SEPARATOR + f + "." + extension)).toArray(size -> new InternalFile[size]);
 	}
 
 }

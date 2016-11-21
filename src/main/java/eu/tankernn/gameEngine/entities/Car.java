@@ -14,18 +14,17 @@ public class Car extends Player {
 	private static final float MAX_SPEED = 100.0f, ACCELERATION = 20.0f, DECELERATION = 10.0f, BRAKE = 40.0f,
 			TURN_FORCE = 160.0f;
 
-	public Car(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale,
-			TerrainPack terrainPack) {
-		super(model, position, rotX, rotY, rotZ, scale, terrainPack);
+	public Car(TexturedModel model, Vector3f position, Vector3f rotation, float scale, TerrainPack terrainPack) {
+		super(model, position, rotation, scale, terrainPack);
 	}
 
 	@Override
-	public void move(TerrainPack terrainPack) {
+	public void move() {
 		checkInputs();
-		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+		super.increaseRotation(new Vector3f(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0));
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
-		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
-		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
+		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotation().y)));
+		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotation().y)));
 		super.increasePosition(dx, 0, dz);
 
 		upwardsSpeed += Physics.GRAVITY * DisplayManager.getFrameTimeSeconds();
@@ -71,7 +70,7 @@ public class Car extends Player {
 					this.currentTurnSpeed = 0;
 			}
 		}
-		
+
 		this.currentTurnSpeed = Math.min(currentTurnSpeed, TURN_MAX);
 		this.currentTurnSpeed = Math.max(currentTurnSpeed, -TURN_MAX);
 

@@ -22,7 +22,6 @@ import eu.tankernn.gameEngine.font.meshCreator.FontType;
 import eu.tankernn.gameEngine.font.meshCreator.GUIText;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
-import eu.tankernn.gameEngine.loader.obj.ModelData;
 import eu.tankernn.gameEngine.loader.obj.OBJFileLoader;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
@@ -87,8 +86,7 @@ public class MainLoop {
 		TerrainPack terrainPack = new TerrainPack(loader, texturePack, blendMap, SEED);
 
 		// Player
-		ModelData playrModelData = OBJFileLoader.loadOBJ(new InternalFile("dragon.obj"));
-		RawModel playerModel = loader.loadToVAO(playrModelData);
+		RawModel playerModel = loader.loadOBJ(new InternalFile("dragon.obj"));
 		TexturedModel texturedMonkeyModel = new TexturedModel(playerModel,
 				new ModelTexture(loader.loadTexture("white.png")));
 
@@ -96,20 +94,15 @@ public class MainLoop {
 		texture.setReflectivity(3);
 		texture.setShineDamper(10);
 
-		Entity entity = new Entity(texturedMonkeyModel, new Vector3f(0, 0, 20), 0, 0, 0, 1);
+		Entity entity = new Entity(texturedMonkeyModel, new Vector3f(0, 0, 20), new Vector3f(0, 0, 0), 1);
 		entities.add(entity);
 		TexturedModel monkey = new TexturedModel(playerModel, new ModelTexture(loader.loadTexture("white.png")));
-		Player player = new Player(monkey, new Vector3f(10, 0, 50), 0, 0, 0, 1, terrainPack);
+		Player player = new Player(monkey, new Vector3f(10, 0, 50), new Vector3f(0, 0, 0), 1, terrainPack);
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
 
-		InternalFile[] dayTextures = new InternalFile[TEXTURE_FILES.length],
-				nightTextures = new InternalFile[NIGHT_TEXTURE_FILES.length];
-
-		for (int i = 0; i < TEXTURE_FILES.length; i++)
-			dayTextures[i] = new InternalFile("skybox/" + TEXTURE_FILES[i] + ".png");
-		for (int i = 0; i < NIGHT_TEXTURE_FILES.length; i++)
-			nightTextures[i] = new InternalFile("skybox/" + NIGHT_TEXTURE_FILES[i] + ".png");
+		InternalFile[] dayTextures = InternalFile.fromFilenames("skybox", TEXTURE_FILES, "png"),
+				nightTextures = InternalFile.fromFilenames("skybox", NIGHT_TEXTURE_FILES, "png");
 
 		Skybox skybox = new Skybox(Texture.newCubeMap(dayTextures, 500), Texture.newCubeMap(nightTextures, 500), 500);
 
@@ -119,15 +112,16 @@ public class MainLoop {
 
 		FontType font = new FontType(loader.loadTexture("arial.png"), "arial.fnt");
 		GUIText text = new GUIText("Sample text", 3, font, new Vector2f(0.5f, 0.5f), 0.5f, true).setColor(1, 1, 1);
+		TextMaster.loadText(text);
 
 		// Barrel
-		TexturedModel barrelModel = new TexturedModel(loader.loadOBJ(new InternalFile("barrel.obj")),
+		TexturedModel barrelModel = new TexturedModel(loader.loadNormalMappedOBJ(new InternalFile("barrel.obj")),
 				new ModelTexture(loader.loadTexture("barrel.png")));
 
 		barrelModel.getModelTexture().setNormalMap(loader.loadTexture("barrelNormal.png"))
 				.setSpecularMap(loader.loadTexture("barrelS.png")).setShineDamper(10).setReflectivity(0.5f);
 
-		Entity barrel = new Entity(barrelModel, new Vector3f(75, 10, 75), 0, 0, 0, 1f);
+		Entity barrel = new Entity(barrelModel, new Vector3f(75, 10, 75), new Vector3f(0, 0, 0), 1f);
 		normalMapEntities.add(barrel);
 
 		Light sun = new Light(new Vector3f(100000, 150000, -70000), new Vector3f(1f, 1f, 1f));
@@ -135,10 +129,6 @@ public class MainLoop {
 
 		lights.add(sun);
 		lights.add(flashLight);
-		lights.add(new Light(new Vector3f(10, 100, 0), new Vector3f(0, 1, 0)));
-		lights.add(new Light(new Vector3f(20, 100, 0), new Vector3f(0, 0, 1)));
-		lights.add(new Light(new Vector3f(30, 100, 0), new Vector3f(1, 0, 0)));
-		lights.add(new Light(new Vector3f(40, 100, 0), new Vector3f(1, 1, 0)));
 
 		terrainPack.update(player);
 
@@ -153,15 +143,17 @@ public class MainLoop {
 		grassModel.getModelTexture().setReflectivity(0.5f);
 		grassModel.getModelTexture().setSpecularMap(loader.loadTexture("lanternS.png"));
 
-		Random rand = new Random();
+		Random rand = new Random(SEED);
 
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 100; i++) {
 			float x = rand.nextFloat() * 1000;
 			float z = rand.nextFloat() * 1000;
 
 			entities.add(new Entity(grassModel, rand.nextInt(4),
-					new Vector3f(x, terrainPack.getTerrainHeightByWorldPos(x, z), z), 0, 0, 0, 1));
+					new Vector3f(x, terrainPack.getTerrainHeightByWorldPos(x, z), z), new Vector3f(), 1));
 		}
+		
+		terrainPack.addWaitingForTerrainHeight(entities.toArray(new Entity[entities.size()]));
 
 		// #### Water rendering ####
 		WaterMaster waterMaster = new WaterMaster(loader, DUDV_MAP, NORMAL_MAP, camera);
@@ -170,7 +162,6 @@ public class MainLoop {
 
 		// #### Gui rendering ####
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
-
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic.png"), 4, true);
@@ -186,8 +177,8 @@ public class MainLoop {
 		MousePicker picker = new MousePicker(camera, camera.getProjectionMatrix(), terrainPack, entities, guis);
 
 		while (!Display.isCloseRequested()) {
-			barrel.increaseRotation(0, 1, 0);
-			player.move(terrainPack);
+			barrel.increaseRotation(new Vector3f(0, 1, 0));
+			player.move();
 			terrainPack.update(player);
 			camera.update();
 			picker.update();

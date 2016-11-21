@@ -12,6 +12,8 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 
 import eu.tankernn.gameEngine.loader.obj.ModelData;
+import eu.tankernn.gameEngine.loader.obj.OBJFileLoader;
+import eu.tankernn.gameEngine.loader.obj.normalMapped.ModelDataNM;
 import eu.tankernn.gameEngine.loader.obj.normalMapped.NormalMappedObjLoader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.RawModel;
@@ -94,6 +96,11 @@ public class Loader {
 	public RawModel loadToVAO(ModelData data) {
 		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
 	}
+	
+	public RawModel loadToVAO(ModelDataNM data) {
+		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), data.getIndices());
+	}
+	
 	/**
 	 * Loads a texture to the GPU.
 	 * @param filename The path, relative to the root of the jar file, of the file to load.
@@ -162,8 +169,12 @@ public class Loader {
 		buffer.flip();
 		return buffer;
 	}
-
+	
 	public RawModel loadOBJ(InternalFile objFile) {
-		return NormalMappedObjLoader.loadOBJ(objFile, this);
+		return this.loadToVAO(OBJFileLoader.loadOBJ(objFile));
+	}
+	
+	public RawModel loadNormalMappedOBJ(InternalFile objFile) {
+		return this.loadToVAO(NormalMappedObjLoader.loadOBJ(objFile));
 	}
 }

@@ -3,6 +3,7 @@ package eu.tankernn.gameEngine.terrains;
 import static eu.tankernn.gameEngine.settings.Settings.TERRAIN_SIZE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import eu.tankernn.gameEngine.util.IPositionable;
 public class TerrainPack {
 	private Map<Pair<Integer, Integer>, Terrain> terrains = new HashMap<Pair<Integer, Integer>, Terrain>();
 	private List<Future<TerrainModelData>> waitingData = new ArrayList<Future<TerrainModelData>>();
+	private List<IPositionable> waitingForHeight = new ArrayList<IPositionable>();
 	private ExecutorService executor = Executors.newCachedThreadPool();
 	private int seed;
 	private Loader loader;
@@ -86,10 +88,6 @@ public class TerrainPack {
 		int newX = currentTerrain.getLeft();
 		int newZ = currentTerrain.getRight();
 
-		if (terrains.isEmpty()) {
-			terrains.put(Pair.of(newX, newZ), new Terrain(newX, newZ, loader, texturePack, blendMap, seed));
-		}
-
 		for (Future<TerrainModelData> futureData : waitingData) {
 			if (futureData.isDone()) {
 				System.out.println("Adding terrain.");
@@ -102,11 +100,19 @@ public class TerrainPack {
 				}
 			}
 		}
+		
+		waitingForHeight.removeIf(p -> {
+			if (!terrains.containsKey(getGridPosByWorldPos(p.getPosition().x, p.getPosition().z)))
+				return false;
+			p.getPosition().setY(getTerrainHeightByWorldPos(p.getPosition().x, p.getPosition().z));
+			return true;
+		});
+		
 		// FIXME If a task finishes between the loop above and this statement,
 		// the terrain will never be added.
 		waitingData.removeIf(f -> f.isDone());
 
-		if (lastX != newX || lastZ != newZ) {
+		if (lastX != newX || lastZ != newZ || terrains.isEmpty()) {
 			List<Pair<Integer, Integer>> toGenerate = new ArrayList<Pair<Integer, Integer>>();
 
 			for (int x = newX - 1; x <= newX + 1; x++)
@@ -144,6 +150,10 @@ public class TerrainPack {
 
 	public void cleanUp() {
 		executor.shutdown();
+	}
+
+	public void addWaitingForTerrainHeight(IPositionable... positionables) {
+		waitingForHeight.addAll(Arrays.asList(positionables));
 	}
 
 }

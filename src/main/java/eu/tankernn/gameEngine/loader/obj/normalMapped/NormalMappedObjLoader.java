@@ -8,13 +8,11 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
 import eu.tankernn.gameEngine.util.InternalFile;
 
 public class NormalMappedObjLoader {
 
-	public static RawModel loadOBJ(InternalFile objFile, Loader loader) {
+	public static ModelDataNM loadOBJ(InternalFile objFile) {
 		BufferedReader reader;
 		try {
 			reader = objFile.getReader();
@@ -73,11 +71,11 @@ public class NormalMappedObjLoader {
 		float[] texturesArray = new float[vertices.size() * 2];
 		float[] normalsArray = new float[vertices.size() * 3];
 		float[] tangentsArray = new float[vertices.size() * 3];
-		/*float furthest = */convertDataToArrays(vertices, textures, normals, verticesArray,
+		float furthest = convertDataToArrays(vertices, textures, normals, verticesArray,
 				texturesArray, normalsArray, tangentsArray);
 		int[] indicesArray = convertIndicesListToArray(indices);
-
-		return loader.loadToVAO(verticesArray, texturesArray, normalsArray, tangentsArray, indicesArray);
+		
+		return new ModelDataNM(verticesArray, texturesArray, normalsArray, tangentsArray, indicesArray, furthest);
 	}
 
 	//NEW 

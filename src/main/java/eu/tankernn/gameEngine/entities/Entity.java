@@ -11,29 +11,25 @@ public class Entity implements IPositionable {
 	
 	private TexturedModel model;
 	private Vector3f position;
-	private float rotX, rotY, rotZ;
+	private Vector3f rotation;
 	private float scale;
 	private AABB boundingBox;
 	
 	private int textureIndex = 0;
 	
-	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	public Entity(TexturedModel model, Vector3f position, Vector3f rotation, float scale) {
 		this.model = model;
 		this.position = position;
-		this.rotX = rotX;
-		this.rotY = rotY;
-		this.rotZ = rotZ;
+		this.rotation = rotation;
 		this.scale = scale;
 		this.boundingBox = new AABB(position, SIZE);
 	}
 	
-	public Entity(TexturedModel model, int index, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	public Entity(TexturedModel model, int index, Vector3f position, Vector3f rotation, float scale) {
 		this.model = model;
 		this.textureIndex = index;
 		this.position = position;
-		this.rotX = rotX;
-		this.rotY = rotY;
-		this.rotZ = rotZ;
+		this.rotation = rotation;
 		this.scale = scale;
 		this.boundingBox = new AABB(position, SIZE);
 	}
@@ -55,10 +51,8 @@ public class Entity implements IPositionable {
 		updateBoundingBox();
 	}
 	
-	public void increaseRotation(float dx, float dy, float dz) {
-		this.rotX += dx;
-		this.rotY += dy;
-		this.rotZ += dz;
+	public void increaseRotation(Vector3f deltaRotation) {
+		Vector3f.add(this.rotation, deltaRotation, this.rotation);
 	}
 	
 	private void updateBoundingBox() {
@@ -81,28 +75,8 @@ public class Entity implements IPositionable {
 		this.position = position;
 	}
 	
-	public float getRotX() {
-		return rotX;
-	}
-	
-	public void setRotX(float rotX) {
-		this.rotX = rotX;
-	}
-	
-	public float getRotY() {
-		return rotY;
-	}
-	
-	public void setRotY(float rotY) {
-		this.rotY = rotY;
-	}
-	
-	public float getRotZ() {
-		return rotZ;
-	}
-	
-	public void setRotZ(float rotZ) {
-		this.rotZ = rotZ;
+	public Vector3f getRotation() {
+		return rotation;
 	}
 	
 	public float getScale() {

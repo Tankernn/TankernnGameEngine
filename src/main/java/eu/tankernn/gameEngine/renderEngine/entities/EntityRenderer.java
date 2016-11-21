@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Entity;
@@ -26,8 +27,8 @@ import eu.tankernn.gameEngine.util.Maths;
  * @author Frans
  *
  */
-public class EntityRenderer {
-	private EntityShader shader;
+public class EntityRenderer<S extends EntityShader> {
+	protected S shader;
 
 	/**
 	 * Starts shader and loads initial values.
@@ -37,8 +38,13 @@ public class EntityRenderer {
 	 * @param projectionMatrix
 	 *            The projection matrix to use when rendering entities
 	 */
+	@SuppressWarnings("unchecked")
 	public EntityRenderer(Matrix4f projectionMatrix) {
-		this.shader = new EntityShader();
+		this((S) new EntityShader(), projectionMatrix);
+	}
+	
+	protected EntityRenderer(S shader, Matrix4f projectionMatrix) {
+		this.shader = shader;
 		shader.start();
 		shader.projectionMatrix.loadMatrix(projectionMatrix);
 		shader.connectTextureUnits();
@@ -106,9 +112,10 @@ public class EntityRenderer {
 		model.getRawModel().unbind(0, 1, 2);
 	}
 
-	private void prepareInstance(Entity entity) {
-		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(),
-				entity.getRotY(), entity.getRotZ(), entity.getScale());
+	protected void prepareInstance(Entity entity) {
+		Vector3f rot = entity.getRotation();
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), rot.x, rot.y, rot.z,
+				entity.getScale());
 		shader.transformationMatrix.loadMatrix(transformationMatrix);
 		shader.offset.loadVec2(entity.getTextureXOffset(), entity.getTextureYOffset());
 	}

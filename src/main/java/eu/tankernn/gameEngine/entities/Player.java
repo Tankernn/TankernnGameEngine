@@ -16,7 +16,7 @@ public class Player extends Entity {
 	protected static final float TURN_MAX = 160;
 	private static final float JUMP_POWER = 30;
 	
-	private TerrainPack terrainPack;
+	protected TerrainPack terrainPack;
 	
 	protected float currentSpeed = 0;
 	protected float currentTurnSpeed = 0;
@@ -25,17 +25,17 @@ public class Player extends Entity {
 	
 	private float height = 2.0f;
 	
-	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale, TerrainPack terrainPack) {
-		super(model, position, rotX, rotY, rotZ, scale);
+	public Player(TexturedModel model, Vector3f position, Vector3f rotation, float scale, TerrainPack terrainPack) {
+		super(model, position, rotation, scale);
 		this.terrainPack = terrainPack;
 	}
 	
-	public void move(TerrainPack terrainPack) {
+	public void move() {
 		checkInputs();
-		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+		super.increaseRotation(new Vector3f(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0));
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
-		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
-		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
+		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotation().y)));
+		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotation().y)));
 		super.increasePosition(dx, 0, dz);
 		upwardsSpeed += Physics.GRAVITY * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
@@ -51,6 +51,8 @@ public class Player extends Entity {
 			upwardsSpeed = 0;
 			this.isInAir = false;
 			super.getPosition().y = terrainHeight;
+		} else {
+			this.isInAir = true;
 		}
 	}
 	

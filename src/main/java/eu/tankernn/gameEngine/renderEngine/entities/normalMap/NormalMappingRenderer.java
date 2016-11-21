@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.renderEngine.normalMap;
+package eu.tankernn.gameEngine.renderEngine.entities.normalMap;
 
 import java.util.List;
 import java.util.Map;
@@ -13,20 +13,14 @@ import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.entities.EntityRenderer;
 import eu.tankernn.gameEngine.settings.Settings;
 import eu.tankernn.gameEngine.util.ICamera;
-import eu.tankernn.gameEngine.util.Maths;
 
-public class NormalMappingRenderer {
-
-	private NormalMappingShader shader;
+public class NormalMappingRenderer extends EntityRenderer<NormalMappingShader> {
 
 	public NormalMappingRenderer(Matrix4f projectionMatrix) {
-		this.shader = new NormalMappingShader();
-		shader.start();
-		shader.projectionMatrix.loadMatrix(projectionMatrix);
-		shader.connectTextureUnits();
-		shader.stop();
+		super(new NormalMappingShader(), projectionMatrix);
 	}
 
 	public void render(Map<TexturedModel, List<Entity>> entities, Vector4f clipPlane, List<Light> lights,
@@ -43,10 +37,6 @@ public class NormalMappingRenderer {
 			unbindTexturedModel(model);
 		}
 		shader.stop();
-	}
-
-	public void cleanUp() {
-		shader.cleanUp();
 	}
 
 	private void prepareTexturedModel(TexturedModel model) {
@@ -70,13 +60,6 @@ public class NormalMappingRenderer {
 	private void unbindTexturedModel(TexturedModel model) {
 		MasterRenderer.enableCulling();
 		model.getRawModel().unbind(0, 1, 2, 3);
-	}
-
-	private void prepareInstance(Entity entity) {
-		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(),
-				entity.getRotY(), entity.getRotZ(), entity.getScale());
-		shader.transformationMatrix.loadMatrix(transformationMatrix);
-		shader.offset.loadVec2(entity.getTextureXOffset(), entity.getTextureYOffset());
 	}
 
 	private void prepare(Vector4f clipPlane, List<Light> lights, ICamera camera) {

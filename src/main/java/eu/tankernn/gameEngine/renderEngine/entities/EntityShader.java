@@ -18,6 +18,7 @@ public class EntityShader extends ShaderProgram {
 	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
 	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");
 	protected UniformViewMatrix viewMatrix = new UniformViewMatrix("viewMatrix");
+	
 	protected UniformFloat shineDamper = new UniformFloat("shineDamper");
 	protected UniformFloat reflectivity = new UniformFloat("reflectivity");
 	protected UniformBoolean useFakeLighting = new UniformBoolean("useFakeLighting");
@@ -41,7 +42,11 @@ public class EntityShader extends ShaderProgram {
 				usesSpecularMap, modelTexture, cameraPosition, enviroMap);
 	}
 
-	public void connectTextureUnits() {
+	public EntityShader(String vertexFile, String fragmentFile, String... string) {
+		super(vertexFile, fragmentFile, string);
+	}
+
+	protected void connectTextureUnits() {
 		shadowMap.loadTexUnit(5);
 		modelTexture.loadTexUnit(0);
 		specularMap.loadTexUnit(1);

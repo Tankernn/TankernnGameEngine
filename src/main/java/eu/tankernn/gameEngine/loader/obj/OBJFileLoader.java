@@ -1,7 +1,6 @@
 package eu.tankernn.gameEngine.loader.obj;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +12,11 @@ import eu.tankernn.gameEngine.util.InternalFile;
 
 public class OBJFileLoader {
 	
-	public static ModelData loadOBJ(InternalFile objFile) throws FileNotFoundException {
+	public static ModelData loadOBJ(InternalFile objFile) {
 		BufferedReader reader;
 		try {
 			reader = objFile.getReader();
-		} catch (Exception e1) {
+		} catch (IOException e1) {
 			e1.printStackTrace();
 			return null;
 		}

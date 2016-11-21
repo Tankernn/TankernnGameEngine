@@ -6,6 +6,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 
@@ -30,11 +31,12 @@ public class PlayerCamera extends Camera {
 	 */
 	@Override
 	public void update() {
+		Vector3f rot = player.getRotation();
 		calculateZoom();
 		if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
 			if (!this.isLocked) { // Happens first frame mouse held down
 				this.isLocked = true;
-				this.lockedPosition = player.getRotY();
+				this.lockedPosition = rot.y;
 			}
 			hideCursor();
 			
@@ -43,13 +45,13 @@ public class PlayerCamera extends Camera {
 			
 			if (Mouse.isButtonDown(1)) { // Right click
 				float targetRot = this.angleAroundPlayer + this.lockedPosition;
-				float delta = targetRot - player.getRotY();
-				player.increaseRotation(0, delta, 0);
+				float delta = targetRot - rot.y;
+				player.increaseRotation(new Vector3f(0, delta, 0));
 			}
 		} else {
 			if (this.isLocked) {
 				this.isLocked = false;
-				this.angleAroundPlayer -= (player.getRotY() - lockedPosition);
+				this.angleAroundPlayer -= (rot.y - lockedPosition);
 			}
 			showCursor();
 		}
@@ -65,7 +67,7 @@ public class PlayerCamera extends Camera {
 		if (this.isLocked) {
 			this.yaw = 180 - (lockedPosition + angleAroundPlayer);
 		} else
-			this.yaw = 180 - (player.getRotY() + angleAroundPlayer);
+			this.yaw = 180 - (rot.y + angleAroundPlayer);
 		
 		super.update();
 	}
@@ -102,7 +104,7 @@ public class PlayerCamera extends Camera {
 		if (this.isLocked)
 			theta = lockedPosition + angleAroundPlayer;
 		else
-			theta = player.getRotY() + angleAroundPlayer;
+			theta = player.getRotation().y + angleAroundPlayer;
 		float offsetX = (float) (horizDistance * Math.sin(Math.toRadians(theta)));
 		float offsetZ = (float) (horizDistance * Math.cos(Math.toRadians(theta)));
 		position.x = player.getPosition().x - offsetX;

@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.renderEngine.normalMap;
+package eu.tankernn.gameEngine.renderEngine.entities.normalMap;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Light;
-import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
+import eu.tankernn.gameEngine.renderEngine.entities.EntityShader;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformBoolean;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
@@ -15,15 +15,16 @@ import eu.tankernn.gameEngine.renderEngine.shaders.UniformSampler;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec2;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec3;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec4;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformViewMatrix;
 
-public class NormalMappingShader extends ShaderProgram {
+public class NormalMappingShader extends EntityShader {
 
-	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/renderEngine/normalMap/normalMapVShader.glsl";
-	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/renderEngine/normalMap/normalMapFShader.glsl";
+	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/renderEngine/entities/normalMap/normalMapVShader.glsl";
+	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/renderEngine/entities/normalMap/normalMapFShader.glsl";
 
 	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
 	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");
-	protected UniformMatrix viewMatrix = new UniformMatrix("viewMatrix");
+	protected UniformViewMatrix viewMatrix = new UniformViewMatrix("viewMatrix");
 	private UniformVec3[] lightPositionEyeSpace;
 	protected UniformFloat shineDamper = new UniformFloat("shineDamper");
 	protected UniformFloat reflectivity = new UniformFloat("reflectivity");

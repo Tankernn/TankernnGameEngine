@@ -12,8 +12,10 @@ public class TankernnGame {
 	protected MasterRenderer renderer;
 	protected WaterMaster waterMaster;
 	protected Camera camera;
+	protected Skybox sky;
 	
 	public TankernnGame(Skybox skybox, String dudvMap, String normalMap) {
+		this.sky = skybox;
 		loader = new Loader();
 		camera = new Camera();
 		renderer = new MasterRenderer(loader, camera, skybox);
