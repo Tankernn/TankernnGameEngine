@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import eu.tankernn.gameEngine.loader.textures.TextureUtils;
-import eu.tankernn.gameEngine.renderEngine.DisplayManager;
+import eu.tankernn.gameEngine.settings.Settings;
 
 public class MultisampleMultitargetFbo extends Fbo {
 	
@@ -46,7 +46,7 @@ public class MultisampleMultitargetFbo extends Fbo {
 	protected int createMultisampleColorAttachment(int attachment) {
 		int colorBuffer = GL30.glGenRenderbuffers();
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, colorBuffer);
-		GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, DisplayManager.MULTISAMPLING, GL11.GL_RGBA8, width, height);
+		GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, Settings.MULTISAMPLING, GL11.GL_RGBA8, width, height);
 		GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, attachment, GL30.GL_RENDERBUFFER,
 				colorBuffer);
 		return colorBuffer;
@@ -56,7 +56,7 @@ public class MultisampleMultitargetFbo extends Fbo {
 	protected void createDepthBufferAttachment() {
 		depthBuffer = GL30.glGenRenderbuffers();
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, depthBuffer);
-		GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, DisplayManager.MULTISAMPLING, GL14.GL_DEPTH_COMPONENT24, width, height);
+		GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, Settings.MULTISAMPLING, GL14.GL_DEPTH_COMPONENT24, width, height);
 		GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER,
 				depthBuffer);
 	}

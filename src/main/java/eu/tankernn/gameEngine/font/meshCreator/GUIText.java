@@ -3,8 +3,6 @@ package eu.tankernn.gameEngine.font.meshCreator;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.renderEngine.font.TextMaster;
-
 /**
  * Represents a piece of text in the game.
  * 
@@ -14,6 +12,8 @@ import eu.tankernn.gameEngine.renderEngine.font.TextMaster;
 public class GUIText {
 
 	private String textString;
+	private boolean dirty;
+	
 	private float fontSize;
 
 	private int textMeshVao;
@@ -61,14 +61,6 @@ public class GUIText {
 		this.position = position;
 		this.lineMaxSize = maxLineLength;
 		this.centerText = centered;
-		TextMaster.loadText(this);
-	}
-
-	/**
-	 * Remove the text from the screen.
-	 */
-	public void remove() {
-		TextMaster.removeText(this);
 	}
 
 	/**
@@ -184,5 +176,13 @@ public class GUIText {
 	protected String getTextString() {
 		return textString;
 	}
-
+	
+	public void setText(String text) {
+		this.textString = text;
+		this.dirty = true;
+	}
+	
+	public boolean isDirty() {
+		return this.dirty;
+	}
 }

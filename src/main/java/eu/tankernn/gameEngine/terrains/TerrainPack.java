@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import eu.tankernn.gameEngine.MainLoop;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.loader.textures.Texture;
@@ -23,7 +24,7 @@ import eu.tankernn.gameEngine.util.IPositionable;
 
 public class TerrainPack {
 	private Map<Pair<Integer, Integer>, Terrain> terrains = new HashMap<Pair<Integer, Integer>, Terrain>();
-	private List<Future<TerrainModelData>> waitingData = new ArrayList<Future<TerrainModelData>>();
+	private Map<Pair<Integer, Integer>, Future<TerrainModelData>> waitingData = new HashMap<Pair<Integer, Integer>, Future<TerrainModelData>>();
 	private List<IPositionable> waitingForHeight = new ArrayList<IPositionable>();
 	private ExecutorService executor = Executors.newCachedThreadPool();
 	private int seed;
@@ -88,29 +89,28 @@ public class TerrainPack {
 		int newX = currentTerrain.getLeft();
 		int newZ = currentTerrain.getRight();
 
-		for (Future<TerrainModelData> futureData : waitingData) {
-			if (futureData.isDone()) {
-				System.out.println("Adding terrain.");
+		waitingData.values().removeIf(f -> {
+			if (f.isDone()) {
+				if (MainLoop.DEBUG)
+					System.out.println("Adding terrain");
 				try {
-					TerrainModelData data = futureData.get();
+					TerrainModelData data = f.get();
 					terrains.put(Pair.of(data.getGridX(), data.getGridZ()),
 							new Terrain(data.getGridX(), data.getGridZ(), loader, texturePack, blendMap, data));
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
 				}
-			}
-		}
-		
+				return true;
+			} else
+				return false;
+		});
+
 		waitingForHeight.removeIf(p -> {
 			if (!terrains.containsKey(getGridPosByWorldPos(p.getPosition().x, p.getPosition().z)))
 				return false;
 			p.getPosition().setY(getTerrainHeightByWorldPos(p.getPosition().x, p.getPosition().z));
 			return true;
 		});
-		
-		// FIXME If a task finishes between the loop above and this statement,
-		// the terrain will never be added.
-		waitingData.removeIf(f -> f.isDone());
 
 		if (lastX != newX || lastZ != newZ || terrains.isEmpty()) {
 			List<Pair<Integer, Integer>> toGenerate = new ArrayList<Pair<Integer, Integer>>();
@@ -120,7 +120,7 @@ public class TerrainPack {
 					toGenerate.add(Pair.of(x, z));
 
 			for (Pair<Integer, Integer> pair : toGenerate) {
-				if (terrains.containsKey(pair) | pair.getLeft() < 0 | pair.getRight() < 0)
+				if (waitingData.containsKey(pair) | terrains.containsKey(pair) | pair.getLeft() < 0 | pair.getRight() < 0)
 					continue;
 
 				Callable<TerrainModelData> task = new Callable<TerrainModelData>() {
@@ -130,18 +130,16 @@ public class TerrainPack {
 					}
 				};
 
-				waitingData.add(executor.submit(task));
+				waitingData.put(pair, executor.submit(task));
 			}
-			
+
 			for (Pair<Integer, Integer> pair : terrains.keySet()) {
 				if (!toGenerate.contains(pair)) {
 					terrains.get(pair).delete();
 				}
 			}
-			
+
 			terrains.keySet().retainAll(toGenerate);
-			
-			System.out.println(terrains.size());
 
 			lastX = newX;
 			lastZ = newZ;

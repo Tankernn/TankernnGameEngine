@@ -13,8 +13,9 @@ public class ParticleShader extends ShaderProgram {
 	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");
 
 	public ParticleShader() {
-		//																 0,					1,						5,				6
-		super(VERTEX_FILE, FRAGMENT_FILE, "position", "modelViewMatrix", "texOffsets", "blendFactor");
+		super(VERTEX_FILE, FRAGMENT_FILE, "position", "modelViewMatrix");
+		super.bindAttribute("texOffsets", 5);
+		super.bindAttribute("blendFactor", 6);
 		super.storeAllUniformLocations(numberOfRows, projectionMatrix);
 	}
 

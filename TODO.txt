@@ -1,4 +1,5 @@
-Infinite terrain
+All Masters, Renderers, etc. should be objects, not static
+Reflectivity uniform vars
 Multiplayer
 Modular GUIs
  - Make text variables uniform/ change text rendering method

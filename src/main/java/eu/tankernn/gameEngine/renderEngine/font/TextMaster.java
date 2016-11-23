@@ -11,42 +11,52 @@ import eu.tankernn.gameEngine.font.meshCreator.TextMeshData;
 import eu.tankernn.gameEngine.loader.Loader;
 
 public class TextMaster {
-	
-	private static Loader loader;
-	private static Map<FontType, List<GUIText>> texts = new HashMap<FontType, List<GUIText>>();
-	private static FontRenderer renderer;
-	
-	public static void init(Loader load) {
+
+	private Loader loader;
+	private Map<FontType, List<GUIText>> texts = new HashMap<FontType, List<GUIText>>();
+	private FontRenderer renderer;
+
+	public TextMaster(Loader load) {
 		renderer = new FontRenderer();
 		loader = load;
 	}
-	
-	public static void render() {
+
+	public void render() {
+		for (List<GUIText> l : texts.values()) {
+			for (GUIText t : l) {
+				if (t.isDirty())
+					updateText(t);
+			}
+		}
 		renderer.render(texts);
 	}
-	
-	public static void loadText(GUIText text) {
+
+	public void updateText(GUIText text) {
 		FontType font = text.getFont();
 		TextMeshData data = font.loadText(text);
 		int vao = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
 		text.setMeshInfo(vao, data.getVertexCount());
-		List<GUIText> textBatch = texts.get(font);
+	}
+
+	public void loadText(GUIText text) {
+		updateText(text);
+		List<GUIText> textBatch = texts.get(text.getFont());
 		if (textBatch == null) {
 			textBatch = new ArrayList<GUIText>();
-			texts.put(font, textBatch);
+			texts.put(text.getFont(), textBatch);
 		}
 		textBatch.add(text);
 	}
-	
-	public static void removeText(GUIText text) {
+
+	public void removeText(GUIText text) {
 		List<GUIText> textBatch = texts.get(text.getFont());
 		textBatch.remove(text);
 		if (textBatch.isEmpty()) {
 			texts.remove(text.getFont());
 		}
 	}
-	
-	public static void cleanUp() {
+
+	public void cleanUp() {
 		renderer.cleanUp();
 	}
 }

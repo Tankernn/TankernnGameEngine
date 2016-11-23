@@ -11,9 +11,9 @@ public class ContrastChanger implements IPostProcessingEffect {
 		renderer = new ImageRenderer();
 	}
 	
-	public void render(Texture texture) {
+	public void render(Texture colorTexture, Texture brightTexture) {
 		shader.start();
-		texture.bindToUnit(0);
+		brightTexture.bindToUnit(0);
 		renderer.renderQuad();
 		shader.stop();
 	}
@@ -21,5 +21,10 @@ public class ContrastChanger implements IPostProcessingEffect {
 	public void cleanUp() {
 		renderer.cleanUp();
 		shader.cleanUp();
+	}
+
+	@Override
+	public Texture getOutputTexture() {
+		return renderer.getOutputTexture();
 	}
 }

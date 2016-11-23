@@ -5,14 +5,18 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import eu.tankernn.gameEngine.loader.models.AABB;
+import eu.tankernn.gameEngine.loader.obj.ModelData;
+
 public class RawModel {
 	
 	private static final int BYTES_PER_FLOAT = 4;
-
+	
 	public final int id;
 	private Vbo dataVbo;
 	private Vbo indexVbo;
 	private int indexCount;
+	private AABB boundingBox;
 
 	public static RawModel create() {
 		int id = GL30.glGenVertexArrays();
@@ -59,6 +63,11 @@ public class RawModel {
 		storeData(vertexCount, data);
 		createIndexBuffer(indices);
 		unbind();
+		return this;
+	}
+	
+	public RawModel withBoundingBox(ModelData data) {
+		this.boundingBox = new AABB(data);
 		return this;
 	}
 	
@@ -134,5 +143,8 @@ public class RawModel {
 		}
 		return interleavedBuffer;
 	}
-
+	
+	public AABB getBoundingBox() {
+		return this.boundingBox;
+	}
 }

@@ -171,10 +171,12 @@ public class Loader {
 	}
 	
 	public RawModel loadOBJ(InternalFile objFile) {
-		return this.loadToVAO(OBJFileLoader.loadOBJ(objFile));
+		ModelData data = OBJFileLoader.loadOBJ(objFile);
+		return this.loadToVAO(data).withBoundingBox(data);
 	}
 	
 	public RawModel loadNormalMappedOBJ(InternalFile objFile) {
-		return this.loadToVAO(NormalMappedObjLoader.loadOBJ(objFile));
+		ModelDataNM data = NormalMappedObjLoader.loadOBJ(objFile);
+		return this.loadToVAO(data).withBoundingBox(data);
 	}
 }

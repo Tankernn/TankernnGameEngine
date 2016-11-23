@@ -23,7 +23,6 @@ public class DisplayManager {
 	private static final int WIDTH = 1600;
 	private static final int HEIGHT = 900;
 	private static final int FPS_CAP = 60;
-	public static final int MULTISAMPLING = 8;
 	
 	private static long lastFrameTime;
 	private static float delta;

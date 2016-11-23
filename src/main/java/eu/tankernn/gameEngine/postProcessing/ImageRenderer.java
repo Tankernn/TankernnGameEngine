@@ -1,5 +1,6 @@
 package eu.tankernn.gameEngine.postProcessing;
 
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import eu.tankernn.gameEngine.loader.textures.Texture;
@@ -9,10 +10,16 @@ public class ImageRenderer {
 	private Fbo fbo;
 
 	public ImageRenderer(int width, int height) {
-		this.fbo = new Fbo(width, height, Fbo.NONE);
+		this(new Fbo(width, height, Fbo.NONE));
 	}
 
-	public ImageRenderer() {}
+	public ImageRenderer() {
+		this(Display.getWidth(), Display.getHeight());
+	}
+	
+	public ImageRenderer(Fbo fbo) {
+		this.fbo = fbo;
+	}
 
 	public void renderQuad() {
 		if (fbo != null) {

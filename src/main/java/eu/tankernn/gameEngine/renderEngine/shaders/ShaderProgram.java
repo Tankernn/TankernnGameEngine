@@ -89,8 +89,12 @@ public class ShaderProgram {
 
 	private void bindAttributes(String[] inVariables) {
 		for (int i = 0; i < inVariables.length; i++) {
-			GL20.glBindAttribLocation(programID, i, inVariables[i]);
+			bindAttribute(inVariables[i], i);
 		}
+	}
+
+	protected void bindAttribute(String variable, int attributeId) {
+		GL20.glBindAttribLocation(programID, attributeId, variable);
 	}
 
 	private int loadShader(String file, int type) {

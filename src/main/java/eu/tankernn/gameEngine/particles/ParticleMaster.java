@@ -14,14 +14,21 @@ import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.util.DistanceSorter;
 
 public class ParticleMaster {
-	private static Map<ParticleTexture, List<Particle>> particles = new HashMap<ParticleTexture, List<Particle>>();
-	private static ParticleRenderer renderer;
-	
-	public static void init(Loader loader, Matrix4f projectionMatrix) {
+	private Map<ParticleTexture, List<Particle>> particles = new HashMap<ParticleTexture, List<Particle>>();
+	private List<ParticleSystem> systems = new ArrayList<ParticleSystem>();
+	private ParticleRenderer renderer;
+
+	public ParticleMaster(Loader loader, Matrix4f projectionMatrix) {
 		renderer = new ParticleRenderer(loader, projectionMatrix);
 	}
-	
-	public static void update(Camera camera) {
+
+	public void update(Camera camera) {
+		for (ParticleSystem sys : systems) {
+			for (Particle particle : sys.generateParticles()) {
+				addParticle(particle);
+			}
+		}
+
 		Iterator<Entry<ParticleTexture, List<Particle>>> mapIterator = particles.entrySet().iterator();
 		while (mapIterator.hasNext()) {
 			Entry<ParticleTexture, List<Particle>> entry = mapIterator.next();
@@ -41,21 +48,25 @@ public class ParticleMaster {
 				DistanceSorter.sort(list, camera);
 		}
 	}
-	
-	public static void renderParticles(Camera camera) {
+
+	public void renderParticles(Camera camera) {
 		renderer.render(particles, camera);
 	}
-	
-	public static void cleanUp() {
+
+	public void cleanUp() {
 		renderer.cleanUp();
 	}
-	
-	public static void addParticle(Particle particle) {
+
+	public void addParticle(Particle particle) {
 		List<Particle> list = particles.get(particle.getTexture());
 		if (list == null) {
 			list = new ArrayList<Particle>();
 			particles.put(particle.getTexture(), list);
 		}
 		list.add(particle);
+	}
+
+	public void addSystem(ParticleSystem system) {
+		this.systems.add(system);
 	}
 }

@@ -17,7 +17,7 @@ public class VerticalBlur implements IPostProcessingEffect {
 		shader.stop();
 	}
 	
-	public void render(Texture texture){
+	public void render(Texture colorTexture, Texture texture){
 		shader.start();
 		texture.bindToUnit(0);
 		renderer.renderQuad();

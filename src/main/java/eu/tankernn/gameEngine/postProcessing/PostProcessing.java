@@ -1,5 +1,8 @@
 package eu.tankernn.gameEngine.postProcessing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -12,61 +15,50 @@ import eu.tankernn.gameEngine.postProcessing.gaussianBlur.VerticalBlur;
 import eu.tankernn.gameEngine.renderEngine.RawModel;
 
 public class PostProcessing {
-	
+
 	private static final int blurFactor = 2;
-	
-	private static final float[] POSITIONS = {-1, 1, -1, -1, 1, 1, 1, -1};
+
+	private static final float[] POSITIONS = { -1, 1, -1, -1, 1, 1, 1, -1 };
 	private static RawModel quad;
-	private static ContrastChanger contrastChanger;
-	private static HorizontalBlur hBlur[] = new HorizontalBlur[blurFactor];
-	private static VerticalBlur vBlur[] = new VerticalBlur[blurFactor];
-	private static BrightFilter brightFilter;
+	private static List<IPostProcessingEffect> effects = new ArrayList<IPostProcessingEffect>();
 	private static CombineFilter combineFilter;
 	
 	public static void init(Loader loader) {
 		quad = loader.loadToVAO(POSITIONS, 2);
-		contrastChanger = new ContrastChanger();
+		effects.add(new ContrastChanger());
 		for (int i = 0; i < blurFactor; i++) {
 			int temp = i + 1;
-			hBlur[i] = new HorizontalBlur(Display.getWidth() / temp, Display.getHeight() / temp);
-			vBlur[i] = new VerticalBlur(Display.getWidth() / temp, Display.getHeight() / temp);
+			effects.add(new HorizontalBlur(Display.getWidth() / temp, Display.getHeight() / temp));
+			effects.add(new VerticalBlur(Display.getWidth() / temp, Display.getHeight() / temp));
 		}
-		brightFilter = new BrightFilter(Display.getWidth() / 2, Display.getHeight() / 2);
+		effects.add(new BrightFilter(Display.getWidth() / 2, Display.getHeight() / 2));
 		combineFilter = new CombineFilter();
 	}
-	
+
 	public static void doPostProcessing(Texture colorTexture, Texture brightTexture) {
-		start();
-		//brightFilter.render(colorTexture);
-		Texture bloomTexture = brightTexture;
-		for (int i = 0; i < blurFactor; i++) {
-			hBlur[i].render(bloomTexture);
-			vBlur[i].render(hBlur[i].getOutputTexture());
-			bloomTexture = vBlur[i].getOutputTexture();
+		for (IPostProcessingEffect effect : effects) {
+			effect.render(colorTexture, brightTexture);
+			brightTexture = effect.getOutputTexture();
 		}
-		combineFilter.render(colorTexture, bloomTexture);
-		//contrastChanger.render(bloomTexture);
+		
+		start();
+		combineFilter.render(colorTexture, brightTexture);
 		end();
 	}
-	
+
 	public static void cleanUp() {
-		contrastChanger.cleanUp();
-		for (int i = 0; i < blurFactor; i++) {
-			hBlur[i].cleanUp();
-			vBlur[i].cleanUp();
-		}
-		brightFilter.cleanUp();
+		effects.forEach(p -> p.cleanUp());
 		combineFilter.cleanUp();
 	}
-	
+
 	private static void start() {
 		quad.bind(0);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 	}
-	
+
 	private static void end() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		quad.unbind(0);
 	}
-	
+
 }

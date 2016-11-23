@@ -36,7 +36,6 @@ public class Particle implements IPositionable {
 		this.lifeLength = lifeLength;
 		this.rotation = rotation;
 		this.scale = scale;
-		ParticleMaster.addParticle(this);
 	}
 
 	public ParticleTexture getTexture() {

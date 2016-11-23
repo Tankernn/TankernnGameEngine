@@ -14,9 +14,10 @@ public class BrightFilter implements IPostProcessingEffect {
 		renderer = new ImageRenderer(width, height);
 	}
 	
-	public void render(Texture texture){
+	@Override
+	public void render(Texture colorTexture, Texture brightTexture) {
 		shader.start();
-		texture.bindToUnit(0);
+		colorTexture.bindToUnit(0);
 		renderer.renderQuad();
 		shader.stop();
 	}

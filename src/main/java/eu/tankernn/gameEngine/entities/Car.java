@@ -73,8 +73,6 @@ public class Car extends Player {
 
 		this.currentTurnSpeed = Math.min(currentTurnSpeed, TURN_MAX);
 		this.currentTurnSpeed = Math.max(currentTurnSpeed, -TURN_MAX);
-
-		// TODO Nitro
 	}
 
 }

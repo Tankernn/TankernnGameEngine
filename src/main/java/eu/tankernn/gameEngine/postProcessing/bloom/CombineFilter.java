@@ -13,7 +13,7 @@ public class CombineFilter {
 		shader.start();
 		shader.connectTextureUnits();
 		shader.stop();
-		renderer = new ImageRenderer();
+		renderer = new ImageRenderer(null);
 	}
 	
 	public void render(Texture colorTexture, Texture bloomTexture){

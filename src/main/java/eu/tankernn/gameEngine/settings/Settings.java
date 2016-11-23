@@ -14,4 +14,5 @@ public class Settings {
 	public static final float TERRAIN_SIZE = 800;
 	
 	public static final float ANISOTROPIC_FILTERING_AMOUNT = 4f;
+	public static final int MULTISAMPLING = 2;
 }

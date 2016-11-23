@@ -62,7 +62,7 @@ public class MainLoop {
 	public static final String DUDV_MAP = "waterDUDV.png";
 	public static final String NORMAL_MAP = "waterNormalMap.png";
 
-	private static final boolean DEBUG = true;
+	public static final boolean DEBUG = true;
 
 	static List<Entity> entities = new ArrayList<Entity>();
 	static List<Entity> normalMapEntities = new ArrayList<Entity>();
@@ -107,12 +107,14 @@ public class MainLoop {
 		Skybox skybox = new Skybox(Texture.newCubeMap(dayTextures, 500), Texture.newCubeMap(nightTextures, 500), 500);
 
 		MasterRenderer renderer = new MasterRenderer(loader, camera, skybox);
-		ParticleMaster.init(loader, camera.getProjectionMatrix());
-		TextMaster.init(loader);
+		ParticleMaster particleMaster = new ParticleMaster(loader, camera.getProjectionMatrix());
+		TextMaster textMaster = new TextMaster(loader);
 
 		FontType font = new FontType(loader.loadTexture("arial.png"), "arial.fnt");
-		GUIText text = new GUIText("Sample text", 3, font, new Vector2f(0.5f, 0.5f), 0.5f, true).setColor(1, 1, 1);
-		TextMaster.loadText(text);
+		GUIText text = new GUIText("Sample text", 1, font, new Vector2f(0.5f, 0.0f), 0.5f, false).setColor(0, 1, 0);
+		GUIText fpsText = new GUIText("FPS: ", 1, font, new Vector2f(0.0f, 0.0f), 0.5f, false).setColor(1, 1, 1);
+		textMaster.loadText(fpsText);
+		textMaster.loadText(text);
 
 		// Barrel
 		TexturedModel barrelModel = new TexturedModel(loader.loadNormalMappedOBJ(new InternalFile("barrel.obj")),
@@ -130,14 +132,11 @@ public class MainLoop {
 		lights.add(sun);
 		lights.add(flashLight);
 
-		terrainPack.update(player);
-
 		// ### Random grass generation ###
 
 		ModelTexture textureAtlas = new ModelTexture(Texture.newTexture(new InternalFile("lantern.png")).create());
 		textureAtlas.setNumberOfRows(1);
-		TexturedModel grassModel = new TexturedModel(
-				loader.loadToVAO(OBJFileLoader.loadOBJ(new InternalFile("lantern.obj"))), textureAtlas);
+		TexturedModel grassModel = new TexturedModel(loader.loadOBJ(new InternalFile("lantern.obj")), textureAtlas);
 		grassModel.getModelTexture().setHasTransparency(true);
 		grassModel.getModelTexture().setShineDamper(10);
 		grassModel.getModelTexture().setReflectivity(0.5f);
@@ -152,7 +151,7 @@ public class MainLoop {
 			entities.add(new Entity(grassModel, rand.nextInt(4),
 					new Vector3f(x, terrainPack.getTerrainHeightByWorldPos(x, z), z), new Vector3f(), 1));
 		}
-		
+
 		terrainPack.addWaitingForTerrainHeight(entities.toArray(new Entity[entities.size()]));
 
 		// #### Water rendering ####
@@ -166,7 +165,8 @@ public class MainLoop {
 
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic.png"), 4, true);
 		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 4);
-
+		particleMaster.addSystem(ps);
+		
 		MultisampleMultitargetFbo multisampleFbo = new MultisampleMultitargetFbo(Display.getWidth(),
 				Display.getHeight());
 		Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
@@ -185,16 +185,18 @@ public class MainLoop {
 
 			if (picker.getCurrentTerrainPoint() != null) {
 				Vector3f currentPoint = picker.getCurrentTerrainPoint();
-				flashLight.getPosition().x = currentPoint.x;
-				flashLight.getPosition().z = currentPoint.z;
+				flashLight.getPosition().set(currentPoint);
 				flashLight.getPosition().y = terrainPack.getTerrainHeightByWorldPos(currentPoint.x, currentPoint.z)
 						+ 1.0f;
+			}
+			
+			if (picker.getCurrentEntity() != null) {
+				picker.getCurrentEntity().setScale(2);
 			}
 
 			if (picker.getCurrentGui() != null) {
 				if (Mouse.isButtonDown(0)) {
 					System.out.println("Clicked gui.");
-					picker.getCurrentGui().getPosition().x += 0.1f;
 				}
 			}
 
@@ -203,22 +205,22 @@ public class MainLoop {
 				Terrain currentTerrain = terrainPack.getTerrainByWorldPos(player.getPosition().x,
 						player.getPosition().z);
 				if (currentTerrain != null) {
-					text.remove();
 					Vector3f pos = player.getPosition();
 					String textString = "X: " + Math.floor(pos.x) + " Y: " + Math.floor(pos.y) + " Z: "
 							+ Math.floor(pos.z) + " Current terrain: " + currentTerrain.getX() / Settings.TERRAIN_SIZE
 							+ ":" + currentTerrain.getZ() / Settings.TERRAIN_SIZE;
-					text = new GUIText(textString, 1, font, new Vector2f(0.5f, 0f), 0.5f, false);
+					text.setText(textString);
+					fpsText.setText(String.format("FPS: %.2f", getFps()));
 				}
 			}
 
 			// Sort list of lights
 			DistanceSorter.sort(lights, camera);
-
+			
 			renderer.renderShadowMap(entities, sun);
-
-			ps.generateParticles(player.getPosition());
-			ParticleMaster.update(camera);
+			
+			ps.setPosition(player.getPosition());
+			particleMaster.update(camera);
 
 			Scene scene = new Scene(entities, normalMapEntities, terrainPack, lights, camera, skybox);
 
@@ -231,16 +233,16 @@ public class MainLoop {
 
 			renderer.renderScene(scene, new Vector4f(0, 1, 0, Float.MAX_VALUE));
 			waterMaster.renderWater(camera, lights);
-			ParticleMaster.renderParticles(camera);
+			particleMaster.renderParticles(camera);
 
 			multisampleFbo.unbindFrameBuffer();
 
 			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT0, outputFbo);
 			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT1, outputFbo2);
 			PostProcessing.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
-
+			
 			guiRenderer.render(guis);
-			TextMaster.render();
+			textMaster.render();
 
 			DisplayManager.updateDisplay();
 		}
@@ -249,13 +251,17 @@ public class MainLoop {
 		outputFbo.cleanUp();
 		outputFbo2.cleanUp();
 		multisampleFbo.cleanUp();
-		ParticleMaster.cleanUp();
-		TextMaster.cleanUp();
+		particleMaster.cleanUp();
+		textMaster.cleanUp();
 		waterMaster.cleanUp();
 		guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
 		terrainPack.cleanUp();
 		DisplayManager.closeDisplay();
+	}
+
+	private static double getFps() {
+		return 1 / DisplayManager.getFrameTimeSeconds();
 	}
 }

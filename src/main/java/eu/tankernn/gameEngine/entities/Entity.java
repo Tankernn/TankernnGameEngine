@@ -7,8 +7,6 @@ import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.util.IPositionable;
 
 public class Entity implements IPositionable {
-	private static final Vector3f SIZE = new Vector3f(2, 4, 2);
-	
 	private TexturedModel model;
 	private Vector3f position;
 	private Vector3f rotation;
@@ -22,16 +20,14 @@ public class Entity implements IPositionable {
 		this.position = position;
 		this.rotation = rotation;
 		this.scale = scale;
-		this.boundingBox = new AABB(position, SIZE);
+		this.boundingBox = model.getRawModel().getBoundingBox();
+		this.boundingBox.updatePosition(position);
+		this.boundingBox = this.boundingBox.copy();
 	}
 	
 	public Entity(TexturedModel model, int index, Vector3f position, Vector3f rotation, float scale) {
-		this.model = model;
+		this(model, position, rotation, scale);
 		this.textureIndex = index;
-		this.position = position;
-		this.rotation = rotation;
-		this.scale = scale;
-		this.boundingBox = new AABB(position, SIZE);
 	}
 	
 	public float getTextureXOffset() {
@@ -56,7 +52,7 @@ public class Entity implements IPositionable {
 	}
 	
 	private void updateBoundingBox() {
-		this.boundingBox = new AABB(this.position, SIZE); //TODO Fix model size
+		this.boundingBox.updatePosition(this.position);
 	}
 	
 	public TexturedModel getModel() {
