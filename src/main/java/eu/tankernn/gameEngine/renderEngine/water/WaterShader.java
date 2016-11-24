@@ -22,12 +22,17 @@ public class WaterShader extends ShaderProgram {
 	protected UniformVec3 cameraPosition = new UniformVec3("cameraPosition");
 	protected UniformSampler normalMap = new UniformSampler("normalMap");
 	protected UniformSampler depthMap = new UniformSampler("depthMap");
+	protected UniformFloat nearPlane = new UniformFloat("nearPlane");
+	protected UniformFloat farPlane = new UniformFloat("farPlane");
+	protected UniformFloat shineDamper = new UniformFloat("shineDamper");
+	protected UniformFloat reflectivity = new UniformFloat("reflectivity");
+	protected UniformFloat waveStrength = new UniformFloat("waveStrength");
 
 	public WaterShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE, "position");
 		super.getLightUniformLocations();
 		super.storeAllUniformLocations(modelMatrix, viewMatrix, projectionMatrix, reflectionTexture, refractionTexture,
-				dudvMap, moveFactor, cameraPosition, normalMap, depthMap);
+				dudvMap, moveFactor, cameraPosition, normalMap, depthMap, nearPlane, farPlane, shineDamper, reflectivity, waveStrength);
 	}
 
 	public void connectTextureUnits() {

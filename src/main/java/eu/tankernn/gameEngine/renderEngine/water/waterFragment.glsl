@@ -17,11 +17,11 @@ uniform vec3 lightColor[4]; //4 max light sources
 uniform vec3 attenuation[4];
 uniform float moveFactor;
 
-const float waveStrength = 0.04;
-const float shineDamper = 20.0;
-const float reflectivity = 0.5;
-const float nearPlane = 0.1;
-const float farPlane = 1000.0;
+uniform float waveStrength;
+uniform float shineDamper;
+uniform float reflectivity;
+uniform float nearPlane;
+uniform float farPlane;
 
 void main(void) {
 	

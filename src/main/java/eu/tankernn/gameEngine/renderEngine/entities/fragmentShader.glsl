@@ -21,6 +21,7 @@ uniform vec3 lightColor[4]; //4 max light sources
 uniform vec3 attenuation[4];
 uniform float shineDamper;
 uniform float reflectivity;
+uniform float refractivity;
 uniform vec3 skyColor;
 
 //const float levels = 3.0;
@@ -80,7 +81,10 @@ void main(void){
 	
 	vec4 reflectedColor = texture(enviroMap, reflectedVector);
 	vec4 refractedColor = texture(enviroMap, refractedVector);
-	vec4 enviroColor = mix(reflectedColor, refractedColor, 0.5);
+	vec4 enviroColor = reflectedColor;
+	if (refractivity > 0) {
+		enviroColor = mix(reflectedColor, refractedColor, (reflectivity / 10) / refractivity);
+	}
 	
-	out_Color = mix(out_Color, enviroColor, 0.3);
+	out_Color = mix(out_Color, enviroColor, (reflectivity / 10 + refractivity) / 2);
 }

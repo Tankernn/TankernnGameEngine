@@ -22,7 +22,6 @@ import eu.tankernn.gameEngine.font.meshCreator.FontType;
 import eu.tankernn.gameEngine.font.meshCreator.GUIText;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
-import eu.tankernn.gameEngine.loader.obj.OBJFileLoader;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.loader.textures.Texture;
@@ -86,17 +85,18 @@ public class MainLoop {
 		TerrainPack terrainPack = new TerrainPack(loader, texturePack, blendMap, SEED);
 
 		// Player
-		RawModel playerModel = loader.loadOBJ(new InternalFile("dragon.obj"));
+		RawModel playerModel = loader.loadOBJ(new InternalFile("apple.obj"));
 		TexturedModel texturedMonkeyModel = new TexturedModel(playerModel,
 				new ModelTexture(loader.loadTexture("white.png")));
 
 		ModelTexture texture = texturedMonkeyModel.getModelTexture();
 		texture.setReflectivity(3);
+		texture.setRefractivity(1.0f);
 		texture.setShineDamper(10);
 
 		Entity entity = new Entity(texturedMonkeyModel, new Vector3f(0, 0, 20), new Vector3f(0, 0, 0), 1);
 		entities.add(entity);
-		TexturedModel monkey = new TexturedModel(playerModel, new ModelTexture(loader.loadTexture("white.png")));
+		TexturedModel monkey = new TexturedModel(playerModel, texture);
 		Player player = new Player(monkey, new Vector3f(10, 0, 50), new Vector3f(0, 0, 0), 1, terrainPack);
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
@@ -104,7 +104,7 @@ public class MainLoop {
 		InternalFile[] dayTextures = InternalFile.fromFilenames("skybox", TEXTURE_FILES, "png"),
 				nightTextures = InternalFile.fromFilenames("skybox", NIGHT_TEXTURE_FILES, "png");
 
-		Skybox skybox = new Skybox(Texture.newCubeMap(dayTextures, 500), Texture.newCubeMap(nightTextures, 500), 500);
+		Skybox skybox = new Skybox(Texture.newCubeMap(dayTextures, 200), Texture.newCubeMap(nightTextures, 200), 200);
 
 		MasterRenderer renderer = new MasterRenderer(loader, camera, skybox);
 		ParticleMaster particleMaster = new ParticleMaster(loader, camera.getProjectionMatrix());
@@ -163,8 +163,8 @@ public class MainLoop {
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
-		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic.png"), 4, true);
-		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 4);
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/fire.png"), 4, false);
+		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 1);
 		particleMaster.addSystem(ps);
 		
 		MultisampleMultitargetFbo multisampleFbo = new MultisampleMultitargetFbo(Display.getWidth(),
@@ -227,12 +227,12 @@ public class MainLoop {
 			EnvironmentMapRenderer.renderEnvironmentMap(scene.getEnvironmentMap(), scene, player.getPosition(),
 					renderer);
 
-			waterMaster.renderBuffers(renderer, scene);
+			//waterMaster.renderBuffers(renderer, scene);
 
 			multisampleFbo.bindFrameBuffer();
 
 			renderer.renderScene(scene, new Vector4f(0, 1, 0, Float.MAX_VALUE));
-			waterMaster.renderWater(camera, lights);
+			//waterMaster.renderWater(camera, lights);
 			particleMaster.renderParticles(camera);
 
 			multisampleFbo.unbindFrameBuffer();

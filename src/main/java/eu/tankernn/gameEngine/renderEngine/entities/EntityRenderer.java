@@ -95,6 +95,7 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.useFakeLighting.loadBoolean(texture.isUseFakeLighting());
 		shader.shineDamper.loadFloat(texture.getShineDamper());
 		shader.reflectivity.loadFloat(texture.getReflectivity());
+		shader.refractivity.loadFloat(texture.getRefractivity());
 		model.getModelTexture().getTexture().bindToUnit(0);
 		shader.usesSpecularMap.loadBoolean(texture.hasSpecularMap());
 		if (texture.hasSpecularMap()) {

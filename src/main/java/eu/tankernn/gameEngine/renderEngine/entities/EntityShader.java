@@ -18,9 +18,10 @@ public class EntityShader extends ShaderProgram {
 	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
 	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");
 	protected UniformViewMatrix viewMatrix = new UniformViewMatrix("viewMatrix");
-	
+
 	protected UniformFloat shineDamper = new UniformFloat("shineDamper");
 	protected UniformFloat reflectivity = new UniformFloat("reflectivity");
+	protected UniformFloat refractivity = new UniformFloat("refractivity");
 	protected UniformBoolean useFakeLighting = new UniformBoolean("useFakeLighting");
 	protected UniformVec3 skyColor = new UniformVec3("skyColor");
 	protected UniformFloat numberOfRows = new UniformFloat("numberOfRows");
@@ -38,8 +39,8 @@ public class EntityShader extends ShaderProgram {
 		super(VERTEX_FILE, FRAGMENT_FILE, "position", "textureCoords", "normal");
 		super.getLightUniformLocations();
 		super.storeAllUniformLocations(transformationMatrix, projectionMatrix, viewMatrix, shineDamper, reflectivity,
-				useFakeLighting, skyColor, numberOfRows, offset, plane, toShadowMapSpace, shadowMap, specularMap,
-				usesSpecularMap, modelTexture, cameraPosition, enviroMap);
+				refractivity, useFakeLighting, skyColor, numberOfRows, offset, plane, toShadowMapSpace, shadowMap,
+				specularMap, usesSpecularMap, modelTexture, cameraPosition, enviroMap);
 	}
 
 	public EntityShader(String vertexFile, String fragmentFile, String... string) {

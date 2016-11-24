@@ -14,11 +14,15 @@ import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.settings.Settings;
 import eu.tankernn.gameEngine.util.Maths;
 
 public class WaterRenderer {
 	
 	private static final float WAVE_SPEED = 0.03f;
+	private static final float WAVE_STRENGTH = 0.04f;
+	private static final float SHINE_DAMPER = 20.0f;
+	private static final float REFLECTIVITY = 0.5f;
 	
 	private RawModel quad;
 	private WaterShader shader;
@@ -61,6 +65,11 @@ public class WaterRenderer {
 		moveFactor %= 1;
 		shader.moveFactor.loadFloat(moveFactor);
 		shader.loadLights(lights);
+		shader.nearPlane.loadFloat(Settings.NEAR_PLANE);
+		shader.farPlane.loadFloat(Settings.FAR_PLANE);
+		shader.waveStrength.loadFloat(WAVE_STRENGTH);
+		shader.shineDamper.loadFloat(SHINE_DAMPER);
+		shader.reflectivity.loadFloat(REFLECTIVITY);
 		quad.bind(0);
 		buffers.getReflectionTexture().bindToUnit(0);
 		buffers.getRefractionTexture().bindToUnit(1);

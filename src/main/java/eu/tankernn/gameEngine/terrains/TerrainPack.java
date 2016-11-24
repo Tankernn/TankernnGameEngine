@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import eu.tankernn.gameEngine.MainLoop;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.loader.textures.Texture;
@@ -91,8 +90,6 @@ public class TerrainPack {
 
 		waitingData.values().removeIf(f -> {
 			if (f.isDone()) {
-				if (MainLoop.DEBUG)
-					System.out.println("Adding terrain");
 				try {
 					TerrainModelData data = f.get();
 					terrains.put(Pair.of(data.getGridX(), data.getGridZ()),

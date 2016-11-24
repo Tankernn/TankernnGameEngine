@@ -1,5 +1,4 @@
-All Masters, Renderers, etc. should be objects, not static
-Reflectivity uniform vars
+Particles and post-processing is broken.
 Multiplayer
 Modular GUIs
  - Make text variables uniform/ change text rendering method
