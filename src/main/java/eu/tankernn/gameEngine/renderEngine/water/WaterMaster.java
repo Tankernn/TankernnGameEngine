@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Vector4f;
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.Loader;
+import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
 import eu.tankernn.gameEngine.util.ICamera;
@@ -20,7 +21,7 @@ public class WaterMaster {
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private WaterRenderer waterRenderer;
 	
-	public WaterMaster(Loader loader, String dudvTexture, String normalMap, ICamera camera) {
+	public WaterMaster(Loader loader, Texture dudvTexture, Texture normalMap, ICamera camera) {
 		waterRenderer = new WaterRenderer(loader, dudvTexture, normalMap, waterShader, camera.getProjectionMatrix(), buffers);
 	}
 	

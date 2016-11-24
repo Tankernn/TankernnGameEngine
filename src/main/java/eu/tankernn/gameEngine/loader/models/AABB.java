@@ -5,7 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
 
 public class AABB {
-	protected Vector3f middlePos, halfSize;
+	protected Vector3f middlePos = new Vector3f(0, 0, 0), halfSize;
 
 	public AABB(Vector3f middlePos, Vector3f halfSize) {
 		this.middlePos = middlePos;
@@ -39,10 +39,6 @@ public class AABB {
 
 		Vector3f fullSize = Vector3f.sub(max, min, null);
 		this.halfSize = new Vector3f(fullSize.x / 2, fullSize.y / 2, fullSize.z / 2);
-	}
-	
-	public AABB copy() {
-		return new AABB(new Vector3f(this.middlePos), new Vector3f(this.halfSize));
 	}
 
 	public void updatePosition(Vector3f pos) {
@@ -79,5 +75,9 @@ public class AABB {
 
 	public Vector3f getRt() {
 		return new Vector3f(middlePos.x + halfSize.x, middlePos.y + halfSize.y, middlePos.z + halfSize.z);
+	}
+	
+	public AABB copy() {
+		return new AABB(new Vector3f(this.middlePos), new Vector3f(this.halfSize));
 	}
 }

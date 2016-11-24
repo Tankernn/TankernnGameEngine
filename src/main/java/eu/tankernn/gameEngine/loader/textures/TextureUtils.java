@@ -67,7 +67,7 @@ public class TextureUtils {
 			in.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.println("Tried to load texture " + file.getName() + " , didn't work");
+			System.err.println("Tried to load texture " + file.getName() + ", didn't work");
 			System.exit(-1);
 		}
 		return new TextureData(buffer, width, height);

@@ -9,11 +9,11 @@ import eu.tankernn.gameEngine.loader.textures.TextureUtils;
 
 public class WaterFrameBuffers {
 	
-	protected static final int REFLECTION_WIDTH = 1920;
-	private static final int REFLECTION_HEIGHT = 1080;
+	protected static final int REFLECTION_WIDTH = 1024 * 1;
+	private static final int REFLECTION_HEIGHT = 1024 * 1;
 	
-	protected static final int REFRACTION_WIDTH = 360;
-	private static final int REFRACTION_HEIGHT = 180;
+	protected static final int REFRACTION_WIDTH = 1024 / 2;
+	private static final int REFRACTION_HEIGHT = 1024 / 2;
 	
 	private int reflectionFrameBuffer;
 	private Texture reflectionTexture;

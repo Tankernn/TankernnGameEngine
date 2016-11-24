@@ -4,7 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.loader.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.settings.Physics;
 import eu.tankernn.gameEngine.terrains.Terrain;
@@ -25,8 +25,8 @@ public class Player extends Entity {
 	
 	private float height = 2.0f;
 	
-	public Player(TexturedModel model, Vector3f position, Vector3f rotation, float scale, TerrainPack terrainPack) {
-		super(model, position, rotation, scale);
+	public Player(int model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox, TerrainPack terrainPack) {
+		super(model, position, rotation, scale, boundingBox);
 		this.terrainPack = terrainPack;
 	}
 	

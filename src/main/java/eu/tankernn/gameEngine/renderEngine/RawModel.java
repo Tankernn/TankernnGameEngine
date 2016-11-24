@@ -145,6 +145,6 @@ public class RawModel {
 	}
 	
 	public AABB getBoundingBox() {
-		return this.boundingBox;
+		return this.boundingBox.copy();
 	}
 }

@@ -33,11 +33,11 @@ public class WaterRenderer {
 	private Texture dudvTexture;
 	private Texture normalMap;
 
-	public WaterRenderer(Loader loader, String dudvTexture, String normalMap, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers buffers) {
+	public WaterRenderer(Loader loader, Texture dudvTexture, Texture normalMap, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers buffers) {
 		this.shader = shader;
 		this.buffers = buffers;
-		this.dudvTexture = loader.loadTexture(dudvTexture);
-		this.normalMap = loader.loadTexture(normalMap);
+		this.dudvTexture = dudvTexture;
+		this.normalMap = normalMap;
 		shader.start();
 		shader.connectTextureUnits();
 		shader.projectionMatrix.loadMatrix(projectionMatrix);

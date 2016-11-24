@@ -1,6 +1,6 @@
 package eu.tankernn.gameEngine;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,8 +21,6 @@ import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.font.meshCreator.FontType;
 import eu.tankernn.gameEngine.font.meshCreator.GUIText;
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.loader.models.TexturedModel;
-import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
@@ -33,7 +31,6 @@ import eu.tankernn.gameEngine.postProcessing.MultisampleMultitargetFbo;
 import eu.tankernn.gameEngine.postProcessing.PostProcessing;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
 import eu.tankernn.gameEngine.renderEngine.Scene;
 import eu.tankernn.gameEngine.renderEngine.font.TextMaster;
 import eu.tankernn.gameEngine.renderEngine.gui.GuiRenderer;
@@ -67,10 +64,10 @@ public class MainLoop {
 	static List<Entity> normalMapEntities = new ArrayList<Entity>();
 	static List<Light> lights = new ArrayList<Light>();
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws IOException {
 		DisplayManager.createDisplay("Tankernn Game Engine tester");
-
-		Loader loader = new Loader();
+		
+		Loader loader = new Loader(new InternalFile("models.txt"));
 
 		// ### Terrain textures ###
 
@@ -85,19 +82,11 @@ public class MainLoop {
 		TerrainPack terrainPack = new TerrainPack(loader, texturePack, blendMap, SEED);
 
 		// Player
-		RawModel playerModel = loader.loadOBJ(new InternalFile("apple.obj"));
-		TexturedModel texturedMonkeyModel = new TexturedModel(playerModel,
-				new ModelTexture(loader.loadTexture("white.png")));
-
-		ModelTexture texture = texturedMonkeyModel.getModelTexture();
-		texture.setReflectivity(3);
-		texture.setRefractivity(1.0f);
-		texture.setShineDamper(10);
-
-		Entity entity = new Entity(texturedMonkeyModel, new Vector3f(0, 0, 20), new Vector3f(0, 0, 0), 1);
+		Entity entity = new Entity(0, new Vector3f(0, 0, 20), new Vector3f(0, 0, 0), 1,
+				loader.getModel(0).getRawModel().getBoundingBox());
 		entities.add(entity);
-		TexturedModel monkey = new TexturedModel(playerModel, texture);
-		Player player = new Player(monkey, new Vector3f(10, 0, 50), new Vector3f(0, 0, 0), 1, terrainPack);
+		Player player = new Player(0, new Vector3f(10, 0, 50), new Vector3f(0, 0, 0), 1,
+				loader.getModel(0).getRawModel().getBoundingBox(), terrainPack);
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
 
@@ -117,13 +106,9 @@ public class MainLoop {
 		textMaster.loadText(text);
 
 		// Barrel
-		TexturedModel barrelModel = new TexturedModel(loader.loadNormalMappedOBJ(new InternalFile("barrel.obj")),
-				new ModelTexture(loader.loadTexture("barrel.png")));
 
-		barrelModel.getModelTexture().setNormalMap(loader.loadTexture("barrelNormal.png"))
-				.setSpecularMap(loader.loadTexture("barrelS.png")).setShineDamper(10).setReflectivity(0.5f);
-
-		Entity barrel = new Entity(barrelModel, new Vector3f(75, 10, 75), new Vector3f(0, 0, 0), 1f);
+		Entity barrel = new Entity(1, new Vector3f(75, 10, 75), new Vector3f(0, 0, 0), 1f,
+				loader.getModel(1).getRawModel().getBoundingBox());
 		normalMapEntities.add(barrel);
 
 		Light sun = new Light(new Vector3f(100000, 150000, -70000), new Vector3f(1f, 1f, 1f));
@@ -132,15 +117,7 @@ public class MainLoop {
 		lights.add(sun);
 		lights.add(flashLight);
 
-		// ### Random grass generation ###
-
-		ModelTexture textureAtlas = new ModelTexture(Texture.newTexture(new InternalFile("lantern.png")).create());
-		textureAtlas.setNumberOfRows(1);
-		TexturedModel grassModel = new TexturedModel(loader.loadOBJ(new InternalFile("lantern.obj")), textureAtlas);
-		grassModel.getModelTexture().setHasTransparency(true);
-		grassModel.getModelTexture().setShineDamper(10);
-		grassModel.getModelTexture().setReflectivity(0.5f);
-		grassModel.getModelTexture().setSpecularMap(loader.loadTexture("lanternS.png"));
+		// ### Random lantern generation ###
 
 		Random rand = new Random(SEED);
 
@@ -148,14 +125,14 @@ public class MainLoop {
 			float x = rand.nextFloat() * 1000;
 			float z = rand.nextFloat() * 1000;
 
-			entities.add(new Entity(grassModel, rand.nextInt(4),
-					new Vector3f(x, terrainPack.getTerrainHeightByWorldPos(x, z), z), new Vector3f(), 1));
+			entities.add(new Entity(2, new Vector3f(x, terrainPack.getTerrainHeightByWorldPos(x, z), z), new Vector3f(),
+					1, loader.getModel(2).getRawModel().getBoundingBox()));
 		}
 
 		terrainPack.addWaitingForTerrainHeight(entities.toArray(new Entity[entities.size()]));
 
 		// #### Water rendering ####
-		WaterMaster waterMaster = new WaterMaster(loader, DUDV_MAP, NORMAL_MAP, camera);
+		WaterMaster waterMaster = new WaterMaster(loader, loader.loadTexture(DUDV_MAP), loader.loadTexture(NORMAL_MAP), camera);
 		WaterTile water = new WaterTile(75, 75, 0);
 		waterMaster.addWaterTile(water);
 
@@ -166,7 +143,7 @@ public class MainLoop {
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/fire.png"), 4, false);
 		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 1);
 		particleMaster.addSystem(ps);
-		
+
 		MultisampleMultitargetFbo multisampleFbo = new MultisampleMultitargetFbo(Display.getWidth(),
 				Display.getHeight());
 		Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
@@ -189,7 +166,7 @@ public class MainLoop {
 				flashLight.getPosition().y = terrainPack.getTerrainHeightByWorldPos(currentPoint.x, currentPoint.z)
 						+ 1.0f;
 			}
-			
+
 			if (picker.getCurrentEntity() != null) {
 				picker.getCurrentEntity().setScale(2);
 			}
@@ -216,9 +193,9 @@ public class MainLoop {
 
 			// Sort list of lights
 			DistanceSorter.sort(lights, camera);
-			
+
 			renderer.renderShadowMap(entities, sun);
-			
+
 			ps.setPosition(player.getPosition());
 			particleMaster.update(camera);
 
@@ -227,12 +204,12 @@ public class MainLoop {
 			EnvironmentMapRenderer.renderEnvironmentMap(scene.getEnvironmentMap(), scene, player.getPosition(),
 					renderer);
 
-			//waterMaster.renderBuffers(renderer, scene);
+			waterMaster.renderBuffers(renderer, scene);
 
 			multisampleFbo.bindFrameBuffer();
 
 			renderer.renderScene(scene, new Vector4f(0, 1, 0, Float.MAX_VALUE));
-			//waterMaster.renderWater(camera, lights);
+			waterMaster.renderWater(camera, lights);
 			particleMaster.renderParticles(camera);
 
 			multisampleFbo.unbindFrameBuffer();
@@ -240,7 +217,7 @@ public class MainLoop {
 			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT0, outputFbo);
 			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT1, outputFbo2);
 			PostProcessing.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
-			
+
 			guiRenderer.render(guis);
 			textMaster.render();
 

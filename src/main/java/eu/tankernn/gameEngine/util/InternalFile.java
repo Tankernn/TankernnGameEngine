@@ -16,24 +16,22 @@ public class InternalFile {
 	private String path;
 	private String name;
 
-	public InternalFile(String path) {
-		this.path = FILE_SEPARATOR + path;
+	public InternalFile(String path) throws FileNotFoundException {
+		this.path = path;
+		if (!path.startsWith("/") || path.isEmpty())
+			this.path = FILE_SEPARATOR + path;
+
 		String[] dirs = path.split(FILE_SEPARATOR);
 		this.name = dirs[dirs.length - 1];
-	}
-
-	public InternalFile(String... paths) {
-		this.path = "";
-		for (String part : paths) {
-			this.path += (FILE_SEPARATOR + part);
+		try {
+			getInputStream().close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		String[] dirs = path.split(FILE_SEPARATOR);
-		this.name = dirs[dirs.length - 1];
 	}
 
-	public InternalFile(InternalFile file, String subFile) {
-		this.path = file.path + FILE_SEPARATOR + subFile;
-		this.name = subFile;
+	public InternalFile(String... paths) throws FileNotFoundException {
+		this(String.join(FILE_SEPARATOR, paths));
 	}
 
 	public InternalFile(InternalFile file, String... subFiles) {
@@ -54,11 +52,16 @@ public class InternalFile {
 		return getPath();
 	}
 
+	@SuppressWarnings("resource")
 	public InputStream getInputStream() throws FileNotFoundException {
-		InputStream in = Class.class.getResourceAsStream(path);
-		if (in == null) {
+		InputStream in = null;
+		try {
 			in = new FileInputStream(new File("." + path));
+		} catch (FileNotFoundException ex) {
+			in = InternalFile.class.getResourceAsStream(path);
 		}
+		if (in == null)
+			throw new FileNotFoundException("Cannot find file " + path + " on classpath.");
 		return in;
 	}
 
@@ -76,9 +79,25 @@ public class InternalFile {
 	public String getName() {
 		return name;
 	}
-	
+
 	public static InternalFile[] fromFilenames(String dir, String[] filenames, String extension) {
-		return Arrays.asList(filenames).stream().map(f -> new InternalFile(dir + FILE_SEPARATOR + f + "." + extension)).toArray(size -> new InternalFile[size]);
+		return Arrays.asList(filenames).stream().map(f -> {
+			try {
+				return new InternalFile(dir + FILE_SEPARATOR + f + "." + extension);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}).toArray(size -> new InternalFile[size]);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!obj.getClass().equals(this.getClass())) {
+			return false;
+		} else {
+			return this.getPath().equals(((InternalFile) obj).getPath());
+		}
 	}
 
 }

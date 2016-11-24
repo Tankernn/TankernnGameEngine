@@ -16,7 +16,7 @@ uniform vec3 lightColor[4];
 uniform vec3 attenuation[4];
 uniform float shineDamper;
 uniform float reflectivity;
-uniform vec3 skyColour;
+uniform vec3 skyColor;
 
 void main(void){
 	
@@ -58,7 +58,7 @@ void main(void){
 	}
 
 	out_Color =  vec4(totalDiffuse,1.0) * textureColour + vec4(totalSpecular,1.0);
-	out_Color = mix(vec4(skyColour,1.0),out_Color, visibility);
+	out_Color = mix(vec4(skyColor,1.0),out_Color, visibility);
 	
 	out_BrightColor = vec4(0.0);
 }

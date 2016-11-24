@@ -18,7 +18,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.loader.textures.Texture;
-import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.util.IPositionable;
 
 public class TerrainPack {
@@ -50,8 +49,8 @@ public class TerrainPack {
 		}
 	}
 
-	public List<Terrain> getList() {
-		return (List<Terrain>) terrains.values();
+	public Terrain[] getTerrains() {
+		return terrains.values().toArray(new Terrain[terrains.size()]);
 	}
 
 	public Pair<Integer, Integer> getGridPosByWorldPos(float x, float z) {
@@ -68,12 +67,6 @@ public class TerrainPack {
 			return terrain.getHeightOfTerrain(x, z);
 		else
 			return 0;
-	}
-
-	public void prepareRenderTerrains(MasterRenderer renderer) {
-		for (Terrain terrain : terrains.values()) {
-			renderer.processTerrain(terrain);
-		}
 	}
 
 	/**

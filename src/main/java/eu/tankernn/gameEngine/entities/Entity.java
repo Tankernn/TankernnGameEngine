@@ -3,41 +3,22 @@ package eu.tankernn.gameEngine.entities;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.loader.models.AABB;
-import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.util.IPositionable;
 
 public class Entity implements IPositionable {
-	private TexturedModel model;
+	private int model;
 	private Vector3f position;
 	private Vector3f rotation;
 	private float scale;
 	private AABB boundingBox;
 	
-	private int textureIndex = 0;
-	
-	public Entity(TexturedModel model, Vector3f position, Vector3f rotation, float scale) {
+	public Entity(int model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox) {
 		this.model = model;
 		this.position = position;
 		this.rotation = rotation;
 		this.scale = scale;
-		this.boundingBox = model.getRawModel().getBoundingBox();
+		this.boundingBox = boundingBox;
 		this.boundingBox.updatePosition(position);
-		this.boundingBox = this.boundingBox.copy();
-	}
-	
-	public Entity(TexturedModel model, int index, Vector3f position, Vector3f rotation, float scale) {
-		this(model, position, rotation, scale);
-		this.textureIndex = index;
-	}
-	
-	public float getTextureXOffset() {
-		int column = textureIndex % model.getModelTexture().getNumberOfRows();
-		return (float) column / (float) model.getModelTexture().getNumberOfRows();
-	}
-	
-	public float getTextureYOffset() {
-		int row = textureIndex / model.getModelTexture().getNumberOfRows();
-		return (float) row / (float) model.getModelTexture().getNumberOfRows();
 	}
 	
 	public void increasePosition(float dx, float dy, float dz) {
@@ -55,11 +36,11 @@ public class Entity implements IPositionable {
 		this.boundingBox.updatePosition(this.position);
 	}
 	
-	public TexturedModel getModel() {
+	public int getModel() {
 		return model;
 	}
 	
-	public void setModel(TexturedModel model) {
+	public void setModel(int model) {
 		this.model = model;
 	}
 	

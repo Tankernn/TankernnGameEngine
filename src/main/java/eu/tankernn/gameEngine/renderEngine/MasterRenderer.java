@@ -38,6 +38,8 @@ import eu.tankernn.gameEngine.util.ICamera;
 public class MasterRenderer {
 	private static final Vector4f NO_CLIP = new Vector4f(0, 0, 0, 1);
 	
+	private Loader loader;
+	
 	private EntityRenderer<EntityShader> entityRenderer;
 	private TerrainRenderer terrainRenderer;
 	private SkyboxRenderer skyboxRenderer;
@@ -58,6 +60,7 @@ public class MasterRenderer {
 	 */
 	public MasterRenderer(Loader loader, Camera camera, Skybox skybox) {
 		enableCulling();
+		this.loader = loader;
 		terrainRenderer = new TerrainRenderer(camera.getProjectionMatrix());
 		normalMapRenderer = new NormalMappingRenderer(camera.getProjectionMatrix());
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
@@ -98,9 +101,8 @@ public class MasterRenderer {
 		prepareScene(scene);
 		prepareBuffer();
 		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, NO_CLIP, scene.getLights(), scene.getEnvironmentMap());
+		normalMapRenderer.render(normalMapEntities, NO_CLIP, scene.getLights(), camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, NO_CLIP, scene.getLights());
-		
-		
 	}
 
 	/**
@@ -115,7 +117,6 @@ public class MasterRenderer {
 	 */
 	public void render(List<Light> lights, ICamera camera, Vector4f clipPlane, Texture environmentMap) {
 		prepareBuffer();
-
 		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, clipPlane, lights, environmentMap);
 		normalMapRenderer.render(normalMapEntities, clipPlane, lights, camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, clipPlane, lights);
@@ -126,7 +127,9 @@ public class MasterRenderer {
 		entities.clear();
 		terrains.clear();
 		normalMapEntities.clear();
-		scene.getTerrainPack().prepareRenderTerrains(this);
+		for (Terrain t : scene.getTerrainPack().getTerrains()) {
+			processTerrain(t);
+		}
 		for (Entity e : scene.getEntities()) {
 			processEntity(e);
 		}
@@ -142,7 +145,7 @@ public class MasterRenderer {
 	 *            Entity to add to the list
 	 */
 	public void processEntity(Entity entity) {
-		TexturedModel entityModel = entity.getModel();
+		TexturedModel entityModel = loader.getModel(entity.getModel());
 		List<Entity> batch = entities.get(entityModel);
 		if (batch != null) {
 			batch.add(entity);
@@ -160,7 +163,7 @@ public class MasterRenderer {
 	 *            Entity to add to the list
 	 */
 	public void processNormalMappedEntity(Entity entity) {
-		TexturedModel entityModel = entity.getModel();
+		TexturedModel entityModel = loader.getModel(entity.getModel());
 		List<Entity> batch = normalMapEntities.get(entityModel);
 		if (batch != null) {
 			batch.add(entity);
@@ -218,6 +221,4 @@ public class MasterRenderer {
 																	// framebuffer
 		getShadowMapTexture().bindToUnit(5);
 	}
-	
-	
 }

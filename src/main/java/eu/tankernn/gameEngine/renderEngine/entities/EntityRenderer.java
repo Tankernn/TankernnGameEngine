@@ -74,7 +74,7 @@ public class EntityRenderer<S extends EntityShader> {
 			prepareTexturedModel(model, environmentMap);
 			List<Entity> batch = entities.get(model);
 			for (Entity entity : batch) {
-				prepareInstance(entity);
+				prepareInstance(entity, model);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
 			unbindTexturedModel(model);
@@ -113,11 +113,11 @@ public class EntityRenderer<S extends EntityShader> {
 		model.getRawModel().unbind(0, 1, 2);
 	}
 
-	protected void prepareInstance(Entity entity) {
+	protected void prepareInstance(Entity entity, TexturedModel model) {
 		Vector3f rot = entity.getRotation();
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), rot.x, rot.y, rot.z,
 				entity.getScale());
 		shader.transformationMatrix.loadMatrix(transformationMatrix);
-		shader.offset.loadVec2(entity.getTextureXOffset(), entity.getTextureYOffset());
+		shader.offset.loadVec2(model.getTextureXOffset(), model.getTextureYOffset());
 	}
 }

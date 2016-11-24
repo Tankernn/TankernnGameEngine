@@ -31,7 +31,7 @@ public class NormalMappingRenderer extends EntityRenderer<NormalMappingShader> {
 			prepareTexturedModel(model);
 			List<Entity> batch = entities.get(model);
 			for (Entity entity : batch) {
-				prepareInstance(entity);
+				prepareInstance(entity, model);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
 			unbindTexturedModel(model);
@@ -64,8 +64,7 @@ public class NormalMappingRenderer extends EntityRenderer<NormalMappingShader> {
 
 	private void prepare(Vector4f clipPlane, List<Light> lights, ICamera camera) {
 		shader.plane.loadVec4(clipPlane);
-		// need to be public variables in MasterRenderer
-		shader.skyColour.loadVec3(Settings.RED, Settings.GREEN, Settings.BLUE);
+		shader.skyColor.loadVec3(Settings.RED, Settings.GREEN, Settings.BLUE);
 		Matrix4f viewMatrix = camera.getViewMatrix();
 
 		shader.loadLights(lights, viewMatrix);

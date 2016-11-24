@@ -8,44 +8,24 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.renderEngine.entities.EntityShader;
-import eu.tankernn.gameEngine.renderEngine.shaders.UniformBoolean;
-import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
-import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformSampler;
-import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec2;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec3;
-import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec4;
-import eu.tankernn.gameEngine.renderEngine.shaders.UniformViewMatrix;
 
 public class NormalMappingShader extends EntityShader {
 
 	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/renderEngine/entities/normalMap/normalMapVShader.glsl";
 	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/renderEngine/entities/normalMap/normalMapFShader.glsl";
-
-	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
-	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");
-	protected UniformViewMatrix viewMatrix = new UniformViewMatrix("viewMatrix");
+	
 	private UniformVec3[] lightPositionEyeSpace;
-	protected UniformFloat shineDamper = new UniformFloat("shineDamper");
-	protected UniformFloat reflectivity = new UniformFloat("reflectivity");
-	protected UniformVec3 skyColour = new UniformVec3("skyColour");
-	protected UniformFloat numberOfRows = new UniformFloat("numberOfRows");
-	protected UniformVec2 offset = new UniformVec2("offset");
-	protected UniformVec4 plane = new UniformVec4("plane");
-	protected UniformSampler modelTexture = new UniformSampler("modelTexture");
 	protected UniformSampler normalMap = new UniformSampler("normalMap");
-	protected UniformSampler specularMap = new UniformSampler("specularMap");
-	protected UniformBoolean usesSpecularMap = new UniformBoolean("usesSpecularMap");
 
 	public NormalMappingShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE, "position", "textureCoordinates", "normal", "tangent");
 		this.getLightUniformLocations();
-		super.storeAllUniformLocations(transformationMatrix, projectionMatrix, viewMatrix, viewMatrix, shineDamper,
-				reflectivity, skyColour, numberOfRows, offset, plane, modelTexture, normalMap, specularMap,
-				usesSpecularMap);
-		super.storeAllUniformLocations(lightPositionEyeSpace);
+		super.storeAllUniformLocations(transformationMatrix, projectionMatrix, viewMatrix, shineDamper, reflectivity,
+				skyColor, numberOfRows, offset, plane, modelTexture, normalMap, specularMap, usesSpecularMap);
 	}
-	
+
 	@Override
 	protected void getLightUniformLocations() {
 		lightPositionEyeSpace = new UniformVec3[MAX_LIGHTS];
@@ -57,7 +37,7 @@ public class NormalMappingShader extends EntityShader {
 			attenuation[i] = new UniformVec3("attenuation[" + i + "]");
 		}
 	}
-	
+
 	public void loadLights(List<Light> lights, Matrix4f viewMatrix) {
 		for (int i = 0; i < MAX_LIGHTS; i++) {
 			if (i < lights.size()) {
@@ -71,7 +51,7 @@ public class NormalMappingShader extends EntityShader {
 			}
 		}
 	}
-	
+
 	@Override
 	public void loadLights(List<Light> lights) {
 		throw new NullPointerException("Use loadLights(List<Light> lights, Matrix4f viewMatrix) instead.");

@@ -17,20 +17,20 @@ public class EntityShader extends ShaderProgram {
 
 	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
 	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");
-	protected UniformViewMatrix viewMatrix = new UniformViewMatrix("viewMatrix");
+	public UniformViewMatrix viewMatrix = new UniformViewMatrix("viewMatrix");
 
-	protected UniformFloat shineDamper = new UniformFloat("shineDamper");
-	protected UniformFloat reflectivity = new UniformFloat("reflectivity");
+	public UniformFloat shineDamper = new UniformFloat("shineDamper");
+	public UniformFloat reflectivity = new UniformFloat("reflectivity");
 	protected UniformFloat refractivity = new UniformFloat("refractivity");
 	protected UniformBoolean useFakeLighting = new UniformBoolean("useFakeLighting");
-	protected UniformVec3 skyColor = new UniformVec3("skyColor");
-	protected UniformFloat numberOfRows = new UniformFloat("numberOfRows");
+	public UniformVec3 skyColor = new UniformVec3("skyColor");
+	public UniformFloat numberOfRows = new UniformFloat("numberOfRows");
 	protected UniformVec2 offset = new UniformVec2("offset");
-	protected UniformVec4 plane = new UniformVec4("plane");
+	public UniformVec4 plane = new UniformVec4("plane");
 	protected UniformMatrix toShadowMapSpace = new UniformMatrix("toShadowMapSpace");
 	protected UniformSampler shadowMap = new UniformSampler("shadowMap");
 	protected UniformSampler specularMap = new UniformSampler("specularMap");
-	protected UniformBoolean usesSpecularMap = new UniformBoolean("usesSpecularMap");
+	public UniformBoolean usesSpecularMap = new UniformBoolean("usesSpecularMap");
 	protected UniformSampler modelTexture = new UniformSampler("modelTexture");
 	protected UniformVec3 cameraPosition = new UniformVec3("cameraPosition");
 	protected UniformSampler enviroMap = new UniformSampler("enviroMap");

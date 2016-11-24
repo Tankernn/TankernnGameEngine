@@ -3,7 +3,7 @@ package eu.tankernn.gameEngine.entities;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.loader.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.settings.Physics;
 import eu.tankernn.gameEngine.terrains.Terrain;
@@ -14,8 +14,8 @@ public class Car extends Player {
 	private static final float MAX_SPEED = 100.0f, ACCELERATION = 20.0f, DECELERATION = 10.0f, BRAKE = 40.0f,
 			TURN_FORCE = 160.0f;
 
-	public Car(TexturedModel model, Vector3f position, Vector3f rotation, float scale, TerrainPack terrainPack) {
-		super(model, position, rotation, scale, terrainPack);
+	public Car(int model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox, TerrainPack terrainPack) {
+		super(model, position, rotation, scale, boundingBox, terrainPack);
 	}
 
 	@Override
