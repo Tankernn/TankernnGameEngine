@@ -7,7 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Arrays;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 
 public class InternalFile {
 
@@ -74,6 +78,14 @@ public class InternalFile {
 			System.err.println("Couldn't get reader for " + path);
 			throw e;
 		}
+	}
+	
+	public URL getURL() {
+		return InternalFile.class.getResource(path);
+	}
+	
+	public String readFile() throws IOException {
+		return Resources.toString(getURL(), Charsets.UTF_8);
 	}
 
 	public String getName() {

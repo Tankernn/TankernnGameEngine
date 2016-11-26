@@ -1,8 +1,8 @@
 package eu.tankernn.gameEngine.loader;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -110,7 +112,8 @@ public class Loader {
 	}
 
 	public RawModel loadToVAO(ModelData data) {
-		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), data.getIndices());
+		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(),
+				data.getIndices());
 	}
 
 	/**
@@ -120,7 +123,7 @@ public class Loader {
 	 *            The path, relative to the root of the jar file, of the file to
 	 *            load.
 	 * @return The texture ID
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
 	public Texture loadTexture(String filename) throws FileNotFoundException {
 		Texture texture = Texture.newTexture(new InternalFile(filename)).create();
@@ -191,30 +194,24 @@ public class Loader {
 	private void readModelSpecification(InternalFile file) throws IOException {
 		Map<InternalFile, RawModel> cachedRawModels = new HashMap<InternalFile, RawModel>();
 		Map<InternalFile, Texture> cachedTextures = new HashMap<InternalFile, Texture>();
+		JSONObject spec;
 
-		BufferedReader in = file.getReader();
-		String line;
-		String[] spec;
+		JSONArray jsonArr = new JSONArray(file.readFile());
 
-		while (in.ready()) {
-			line = in.readLine();
-
-			if (line.startsWith("#") || line.isEmpty())
-				continue;
-
-			spec = line.split("\\s+");
+		for (int j = 0; j < jsonArr.length(); j++) {
+			spec = jsonArr.getJSONObject(j);
 
 			int id;
 			RawModel model;
 			ModelTexture modelTexture;
 			Texture[] textures = new Texture[3];
 
-			id = Integer.parseInt(spec[0]);
+			id = spec.getInt("id");
 
-			InternalFile objFile = new InternalFile(spec[1]);
-			InternalFile textureFile = new InternalFile(spec[2]),
-					specularFile = spec[3].equals("null") ? null : new InternalFile(spec[3]),
-					normalFile = spec[4].equals("null") ? null : new InternalFile(spec[4]);
+			InternalFile objFile = new InternalFile(spec.getString("model"));
+			InternalFile textureFile = new InternalFile(spec.getString("texture")),
+					specularFile = spec.has("specular") ? new InternalFile(spec.getString("specular")) : null,
+					normalFile = spec.has("normal") ? new InternalFile(spec.getString("normal")) : null;
 
 			InternalFile[] textureFiles = { textureFile, specularFile, normalFile };
 
@@ -226,6 +223,7 @@ public class Loader {
 			}
 
 			for (int i = 0; i < textureFiles.length; i++) {
+				System.out.println(textureFiles[i]);
 				if (textureFiles[i] == null)
 					textures[i] = null;
 				else if (cachedTextures.containsKey(textureFiles[i]))
@@ -238,18 +236,18 @@ public class Loader {
 
 			modelTexture = new ModelTexture(textures[0]);
 			if (textures[1] != null)
-				modelTexture.setNormalMap(textures[1]);
+				modelTexture.setNormalMap(textures[2]);
 			if (textures[2] != null)
-				modelTexture.setSpecularMap(textures[2]);
+				modelTexture.setSpecularMap(textures[1]);
 
-			modelTexture.setShineDamper(Float.parseFloat(spec[5]));
-			modelTexture.setReflectivity(Float.parseFloat(spec[6]));
-			modelTexture.setRefractivity(Float.parseFloat(spec[7]));
+			modelTexture.setShineDamper(BigDecimal.valueOf(spec.optDouble("shinedamper", 10.0d)).floatValue());
+			modelTexture.setReflectivity(BigDecimal.valueOf(spec.optDouble("reflectivity", 0d)).floatValue());
+			modelTexture.setRefractivity(BigDecimal.valueOf(spec.optDouble("refractivity", 0d)).floatValue());
+			
+			modelTexture.setHasTransparency(spec.optBoolean("transparency"));
 
 			models.put(id, new TexturedModel(model, modelTexture));
 		}
-
-		in.close();
 	}
 
 	public int registerModel(int id, TexturedModel model) throws Exception {

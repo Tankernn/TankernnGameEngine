@@ -5,9 +5,9 @@ public class ModelTexture {
 	private Texture normalMap;
 	private Texture specularMap;
 
-	private float shineDamper = 1;
-	private float reflectivity = 0;
-	private float refractivity = 0;
+	private float shineDamper = 10.0f;
+	private float reflectivity = 0.0f;
+	private float refractivity = 0.0f;
 
 	private boolean hasTransparency = false;
 	private boolean useFakeLighting = false;

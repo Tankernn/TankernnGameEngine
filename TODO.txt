@@ -1,6 +1,5 @@
 Particles and post-processing is broken.
-I am suspecting that it would be laughably easy to merge the normalmapped and non-normalmapped entity shaders.
-Texture atlases  and transparency vars with the new model spec system.
+Texture atlases with the new model spec system.
 Multiplayer
 Modular GUIs
  - Make text variables uniform/ change text rendering method
