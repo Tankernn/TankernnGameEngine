@@ -61,7 +61,6 @@ public class MainLoop {
 	public static final boolean DEBUG = true;
 
 	static List<Entity> entities = new ArrayList<Entity>();
-	static List<Entity> normalMapEntities = new ArrayList<Entity>();
 	static List<Light> lights = new ArrayList<Light>();
 
 	public static void main(String[] args) throws IOException {
@@ -106,10 +105,9 @@ public class MainLoop {
 		textMaster.loadText(text);
 
 		// Barrel
-
 		Entity barrel = new Entity(1, new Vector3f(75, 10, 75), new Vector3f(0, 0, 0), 1f,
 				loader.getModel(1).getRawModel().getBoundingBox());
-		normalMapEntities.add(barrel);
+		entities.add(barrel);
 
 		Light sun = new Light(new Vector3f(100000, 150000, -70000), new Vector3f(1f, 1f, 1f));
 		Light flashLight = new Light(new Vector3f(0, 10, -10), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f));
@@ -199,7 +197,7 @@ public class MainLoop {
 			ps.setPosition(player.getPosition());
 			particleMaster.update(camera);
 
-			Scene scene = new Scene(entities, normalMapEntities, terrainPack, lights, camera, skybox);
+			Scene scene = new Scene(entities, terrainPack, lights, camera, skybox);
 
 			EnvironmentMapRenderer.renderEnvironmentMap(scene.getEnvironmentMap(), scene, player.getPosition(),
 					renderer);

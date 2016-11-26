@@ -20,9 +20,7 @@ import org.lwjgl.opengl.GL33;
 
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
-import eu.tankernn.gameEngine.loader.obj.OBJFileLoader;
-import eu.tankernn.gameEngine.loader.obj.normalMapped.ModelDataNM;
-import eu.tankernn.gameEngine.loader.obj.normalMapped.NormalMappedObjLoader;
+import eu.tankernn.gameEngine.loader.obj.ObjLoader;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.RawModel;
@@ -112,12 +110,7 @@ public class Loader {
 	}
 
 	public RawModel loadToVAO(ModelData data) {
-		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
-	}
-
-	public RawModel loadToVAO(ModelDataNM data) {
-		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(),
-				data.getIndices());
+		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), data.getIndices());
 	}
 
 	/**
@@ -191,12 +184,7 @@ public class Loader {
 	}
 
 	public RawModel loadOBJ(InternalFile objFile) {
-		ModelData data = OBJFileLoader.loadOBJ(objFile);
-		return this.loadToVAO(data).withBoundingBox(data);
-	}
-
-	public RawModel loadNormalMappedOBJ(InternalFile objFile) {
-		ModelDataNM data = NormalMappedObjLoader.loadOBJ(objFile);
+		ModelData data = ObjLoader.loadOBJ(objFile);
 		return this.loadToVAO(data).withBoundingBox(data);
 	}
 
@@ -233,7 +221,7 @@ public class Loader {
 			if (cachedRawModels.containsKey(objFile))
 				model = cachedRawModels.get(objFile);
 			else {
-				model = (normalFile != null ? loadNormalMappedOBJ(objFile) : loadOBJ(objFile));
+				model = loadOBJ(objFile);
 				cachedRawModels.put(objFile, model);
 			}
 

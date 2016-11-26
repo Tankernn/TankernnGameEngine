@@ -65,7 +65,7 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
 		shader.skyColor.loadVec3(RED, GREEN, BLUE);
-		shader.loadLights(lights);
+		shader.loadLights(lights, cam.getViewMatrix());
 		shader.viewMatrix.loadCamera(cam);
 
 		shader.toShadowMapSpace.loadMatrix(toShadowSpace);
@@ -87,7 +87,7 @@ public class EntityRenderer<S extends EntityShader> {
 	}
 
 	private void prepareTexturedModel(TexturedModel model, Texture environmentMap) {
-		model.getRawModel().bind(0, 1, 2);
+		model.getRawModel().bind(0, 1, 2, 3);
 		ModelTexture texture = model.getModelTexture();
 		shader.numberOfRows.loadFloat(texture.getNumberOfRows());
 		if (texture.hasTransparency())
@@ -99,8 +99,11 @@ public class EntityRenderer<S extends EntityShader> {
 		model.getModelTexture().getTexture().bindToUnit(0);
 		shader.usesSpecularMap.loadBoolean(texture.hasSpecularMap());
 		if (texture.hasSpecularMap()) {
-			texture.getSpecularMap().bindToUnit(1);
+			texture.getSpecularMap().bindToUnit(2);
 		}
+		shader.usesNormalMap.loadBoolean(texture.hasNormalMap());
+		if (texture.hasNormalMap())
+			texture.getNormalMap().bindToUnit(1);
 		bindEnvironmentMap(environmentMap);
 	}
 
@@ -110,7 +113,7 @@ public class EntityRenderer<S extends EntityShader> {
 
 	private void unbindTexturedModel(TexturedModel model) {
 		MasterRenderer.enableCulling();
-		model.getRawModel().unbind(0, 1, 2);
+		model.getRawModel().unbind(0, 1, 2, 3);
 	}
 
 	protected void prepareInstance(Entity entity, TexturedModel model) {

@@ -11,7 +11,6 @@ public class ModelTexture {
 
 	private boolean hasTransparency = false;
 	private boolean useFakeLighting = false;
-	private boolean hasSpecularMap = false;
 
 	private int numberOfRows = 1;
 
@@ -50,6 +49,10 @@ public class ModelTexture {
 	public Texture getNormalMap() {
 		return normalMap;
 	}
+	
+	public boolean hasNormalMap() {
+		return normalMap != null;
+	}
 
 	public ModelTexture setNormalMap(Texture normalMap) {
 		this.normalMap = normalMap;
@@ -76,12 +79,11 @@ public class ModelTexture {
 	
 	public ModelTexture setSpecularMap(Texture texture) {
 		this.specularMap = texture;
-		this.hasSpecularMap = true;
 		return this;
 	}
 	
 	public boolean hasSpecularMap() {
-		return this.hasSpecularMap;
+		return this.specularMap != null;
 	}
 	
 	public Texture getSpecularMap() {

@@ -1,5 +1,12 @@
 package eu.tankernn.gameEngine.renderEngine.entities;
 
+import java.util.List;
+
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
+
+import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformBoolean;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
@@ -18,7 +25,6 @@ public class EntityShader extends ShaderProgram {
 	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
 	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");
 	public UniformViewMatrix viewMatrix = new UniformViewMatrix("viewMatrix");
-
 	public UniformFloat shineDamper = new UniformFloat("shineDamper");
 	public UniformFloat reflectivity = new UniformFloat("reflectivity");
 	protected UniformFloat refractivity = new UniformFloat("refractivity");
@@ -34,23 +40,44 @@ public class EntityShader extends ShaderProgram {
 	protected UniformSampler modelTexture = new UniformSampler("modelTexture");
 	protected UniformVec3 cameraPosition = new UniformVec3("cameraPosition");
 	protected UniformSampler enviroMap = new UniformSampler("enviroMap");
+	protected UniformSampler normalMap = new UniformSampler("normalMap");
+	public UniformBoolean usesNormalMap = new UniformBoolean("usesNormalMap");
 
 	public EntityShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE, "position", "textureCoords", "normal");
+		super(VERTEX_FILE, FRAGMENT_FILE, "position", "textureCoords", "normal", "tangent");
 		super.getLightUniformLocations();
 		super.storeAllUniformLocations(transformationMatrix, projectionMatrix, viewMatrix, shineDamper, reflectivity,
 				refractivity, useFakeLighting, skyColor, numberOfRows, offset, plane, toShadowMapSpace, shadowMap,
-				specularMap, usesSpecularMap, modelTexture, cameraPosition, enviroMap);
+				specularMap, usesSpecularMap, modelTexture, cameraPosition, enviroMap, normalMap, usesNormalMap);
 	}
 
 	public EntityShader(String vertexFile, String fragmentFile, String... string) {
 		super(vertexFile, fragmentFile, string);
 	}
 
+	public void loadLights(List<Light> lights, Matrix4f viewMatrix) {
+		super.loadLights(lights);
+		for (int i = 0; i < MAX_LIGHTS; i++) {
+			if (i < lights.size()) {
+				lightPositionEyeSpace[i].loadVec3(getEyeSpacePosition(lights.get(i), viewMatrix));
+			} else {
+				lightPositionEyeSpace[i].loadVec3(new Vector3f(0, 0, 0));
+			}
+		}
+	}
+
 	protected void connectTextureUnits() {
 		shadowMap.loadTexUnit(5);
 		modelTexture.loadTexUnit(0);
-		specularMap.loadTexUnit(1);
+		normalMap.loadTexUnit(1);
+		specularMap.loadTexUnit(2);
 		enviroMap.loadTexUnit(10);
+	}
+
+	private Vector3f getEyeSpacePosition(Light light, Matrix4f viewMatrix) {
+		Vector3f position = light.getPosition();
+		Vector4f eyeSpacePos = new Vector4f(position.x, position.y, position.z, 1f);
+		Matrix4f.transform(viewMatrix, eyeSpacePos, eyeSpacePos);
+		return new Vector3f(eyeSpacePos);
 	}
 }

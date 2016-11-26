@@ -14,8 +14,10 @@ layout (location = 1) out vec4 out_BrightColor;
 
 uniform sampler2D shadowMap;
 uniform sampler2D modelTexture;
+uniform sampler2D normalMap;
 uniform sampler2D specularMap;
 uniform samplerCube enviroMap;
+uniform float usesNormalMap;
 uniform float usesSpecularMap;
 uniform vec3 lightColor[4]; //4 max light sources
 uniform vec3 attenuation[4];
@@ -35,6 +37,12 @@ void main(void){
 	}
 	
 	vec3 unitNormal = normalize(surfaceNormal);
+
+	if (usesNormalMap > 0.5) {
+		vec4 normalMapValue = 2.0 * texture(normalMap, pass_textureCoords) - 1.0;
+		unitNormal = normalize(normalMapValue.rgb);
+	}
+
 	vec3 unitVectorToCamera = normalize(toCameraVector);
 	
 	vec3 totalDiffuse = vec3(0.0);

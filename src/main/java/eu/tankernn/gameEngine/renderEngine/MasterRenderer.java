@@ -22,7 +22,6 @@ import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.entities.EntityRenderer;
 import eu.tankernn.gameEngine.renderEngine.entities.EntityShader;
-import eu.tankernn.gameEngine.renderEngine.entities.normalMap.NormalMappingRenderer;
 import eu.tankernn.gameEngine.renderEngine.shadows.ShadowMapMasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.renderEngine.skybox.SkyboxRenderer;
@@ -43,11 +42,9 @@ public class MasterRenderer {
 	private EntityRenderer<EntityShader> entityRenderer;
 	private TerrainRenderer terrainRenderer;
 	private SkyboxRenderer skyboxRenderer;
-	private NormalMappingRenderer normalMapRenderer;
 	private ShadowMapMasterRenderer shadowMapRenderer;
 	
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
-	private Map<TexturedModel, List<Entity>> normalMapEntities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 
 	/**
@@ -62,7 +59,6 @@ public class MasterRenderer {
 		enableCulling();
 		this.loader = loader;
 		terrainRenderer = new TerrainRenderer(camera.getProjectionMatrix());
-		normalMapRenderer = new NormalMappingRenderer(camera.getProjectionMatrix());
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
 		skyboxRenderer = new SkyboxRenderer(loader, camera.getProjectionMatrix(), skybox);
 		entityRenderer = new EntityRenderer<EntityShader>(camera.getProjectionMatrix());
@@ -101,7 +97,6 @@ public class MasterRenderer {
 		prepareScene(scene);
 		prepareBuffer();
 		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, NO_CLIP, scene.getLights(), scene.getEnvironmentMap());
-		normalMapRenderer.render(normalMapEntities, NO_CLIP, scene.getLights(), camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, NO_CLIP, scene.getLights());
 	}
 
@@ -118,7 +113,6 @@ public class MasterRenderer {
 	public void render(List<Light> lights, ICamera camera, Vector4f clipPlane, Texture environmentMap) {
 		prepareBuffer();
 		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, clipPlane, lights, environmentMap);
-		normalMapRenderer.render(normalMapEntities, clipPlane, lights, camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, clipPlane, lights);
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);
 	}
@@ -126,15 +120,11 @@ public class MasterRenderer {
 	private void prepareScene(Scene scene) {
 		entities.clear();
 		terrains.clear();
-		normalMapEntities.clear();
 		for (Terrain t : scene.getTerrainPack().getTerrains()) {
 			processTerrain(t);
 		}
 		for (Entity e : scene.getEntities()) {
 			processEntity(e);
-		}
-		for (Entity e : scene.getNormalEntities()) {
-			processNormalMappedEntity(e);
 		}
 	}
 
@@ -153,24 +143,6 @@ public class MasterRenderer {
 			List<Entity> newBatch = new ArrayList<Entity>();
 			newBatch.add(entity);
 			entities.put(entityModel, newBatch);
-		}
-	}
-
-	/**
-	 * Same as {@link #processEntity(Entity)}, but for normal-mapped entities.
-	 * 
-	 * @param entity
-	 *            Entity to add to the list
-	 */
-	public void processNormalMappedEntity(Entity entity) {
-		TexturedModel entityModel = loader.getModel(entity.getModel());
-		List<Entity> batch = normalMapEntities.get(entityModel);
-		if (batch != null) {
-			batch.add(entity);
-		} else {
-			List<Entity> newBatch = new ArrayList<Entity>();
-			newBatch.add(entity);
-			normalMapEntities.put(entityModel, newBatch);
 		}
 	}
 
@@ -207,7 +179,6 @@ public class MasterRenderer {
 	public void cleanUp() {
 		entityRenderer.cleanUp();
 		terrainRenderer.cleanUp();
-		normalMapRenderer.cleanUp();
 		shadowMapRenderer.cleanUp();
 	}
 

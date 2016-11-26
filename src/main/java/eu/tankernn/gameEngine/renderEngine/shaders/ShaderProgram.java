@@ -18,6 +18,7 @@ public class ShaderProgram {
 	private int programID;
 
 	protected UniformVec3[] lightPosition;
+	protected UniformVec3[] lightPositionEyeSpace;
 	protected UniformVec3[] lightColor;
 	protected UniformVec3[] attenuation;
 
@@ -37,9 +38,11 @@ public class ShaderProgram {
 
 	protected void getLightUniformLocations() {
 		lightPosition = new UniformVec3[MAX_LIGHTS];
+		lightPositionEyeSpace = new UniformVec3[MAX_LIGHTS];
 		lightColor = new UniformVec3[MAX_LIGHTS];
 		attenuation = new UniformVec3[MAX_LIGHTS];
 		for (int i = 0; i < MAX_LIGHTS; i++) {
+			lightPositionEyeSpace[i] = new UniformVec3("lightPositionEyeSpace[" + i + "]");
 			lightPosition[i] = new UniformVec3("lightPosition[" + i + "]");
 			lightColor[i] = new UniformVec3("lightColor[" + i + "]");
 			attenuation[i] = new UniformVec3("attenuation[" + i + "]");
