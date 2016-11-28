@@ -1,4 +1,3 @@
-Particles and post-processing is broken.
 Texture atlases with the new model spec system.
 Multiplayer
 Modular GUIs

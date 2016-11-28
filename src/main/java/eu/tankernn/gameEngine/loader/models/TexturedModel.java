@@ -37,5 +37,7 @@ public class TexturedModel {
 		return texture;
 	}
 	
-	
+	public AABB getBoundingBox() {
+		return rawModel.getBoundingBox();
+	}
 }

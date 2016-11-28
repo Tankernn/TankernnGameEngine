@@ -1,36 +1,26 @@
 package eu.tankernn.gameEngine.postProcessing.gaussianBlur;
 
 import eu.tankernn.gameEngine.loader.textures.Texture;
-import eu.tankernn.gameEngine.postProcessing.IPostProcessingEffect;
+import eu.tankernn.gameEngine.postProcessing.PostProcessingEffect;
 import eu.tankernn.gameEngine.postProcessing.ImageRenderer;
 
-public class HorizontalBlur implements IPostProcessingEffect {
-	
-	private ImageRenderer renderer;
-	private HorizontalBlurShader shader;
+public class HorizontalBlur extends PostProcessingEffect<HorizontalBlurShader> {
 	
 	public HorizontalBlur(int targetFboWidth, int targetFboHeight){
-		shader = new HorizontalBlurShader();
+		super(new HorizontalBlurShader());
 		shader.start();
 		shader.targetWidth.loadFloat(targetFboWidth);
 		shader.stop();
 		renderer = new ImageRenderer(targetFboWidth, targetFboHeight);
 	}
 	
-	public void render(Texture colorTexture, Texture texture){
+	public void render(Texture colorTexture, Texture brightTexture){
 		shader.start();
-		texture.bindToUnit(0);
+		colorTexture.bindToUnit(0);
 		renderer.renderQuad();
 		shader.stop();
+		
+		outputColorTexture = renderer.getOutputTexture();
+		outputBrightTexture = brightTexture;
 	}
-	
-	public Texture getOutputTexture(){
-		return renderer.getOutputTexture();
-	}
-	
-	public void cleanUp(){
-		renderer.cleanUp();
-		shader.cleanUp();
-	}
-
 }

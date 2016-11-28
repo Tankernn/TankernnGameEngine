@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 
+import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
 import eu.tankernn.gameEngine.loader.obj.ObjLoader;
@@ -223,7 +224,6 @@ public class Loader {
 			}
 
 			for (int i = 0; i < textureFiles.length; i++) {
-				System.out.println(textureFiles[i]);
 				if (textureFiles[i] == null)
 					textures[i] = null;
 				else if (cachedTextures.containsKey(textureFiles[i]))
@@ -277,5 +277,9 @@ public class Loader {
 
 	public TexturedModel getModel(int id) {
 		return models.get(id);
+	}
+	
+	public AABB getBoundingBox(int id) {
+		return getModel(id).getBoundingBox();
 	}
 }

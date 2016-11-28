@@ -65,7 +65,7 @@ public class MainLoop {
 
 	public static void main(String[] args) throws IOException {
 		DisplayManager.createDisplay("Tankernn Game Engine tester");
-		
+
 		Loader loader = new Loader(new InternalFile("models.json"));
 
 		// ### Terrain textures ###
@@ -81,11 +81,10 @@ public class MainLoop {
 		TerrainPack terrainPack = new TerrainPack(loader, texturePack, blendMap, SEED);
 
 		// Player
-		Entity entity = new Entity(0, new Vector3f(0, 0, 20), new Vector3f(0, 0, 0), 1,
-				loader.getModel(0).getRawModel().getBoundingBox());
+		Entity entity = new Entity(0, new Vector3f(0, 0, 20), new Vector3f(0, 0, 0), 1, loader.getBoundingBox(0));
 		entities.add(entity);
-		Player player = new Player(0, new Vector3f(10, 0, 50), new Vector3f(0, 0, 0), 1,
-				loader.getModel(0).getRawModel().getBoundingBox(), terrainPack);
+		Player player = new Player(0, new Vector3f(10, 0, 50), new Vector3f(0, 0, 0), 1, loader.getBoundingBox(0),
+				terrainPack);
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
 
@@ -105,8 +104,7 @@ public class MainLoop {
 		textMaster.loadText(text);
 
 		// Barrel
-		Entity barrel = new Entity(1, new Vector3f(75, 10, 75), new Vector3f(0, 0, 0), 1f,
-				loader.getModel(1).getRawModel().getBoundingBox());
+		Entity barrel = new Entity(1, new Vector3f(75, 10, 75), new Vector3f(0, 0, 0), 1f, loader.getBoundingBox(1));
 		entities.add(barrel);
 
 		Light sun = new Light(new Vector3f(100000, 150000, -70000), new Vector3f(1f, 1f, 1f));
@@ -124,13 +122,14 @@ public class MainLoop {
 			float z = rand.nextFloat() * 1000;
 
 			entities.add(new Entity(2, new Vector3f(x, terrainPack.getTerrainHeightByWorldPos(x, z), z), new Vector3f(),
-					1, loader.getModel(2).getRawModel().getBoundingBox()));
+					1, loader.getBoundingBox(2)));
 		}
 
 		terrainPack.addWaitingForTerrainHeight(entities.toArray(new Entity[entities.size()]));
 
 		// #### Water rendering ####
-		WaterMaster waterMaster = new WaterMaster(loader, loader.loadTexture(DUDV_MAP), loader.loadTexture(NORMAL_MAP), camera);
+		WaterMaster waterMaster = new WaterMaster(loader, loader.loadTexture(DUDV_MAP), loader.loadTexture(NORMAL_MAP),
+				camera);
 		WaterTile water = new WaterTile(75, 75, 0);
 		waterMaster.addWaterTile(water);
 
@@ -138,7 +137,7 @@ public class MainLoop {
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
-		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/fire.png"), 4, false);
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/cosmic.png"), 4, true);
 		ParticleSystem ps = new ParticleSystem(particleTexture, 50, 10, 0.3f, 1);
 		particleMaster.addSystem(ps);
 
@@ -214,6 +213,7 @@ public class MainLoop {
 
 			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT0, outputFbo);
 			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT1, outputFbo2);
+			
 			PostProcessing.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
 
 			guiRenderer.render(guis);

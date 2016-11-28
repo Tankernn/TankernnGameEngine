@@ -16,11 +16,11 @@ import eu.tankernn.gameEngine.renderEngine.RawModel;
 
 public class PostProcessing {
 
-	private static final int blurFactor = 2;
+	private static final int blurFactor = 0;
 
 	private static final float[] POSITIONS = { -1, 1, -1, -1, 1, 1, 1, -1 };
 	private static RawModel quad;
-	private static List<IPostProcessingEffect> effects = new ArrayList<IPostProcessingEffect>();
+	private static List<PostProcessingEffect<?>> effects = new ArrayList<PostProcessingEffect<?>>();
 	private static CombineFilter combineFilter;
 	
 	public static void init(Loader loader) {
@@ -36,12 +36,12 @@ public class PostProcessing {
 	}
 
 	public static void doPostProcessing(Texture colorTexture, Texture brightTexture) {
-		for (IPostProcessingEffect effect : effects) {
-			effect.render(colorTexture, brightTexture);
-			brightTexture = effect.getOutputTexture();
-		}
-		
 		start();
+		for (PostProcessingEffect<?> effect : effects) {
+			effect.render(colorTexture, brightTexture);
+			colorTexture = effect.getOutputColorTexture();
+			brightTexture = effect.getOutputBrightTexture();
+		}
 		combineFilter.render(colorTexture, brightTexture);
 		end();
 	}
