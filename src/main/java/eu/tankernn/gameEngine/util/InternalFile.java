@@ -29,6 +29,8 @@ public class InternalFile {
 		this.name = dirs[dirs.length - 1];
 		try {
 			getInputStream().close();
+		} catch (FileNotFoundException e) {
+			throw e;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -79,11 +81,11 @@ public class InternalFile {
 			throw e;
 		}
 	}
-	
+
 	public URL getURL() {
 		return InternalFile.class.getResource(path);
 	}
-	
+
 	public String readFile() throws IOException {
 		return Resources.toString(getURL(), Charsets.UTF_8);
 	}

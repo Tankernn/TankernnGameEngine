@@ -2,15 +2,15 @@ package eu.tankernn.gameEngine.renderEngine.water;
 
 public class WaterTile {
 	
-	public static final float TILE_SIZE = 60;
-	
 	private float height;
 	private float x, z;
+	private float size;
 	
-	public WaterTile(float centerX, float centerZ, float height) {
+	public WaterTile(float centerX, float centerZ, float height, float size) {
 		this.x = centerX;
 		this.z = centerZ;
 		this.height = height;
+		this.size = size;
 	}
 	
 	public float getHeight() {
@@ -23,6 +23,10 @@ public class WaterTile {
 	
 	public float getZ() {
 		return z;
+	}
+	
+	public float getSize() {
+		return size;
 	}
 	
 }

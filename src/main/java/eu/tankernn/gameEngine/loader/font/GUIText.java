@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.font.meshCreator;
+package eu.tankernn.gameEngine.loader.font;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;

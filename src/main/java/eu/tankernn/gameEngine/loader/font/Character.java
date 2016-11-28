@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.font.meshCreator;
+package eu.tankernn.gameEngine.loader.font;
 
 /**
  * Simple data structure class holding information about a certain glyph in the

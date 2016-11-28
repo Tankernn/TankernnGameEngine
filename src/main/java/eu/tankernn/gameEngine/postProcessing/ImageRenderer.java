@@ -4,6 +4,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.renderEngine.Fbo;
 
 public class ImageRenderer {
 

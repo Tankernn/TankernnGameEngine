@@ -7,8 +7,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import eu.tankernn.gameEngine.font.meshCreator.FontType;
-import eu.tankernn.gameEngine.font.meshCreator.GUIText;
+import eu.tankernn.gameEngine.loader.font.FontType;
+import eu.tankernn.gameEngine.loader.font.GUIText;
 
 public class FontRenderer {
 	

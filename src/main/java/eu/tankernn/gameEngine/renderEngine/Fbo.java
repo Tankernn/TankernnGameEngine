@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.postProcessing;
+package eu.tankernn.gameEngine.renderEngine;
 
 import java.nio.IntBuffer;
 

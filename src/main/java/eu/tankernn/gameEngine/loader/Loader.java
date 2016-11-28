@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -105,13 +106,6 @@ public class Loader {
 		return new RawModel(vaoID, positions.length / 2);
 	}
 
-	public RawModel loadToVAO(float[] positions) {
-		int vaoID = createVAO();
-		this.storeDataInAttributeList(0, 3, positions);
-		unbindVAO();
-		return new RawModel(vaoID, positions.length / 3);
-	}
-
 	public RawModel loadToVAO(ModelData data) {
 		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(),
 				data.getIndices());
@@ -205,16 +199,16 @@ public class Loader {
 			int id;
 			RawModel model;
 			ModelTexture modelTexture;
-			Texture[] textures = new Texture[3];
 
 			id = spec.getInt("id");
 
-			InternalFile objFile = new InternalFile(spec.getString("model"));
-			InternalFile textureFile = new InternalFile(spec.getString("texture")),
-					specularFile = spec.has("specular") ? new InternalFile(spec.getString("specular")) : null,
-					normalFile = spec.has("normal") ? new InternalFile(spec.getString("normal")) : null;
+			InternalFile objFile = new InternalFile(optFilename(spec, "model", ".obj"));
 
-			InternalFile[] textureFiles = { textureFile, specularFile, normalFile };
+			String[] textureFiles = {
+					optFilename(spec, "texture", ".png"), 
+					optFilename(spec, "specular", "S.png"),
+					optFilename(spec, "normal", "N.png")
+			};
 
 			if (cachedRawModels.containsKey(objFile))
 				model = cachedRawModels.get(objFile);
@@ -223,16 +217,22 @@ public class Loader {
 				cachedRawModels.put(objFile, model);
 			}
 
-			for (int i = 0; i < textureFiles.length; i++) {
-				if (textureFiles[i] == null)
-					textures[i] = null;
-				else if (cachedTextures.containsKey(textureFiles[i]))
-					textures[i] = cachedTextures.get(textureFiles[i]);
-				else {
-					textures[i] = this.loadTexture(textureFiles[i].getPath());
-					cachedTextures.put(textureFiles[i], textures[i]);
+			Texture[] textures = Arrays.stream(textureFiles).map(fileName -> {
+				try {
+					InternalFile f = new InternalFile(fileName);
+					if (cachedTextures.containsKey(f)) {
+						return cachedTextures.get(f);
+					} else {
+						Texture t = loadTexture(f.getPath());
+						cachedTextures.put(f, t);
+						return t;
+					}
+				} catch (FileNotFoundException ex) {
+					if (!(ex.getMessage().contains("S.png") || ex.getMessage().contains("N.png")))
+						ex.printStackTrace();
+					return null;
 				}
-			}
+			}).toArray(size -> new Texture[size]);
 
 			modelTexture = new ModelTexture(textures[0]);
 			if (textures[1] != null)
@@ -240,14 +240,22 @@ public class Loader {
 			if (textures[2] != null)
 				modelTexture.setSpecularMap(textures[1]);
 
-			modelTexture.setShineDamper(BigDecimal.valueOf(spec.optDouble("shinedamper", 10.0d)).floatValue());
-			modelTexture.setReflectivity(BigDecimal.valueOf(spec.optDouble("reflectivity", 0d)).floatValue());
-			modelTexture.setRefractivity(BigDecimal.valueOf(spec.optDouble("refractivity", 0d)).floatValue());
-			
+			modelTexture.setShineDamper(optFloat(spec, "shinedamper", 10.0f));
+			modelTexture.setReflectivity(optFloat(spec, "reflectivity", 0f));
+			modelTexture.setRefractivity(optFloat(spec, "refractivity", 0f));
+
 			modelTexture.setHasTransparency(spec.optBoolean("transparency"));
 
 			models.put(id, new TexturedModel(model, modelTexture));
 		}
+	}
+
+	private float optFloat(JSONObject spec, String key, float defaultValue) {
+		return BigDecimal.valueOf(spec.optDouble(key, (double) defaultValue)).floatValue();
+	}
+
+	private String optFilename(JSONObject spec, String key, String extension) {
+		return spec.has(key) ? spec.getString(key) : spec.get("name") + extension;
 	}
 
 	public int registerModel(int id, TexturedModel model) throws Exception {
@@ -278,7 +286,7 @@ public class Loader {
 	public TexturedModel getModel(int id) {
 		return models.get(id);
 	}
-	
+
 	public AABB getBoundingBox(int id) {
 		return getModel(id).getBoundingBox();
 	}

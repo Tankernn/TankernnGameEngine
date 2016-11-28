@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import eu.tankernn.gameEngine.font.meshCreator.FontType;
-import eu.tankernn.gameEngine.font.meshCreator.GUIText;
-import eu.tankernn.gameEngine.font.meshCreator.TextMeshData;
 import eu.tankernn.gameEngine.loader.Loader;
+import eu.tankernn.gameEngine.loader.font.FontType;
+import eu.tankernn.gameEngine.loader.font.GUIText;
+import eu.tankernn.gameEngine.loader.font.TextMeshData;
 
 public class TextMaster {
 

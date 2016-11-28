@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.font.meshCreator;
+package eu.tankernn.gameEngine.loader.font;
 
 import eu.tankernn.gameEngine.loader.textures.Texture;
 

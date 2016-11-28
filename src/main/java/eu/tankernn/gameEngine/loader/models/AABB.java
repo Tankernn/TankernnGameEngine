@@ -5,11 +5,14 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
 
 public class AABB {
-	protected Vector3f middlePos = new Vector3f(0, 0, 0), halfSize;
+	protected Vector3f position;
+	private final Vector3f halfSize, relativeMiddlePos, relativeLb, relativeRt;
 
-	public AABB(Vector3f middlePos, Vector3f halfSize) {
-		this.middlePos = middlePos;
+	public AABB(Vector3f relativeMiddlePos, Vector3f halfSize) {
+		this.relativeMiddlePos = relativeMiddlePos;
 		this.halfSize = halfSize;
+		relativeLb = Vector3f.sub(relativeMiddlePos, halfSize, null);
+		relativeRt = Vector3f.add(relativeMiddlePos, halfSize, null);
 	}
 
 	public AABB(ModelData model) {
@@ -39,17 +42,22 @@ public class AABB {
 
 		Vector3f fullSize = Vector3f.sub(max, min, null);
 		this.halfSize = new Vector3f(fullSize.x / 2, fullSize.y / 2, fullSize.z / 2);
+		relativeLb = min;
+		relativeRt = max;
+		this.relativeMiddlePos = Vector3f.add(relativeLb, relativeRt, null);
+		this.relativeMiddlePos.x /= 2;
+		this.relativeMiddlePos.y /= 2;
+		this.relativeMiddlePos.z /= 2;
 	}
 
 	public void updatePosition(Vector3f pos) {
-		this.middlePos = new Vector3f(pos);
-		this.middlePos.setY(pos.y + halfSize.y);
+		this.position = pos;
 	}
 
 	public static boolean collides(AABB a, AABB b) {
-		if (Math.abs(a.middlePos.x - b.middlePos.x) < a.halfSize.x + b.halfSize.x) {
-			if (Math.abs(a.middlePos.y - b.middlePos.y) < a.halfSize.y + b.halfSize.y) {
-				if (Math.abs(a.middlePos.z - b.middlePos.z) < a.halfSize.z + b.halfSize.z) {
+		if (Math.abs(a.getMiddlePos().x - b.getMiddlePos().x) < a.halfSize.x + b.halfSize.x) {
+			if (Math.abs(a.getMiddlePos().y - b.getMiddlePos().y) < a.halfSize.y + b.halfSize.y) {
+				if (Math.abs(a.getMiddlePos().z - b.getMiddlePos().z) < a.halfSize.z + b.halfSize.z) {
 					return true;
 				}
 			}
@@ -59,9 +67,9 @@ public class AABB {
 	}
 
 	public static boolean inside(AABB a, Vector3f b) {
-		if (Math.abs(a.middlePos.x - b.x) < a.halfSize.x) {
-			if (Math.abs(a.middlePos.y - b.y) < a.halfSize.y) {
-				if (Math.abs(a.middlePos.z - b.z) < a.halfSize.z) {
+		if (Math.abs(a.getMiddlePos().x - b.x) < a.halfSize.x) {
+			if (Math.abs(a.getMiddlePos().y - b.y) < a.halfSize.y) {
+				if (Math.abs(a.getMiddlePos().z - b.z) < a.halfSize.z) {
 					return true;
 				}
 			}
@@ -70,14 +78,18 @@ public class AABB {
 	}
 
 	public Vector3f getLb() {
-		return new Vector3f(middlePos.x - halfSize.x, middlePos.y - halfSize.y, middlePos.z - halfSize.z);
+		return Vector3f.add(position, relativeLb, null);
 	}
 
 	public Vector3f getRt() {
-		return new Vector3f(middlePos.x + halfSize.x, middlePos.y + halfSize.y, middlePos.z + halfSize.z);
+		return Vector3f.add(position, relativeRt, null);
+	}
+	
+	public Vector3f getMiddlePos() {
+		return Vector3f.add(position, relativeMiddlePos, null);
 	}
 	
 	public AABB copy() {
-		return new AABB(new Vector3f(this.middlePos), new Vector3f(this.halfSize));
+		return new AABB(new Vector3f(this.relativeMiddlePos), new Vector3f(this.halfSize));
 	}
 }

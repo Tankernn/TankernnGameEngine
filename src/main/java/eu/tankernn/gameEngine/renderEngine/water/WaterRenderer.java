@@ -50,7 +50,7 @@ public class WaterRenderer {
 		for (WaterTile tile : water) {
 			Matrix4f modelMatrix = Maths.createTransformationMatrix(
 					new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
-					WaterTile.TILE_SIZE);
+					tile.getSize());
 			shader.modelMatrix.loadMatrix(modelMatrix);
 			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getIndexCount());
 		}
@@ -71,11 +71,11 @@ public class WaterRenderer {
 		shader.shineDamper.loadFloat(SHINE_DAMPER);
 		shader.reflectivity.loadFloat(REFLECTIVITY);
 		quad.bind(0);
-		buffers.getReflectionTexture().bindToUnit(0);
-		buffers.getRefractionTexture().bindToUnit(1);
+		buffers.getReflectionFbo().getColourTexture().bindToUnit(0);
+		buffers.getRefractionFbo().getColourTexture().bindToUnit(1);
 		dudvTexture.bindToUnit(2);
 		normalMap.bindToUnit(3);
-		buffers.getRefractionDepthTexture().bindToUnit(4);
+		buffers.getRefractionFbo().getDepthTexture().bindToUnit(4);
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -89,7 +89,7 @@ public class WaterRenderer {
 	}
 
 	private void setUpVAO(Loader loader) {
-		// Just x and z vectex positions here, y is set to 0 in v.shader
+		// Just x and z vertex positions here, y is set to 0 in v.shader
 		float[] vertices = { -1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1 };
 		quad = loader.loadToVAO(vertices, 2);
 	}

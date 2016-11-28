@@ -18,19 +18,19 @@ import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
 import eu.tankernn.gameEngine.entities.PlayerCamera;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
-import eu.tankernn.gameEngine.font.meshCreator.FontType;
-import eu.tankernn.gameEngine.font.meshCreator.GUIText;
 import eu.tankernn.gameEngine.loader.Loader;
+import eu.tankernn.gameEngine.loader.font.FontType;
+import eu.tankernn.gameEngine.loader.font.GUIText;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.particles.ParticleSystem;
 import eu.tankernn.gameEngine.particles.ParticleTexture;
-import eu.tankernn.gameEngine.postProcessing.Fbo;
-import eu.tankernn.gameEngine.postProcessing.MultisampleMultitargetFbo;
 import eu.tankernn.gameEngine.postProcessing.PostProcessing;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
+import eu.tankernn.gameEngine.renderEngine.Fbo;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
+import eu.tankernn.gameEngine.renderEngine.MultisampleMultitargetFbo;
 import eu.tankernn.gameEngine.renderEngine.Scene;
 import eu.tankernn.gameEngine.renderEngine.font.TextMaster;
 import eu.tankernn.gameEngine.renderEngine.gui.GuiRenderer;
@@ -130,8 +130,9 @@ public class MainLoop {
 		// #### Water rendering ####
 		WaterMaster waterMaster = new WaterMaster(loader, loader.loadTexture(DUDV_MAP), loader.loadTexture(NORMAL_MAP),
 				camera);
-		WaterTile water = new WaterTile(75, 75, 0);
+		WaterTile water = new WaterTile(75, 75, 0, 50);
 		waterMaster.addWaterTile(water);
+		waterMaster.addWaterTile(new WaterTile(175, 75, 0, 50));
 
 		// #### Gui rendering ####
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();

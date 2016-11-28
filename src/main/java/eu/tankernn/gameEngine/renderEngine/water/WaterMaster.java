@@ -34,7 +34,7 @@ public class WaterMaster {
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		
 		// Reflection
-		buffers.bindReflectionFrameBuffer();
+		buffers.getReflectionFbo().bindFrameBuffer();
 		float distance = 2 * (scene.getCamera().getPosition().y - waterHeight);
 		scene.getCamera().getPosition().y -= distance;
 		scene.getCamera().invertPitch();
@@ -45,12 +45,12 @@ public class WaterMaster {
 		scene.getCamera().invertRoll();
 		
 		// Refraction
-		buffers.bindRefractionFrameBuffer();
+		buffers.getRefractionFbo().bindFrameBuffer();
 		renderer.renderScene(scene, new Vector4f(0, -1, 0, waterHeight + 1f));
 		
 		// Screen
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-		buffers.unbindCurrentFrameBuffer();
+		buffers.getReflectionFbo().unbindFrameBuffer();
 	}
 	
 	public void renderWater(Camera camera, List<Light> lights) {
