@@ -51,6 +51,8 @@ public class NativesExporter {
 					jar.close();
 					System.setProperty("org.lwjgl.librarypath", nativeDir.getAbsolutePath());
 				} else { // Run with IDE
+					System.out.println("Running in IDE environment. Setting native path to target/natives.");
+					System.setProperty("org.lwjgl.librarypath", new File("target/natives").getAbsolutePath());
 				}
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null,

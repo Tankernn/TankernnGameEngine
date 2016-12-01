@@ -10,7 +10,6 @@ public class GameLauncher {
 
 	public static void launch(TankernnGame game) {
 		instance = game;
-		init();
 
 		while (!Display.isCloseRequested()) {
 			instance.update();
@@ -21,8 +20,8 @@ public class GameLauncher {
 		DisplayManager.closeDisplay();
 	}
 
-	private static void init() {
+	public static void init(String name) {
 		NativesExporter.exportNatives();
-		DisplayManager.createDisplay(instance.getName());
+		DisplayManager.createDisplay(name);
 	}
 }
