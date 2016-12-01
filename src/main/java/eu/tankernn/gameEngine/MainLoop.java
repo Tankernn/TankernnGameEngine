@@ -66,7 +66,8 @@ public class MainLoop {
 	public static void main(String[] args) throws IOException {
 		DisplayManager.createDisplay("Tankernn Game Engine tester");
 
-		Loader loader = new Loader(new InternalFile("models.json"));
+		Loader loader = new Loader();
+		loader.readModelSpecification(new InternalFile("models.json"));
 
 		// ### Terrain textures ###
 

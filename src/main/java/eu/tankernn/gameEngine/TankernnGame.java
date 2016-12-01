@@ -12,16 +12,19 @@ import eu.tankernn.gameEngine.renderEngine.water.WaterMaster;
 import eu.tankernn.gameEngine.util.InternalFile;
 
 public class TankernnGame {
+	private final String name;
 	protected Loader loader;
 	protected MasterRenderer renderer;
 	protected WaterMaster waterMaster;
 	protected Camera camera;
 	protected Skybox sky;
 	
-	public TankernnGame(Skybox skybox, String dudvMap, String normalMap) {
+	public TankernnGame(String name, Skybox skybox, String dudvMap, String normalMap) {
+		this.name = name;
 		this.sky = skybox;
 		try {
-			loader = new Loader(new InternalFile("models.txt"));
+			loader = new Loader();
+			loader.readModelSpecification(new InternalFile("models.json"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -46,5 +49,9 @@ public class TankernnGame {
 		waterMaster.cleanUp();
 		loader.cleanUp();
 		renderer.cleanUp();
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

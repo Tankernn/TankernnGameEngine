@@ -32,12 +32,16 @@ public class DisplayManager {
 	 * Creates a new display.
 	 */
 	public static void createDisplay(String title) {
+		createDisplay(title, WIDTH, HEIGHT);
+	}
+	
+	public static void createDisplay(String title, int width, int height) {
 		ContextAttribs attribs = new ContextAttribs(3, 3)
 				.withForwardCompatible(true)
 				.withProfileCore(true);
 		
 		try {
-			setDisplayMode(WIDTH, HEIGHT, fullscreen);
+			setDisplayMode(width, height, fullscreen);
 			Display.setResizable(true);
 			Display.create(new PixelFormat().withDepthBits(24), attribs);
 			GL11.glEnable(GL13.GL_MULTISAMPLE);
@@ -45,7 +49,7 @@ public class DisplayManager {
 			e.printStackTrace();
 		}
 		
-		GL11.glViewport(0, 0, WIDTH, HEIGHT);
+		GL11.glViewport(0, 0, width, height);
 		lastFrameTime = getCurrentTime();
 		
 		Display.setTitle(title);

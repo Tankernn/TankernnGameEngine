@@ -43,10 +43,6 @@ public class Loader {
 	private List<Texture> textures = new ArrayList<Texture>();
 	private Map<Integer, TexturedModel> models = new HashMap<Integer, TexturedModel>();
 
-	public Loader(InternalFile modelSpec) throws IOException {
-		readModelSpecification(modelSpec);
-	}
-
 	public RawModel loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
 		RawModel model = RawModel.create();
 		model.storeData(indices, vertices.length / 3, vertices, textureCoords, normals);
@@ -186,7 +182,7 @@ public class Loader {
 		return this.loadToVAO(data).withBoundingBox(data);
 	}
 
-	private void readModelSpecification(InternalFile file) throws IOException {
+	public void readModelSpecification(InternalFile file) throws IOException {
 		Map<InternalFile, RawModel> cachedRawModels = new HashMap<InternalFile, RawModel>();
 		Map<InternalFile, Texture> cachedTextures = new HashMap<InternalFile, Texture>();
 		JSONObject spec;

@@ -3,7 +3,6 @@ package eu.tankernn.gameEngine.renderEngine.gui;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Matrix4f;
 
 import eu.tankernn.gameEngine.loader.Loader;
@@ -28,8 +27,7 @@ public class GuiRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		for (GuiTexture gui : guis) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture());
+			gui.getTexture().bindToUnit(0);
 			Matrix4f matrix = Maths.createTransformationMatrix(gui.getPosition(), gui.getScale());
 			shader.transformationMatrix.loadMatrix(matrix);
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getIndexCount());
