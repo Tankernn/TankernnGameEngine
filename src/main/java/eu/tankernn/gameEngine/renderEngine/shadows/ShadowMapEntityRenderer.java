@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.entities.Entity;
+import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.RawModel;
@@ -40,7 +40,7 @@ public class ShadowMapEntityRenderer {
 	 * @param entities
 	 *            - the entities to be rendered to the shadow map.
 	 */
-	protected void render(Map<TexturedModel, List<Entity>> entities) {
+	protected void render(Map<TexturedModel, List<Entity3D>> entities) {
 		for (TexturedModel model : entities.keySet()) {
 			RawModel rawModel = model.getRawModel();
 			bindModel(rawModel);
@@ -48,7 +48,7 @@ public class ShadowMapEntityRenderer {
 			if (model.getModelTexture().hasTransparency()) {
 				MasterRenderer.disableCulling();
 			}
-			for (Entity entity : entities.get(model)) {
+			for (Entity3D entity : entities.get(model)) {
 				prepareInstance(entity);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
@@ -82,7 +82,7 @@ public class ShadowMapEntityRenderer {
 	 * @param entity
 	 *            - the entity to be prepared for rendering.
 	 */
-	private void prepareInstance(Entity entity) {
+	private void prepareInstance(Entity3D entity) {
 		Vector3f rot = entity.getRotation();
 		Matrix4f modelMatrix = Maths.createTransformationMatrix(entity.getPosition(), rot.x, rot.y, rot.z,
 				entity.getScale());

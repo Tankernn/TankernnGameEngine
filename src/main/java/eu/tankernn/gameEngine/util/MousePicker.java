@@ -10,7 +10,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
-import eu.tankernn.gameEngine.entities.Entity;
+import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.renderEngine.gui.GuiTexture;
 import eu.tankernn.gameEngine.terrains.Terrain;
@@ -28,13 +28,13 @@ public class MousePicker {
 	
 	private TerrainPack terrains;
 	private Vector3f currentTerrainPoint;
-	private List<Entity> entities;
-	private Entity currentEntity;
+	private List<Entity3D> entities;
+	private Entity3D currentEntity;
 	
 	private List<GuiTexture> guis;
 	private GuiTexture currentGui;
 	
-	public MousePicker(Camera cam, Matrix4f projection, TerrainPack terrains, List<Entity> entities, List<GuiTexture> guis) {
+	public MousePicker(Camera cam, Matrix4f projection, TerrainPack terrains, List<Entity3D> entities, List<GuiTexture> guis) {
 		camera = cam;
 		projectionMatrix = projection;
 		viewMatrix = camera.getViewMatrix();
@@ -43,7 +43,7 @@ public class MousePicker {
 		this.guis = guis;
 	}
 	
-	public Entity getCurrentEntity() {
+	public Entity3D getCurrentEntity() {
 		return currentEntity;
 	}
 	
@@ -70,7 +70,7 @@ public class MousePicker {
 		}
 		
 		boolean foundTarget = false;
-		for (Entity e: entities) {
+		for (Entity3D e: entities) {
 			if (entityInstersect(e) && !foundTarget) {
 				e.setScale(2);
 				foundTarget = true;
@@ -132,7 +132,7 @@ public class MousePicker {
 	
 	// #### Entity intersect ####
 	
-	public boolean entityInstersect(Entity entity) {
+	public boolean entityInstersect(Entity3D entity) {
 		AABB box = entity.getBoundingBox();
 		Vector3f dirfrac = new Vector3f();
 		

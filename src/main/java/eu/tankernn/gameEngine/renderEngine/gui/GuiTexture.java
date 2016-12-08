@@ -7,8 +7,8 @@ import eu.tankernn.gameEngine.loader.textures.Texture;
 public class GuiTexture {
 	
 	private Texture texture;
-	private Vector2f position;
-	private Vector2f scale;
+	protected Vector2f position;
+	protected Vector2f scale;
 	
 	public GuiTexture(Texture texture, Vector2f position, Vector2f scale) {
 		this.texture = texture;

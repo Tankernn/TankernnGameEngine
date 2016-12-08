@@ -5,14 +5,14 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.util.IPositionable;
 
-public class Entity implements IPositionable {
+public class Entity3D implements IPositionable {
 	private int model;
 	private Vector3f position;
 	private Vector3f rotation;
 	private float scale;
 	private AABB boundingBox;
 	
-	public Entity(int model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox) {
+	public Entity3D(int model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox) {
 		this.model = model;
 		this.position = position;
 		this.rotation = rotation;

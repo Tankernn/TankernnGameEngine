@@ -37,7 +37,7 @@ public class FontType {
 	}
 
 	/**
-	 * Takes in an unloaded text and calculate all of the vertices for the quads
+	 * Takes in an unloaded text and calculates all of the vertices for the quads
 	 * on which this text will be rendered. The vertex positions and texture
 	 * coords and calculated based on the information from the font file.
 	 * 

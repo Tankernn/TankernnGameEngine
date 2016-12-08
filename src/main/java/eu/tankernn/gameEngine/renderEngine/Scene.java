@@ -3,14 +3,14 @@ package eu.tankernn.gameEngine.renderEngine;
 import java.util.List;
 
 import eu.tankernn.gameEngine.entities.Camera;
-import eu.tankernn.gameEngine.entities.Entity;
+import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 
 public class Scene {
-	private List<Entity> entities;
+	private List<Entity3D> entities;
 	private TerrainPack terrainPack;
 	private List<Light> lights;
 	private Camera camera;
@@ -18,7 +18,7 @@ public class Scene {
 	
 	private Texture environmentMap;
 	
-	public Scene(List<Entity> entities, TerrainPack terrainPack, List<Light> lights, Camera camera, Skybox sky) {
+	public Scene(List<Entity3D> entities, TerrainPack terrainPack, List<Light> lights, Camera camera, Skybox sky) {
 		this.entities = entities;
 		this.terrainPack = terrainPack;
 		this.lights = lights;
@@ -27,7 +27,7 @@ public class Scene {
 		this.environmentMap = Texture.newEmptyCubeMap(128);
 	}
 
-	public List<Entity> getEntities() {
+	public List<Entity3D> getEntities() {
 		return entities;
 	}
 

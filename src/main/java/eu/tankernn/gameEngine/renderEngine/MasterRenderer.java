@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
-import eu.tankernn.gameEngine.entities.Entity;
+import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
@@ -44,7 +44,7 @@ public class MasterRenderer {
 	private SkyboxRenderer skyboxRenderer;
 	private ShadowMapMasterRenderer shadowMapRenderer;
 	
-	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
+	private Map<TexturedModel, List<Entity3D>> entities = new HashMap<TexturedModel, List<Entity3D>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 
 	/**
@@ -123,7 +123,7 @@ public class MasterRenderer {
 		for (Terrain t : scene.getTerrainPack().getTerrains()) {
 			processTerrain(t);
 		}
-		for (Entity e : scene.getEntities()) {
+		for (Entity3D e : scene.getEntities()) {
 			processEntity(e);
 		}
 	}
@@ -134,13 +134,13 @@ public class MasterRenderer {
 	 * @param entity
 	 *            Entity to add to the list
 	 */
-	public void processEntity(Entity entity) {
+	public void processEntity(Entity3D entity) {
 		TexturedModel entityModel = loader.getModel(entity.getModel());
-		List<Entity> batch = entities.get(entityModel);
+		List<Entity3D> batch = entities.get(entityModel);
 		if (batch != null) {
 			batch.add(entity);
 		} else {
-			List<Entity> newBatch = new ArrayList<Entity>();
+			List<Entity3D> newBatch = new ArrayList<Entity3D>();
 			newBatch.add(entity);
 			entities.put(entityModel, newBatch);
 		}
@@ -156,8 +156,8 @@ public class MasterRenderer {
 		terrains.add(terrain);
 	}
 
-	public void renderShadowMap(List<Entity> entityList, Light sun) {
-		for (Entity e : entityList) {
+	public void renderShadowMap(List<Entity3D> entityList, Light sun) {
+		for (Entity3D e : entityList) {
 			processEntity(e);
 		}
 		shadowMapRenderer.render(entities, sun);

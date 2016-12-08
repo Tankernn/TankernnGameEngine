@@ -20,8 +20,13 @@ public class GameLauncher {
 		DisplayManager.closeDisplay();
 	}
 
-	public static void init(String name) {
+	public static void init(String name, int width, int height) {
 		NativesExporter.exportNatives();
-		DisplayManager.createDisplay(name);
+		DisplayManager.createDisplay(name, width, height);
 	}
+	
+	public static void init(String name) {
+		init(name, 800, 600);
+	}
+	
 }

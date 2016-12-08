@@ -12,7 +12,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import eu.tankernn.gameEngine.entities.Entity;
+import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
@@ -60,7 +60,7 @@ public class EntityRenderer<S extends EntityShader> {
 	 *            Transformation matrix to shadow space. Used for applying
 	 *            shadows.
 	 */
-	public void render(Map<TexturedModel, List<Entity>> entities, Matrix4f toShadowSpace, ICamera cam,
+	public void render(Map<TexturedModel, List<Entity3D>> entities, Matrix4f toShadowSpace, ICamera cam,
 			Vector4f clipPlane, List<Light> lights, Texture environmentMap) {
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
@@ -72,8 +72,8 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.cameraPosition.loadVec3(cam.getPosition());
 		for (TexturedModel model : entities.keySet()) {
 			prepareTexturedModel(model, environmentMap);
-			List<Entity> batch = entities.get(model);
-			for (Entity entity : batch) {
+			List<Entity3D> batch = entities.get(model);
+			for (Entity3D entity : batch) {
 				prepareInstance(entity, model);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
@@ -116,7 +116,7 @@ public class EntityRenderer<S extends EntityShader> {
 		model.getRawModel().unbind(0, 1, 2, 3);
 	}
 
-	protected void prepareInstance(Entity entity, TexturedModel model) {
+	protected void prepareInstance(Entity3D entity, TexturedModel model) {
 		Vector3f rot = entity.getRotation();
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), rot.x, rot.y, rot.z,
 				entity.getScale());

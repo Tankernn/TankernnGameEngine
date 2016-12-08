@@ -10,7 +10,7 @@ import eu.tankernn.gameEngine.settings.Physics;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 
-public class Player extends Entity {
+public class Player extends Entity3D {
 	
 	private static final float RUN_SPEED = 20;
 	protected static final float TURN_MAX = 160;
