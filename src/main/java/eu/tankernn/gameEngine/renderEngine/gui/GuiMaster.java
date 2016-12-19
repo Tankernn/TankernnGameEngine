@@ -24,6 +24,10 @@ public class GuiMaster {
 	public void removeGui(GuiTexture gui) {
 		guis.remove(gui);
 	}
+	
+	public List<GuiTexture> getGuis() {
+		return guis;
+	}
 
 	public void cleanUp() {
 		renderer.cleanUp();

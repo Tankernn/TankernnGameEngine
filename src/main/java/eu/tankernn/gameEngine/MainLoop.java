@@ -26,7 +26,7 @@ import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.particles.ParticleSystem;
 import eu.tankernn.gameEngine.particles.ParticleTexture;
-import eu.tankernn.gameEngine.postProcessing.PostProcessing;
+import eu.tankernn.gameEngine.postProcessing.PostProcessor;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Fbo;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
@@ -148,16 +148,16 @@ public class MainLoop {
 		Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 		Fbo outputFbo2 = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 
-		PostProcessing.init(loader);
+		PostProcessor postProcessor = new PostProcessor(loader);
 
-		MousePicker picker = new MousePicker(camera, camera.getProjectionMatrix(), terrainPack, entities, guis);
+		MousePicker picker = new MousePicker(camera, camera.getProjectionMatrix(), entities, guis);
 
 		while (!Display.isCloseRequested()) {
 			barrel.increaseRotation(new Vector3f(0, 1, 0));
 			player.move();
 			terrainPack.update(player);
 			camera.update();
-			picker.update();
+			picker.update(terrainPack);
 
 			if (picker.getCurrentTerrainPoint() != null) {
 				Vector3f currentPoint = picker.getCurrentTerrainPoint();
@@ -216,7 +216,7 @@ public class MainLoop {
 			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT0, outputFbo);
 			multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT1, outputFbo2);
 			
-			PostProcessing.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
+			postProcessor.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
 
 			guiRenderer.render(guis);
 			textMaster.render();
@@ -224,7 +224,7 @@ public class MainLoop {
 			DisplayManager.updateDisplay();
 		}
 
-		PostProcessing.cleanUp();
+		postProcessor.cleanUp();
 		outputFbo.cleanUp();
 		outputFbo2.cleanUp();
 		multisampleFbo.cleanUp();

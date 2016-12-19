@@ -14,16 +14,16 @@ import eu.tankernn.gameEngine.postProcessing.gaussianBlur.HorizontalBlur;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.VerticalBlur;
 import eu.tankernn.gameEngine.renderEngine.RawModel;
 
-public class PostProcessing {
+public class PostProcessor {
 
-	private static final int blurFactor = 0;
+	private final int blurFactor = 0;
 
-	private static final float[] POSITIONS = { -1, 1, -1, -1, 1, 1, 1, -1 };
-	private static RawModel quad;
-	private static List<PostProcessingEffect<?>> effects = new ArrayList<PostProcessingEffect<?>>();
-	private static CombineFilter combineFilter;
+	private final float[] POSITIONS = { -1, 1, -1, -1, 1, 1, 1, -1 };
+	private RawModel quad;
+	private List<PostProcessingEffect<?>> effects = new ArrayList<PostProcessingEffect<?>>();
+	private CombineFilter combineFilter;
 	
-	public static void init(Loader loader) {
+	public PostProcessor(Loader loader) {
 		quad = loader.loadToVAO(POSITIONS, 2);
 		effects.add(new ContrastChanger());
 		for (int i = 0; i < blurFactor; i++) {
@@ -35,7 +35,7 @@ public class PostProcessing {
 		combineFilter = new CombineFilter();
 	}
 
-	public static void doPostProcessing(Texture colorTexture, Texture brightTexture) {
+	public void doPostProcessing(Texture colorTexture, Texture brightTexture) {
 		start();
 		for (PostProcessingEffect<?> effect : effects) {
 			effect.render(colorTexture, brightTexture);
@@ -46,17 +46,17 @@ public class PostProcessing {
 		end();
 	}
 
-	public static void cleanUp() {
+	public void cleanUp() {
 		effects.forEach(p -> p.cleanUp());
 		combineFilter.cleanUp();
 	}
 
-	private static void start() {
+	private void start() {
 		quad.bind(0);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 	}
 
-	private static void end() {
+	private void end() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		quad.unbind(0);
 	}

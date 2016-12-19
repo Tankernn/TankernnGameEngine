@@ -26,19 +26,18 @@ public class MousePicker {
 	private Matrix4f viewMatrix;
 	private Camera camera;
 	
-	private TerrainPack terrains;
 	private Vector3f currentTerrainPoint;
 	private List<Entity3D> entities;
 	private Entity3D currentEntity;
 	
 	private List<GuiTexture> guis;
 	private GuiTexture currentGui;
+	private TerrainPack terrains;
 	
-	public MousePicker(Camera cam, Matrix4f projection, TerrainPack terrains, List<Entity3D> entities, List<GuiTexture> guis) {
+	public MousePicker(Camera cam, Matrix4f projection, List<Entity3D> entities, List<GuiTexture> guis) {
 		camera = cam;
 		projectionMatrix = projection;
 		viewMatrix = camera.getViewMatrix();
-		this.terrains = terrains;
 		this.entities = entities;
 		this.guis = guis;
 	}
@@ -59,7 +58,8 @@ public class MousePicker {
 		return currentGui;
 	}
 	
-	public void update() {
+	public void update(TerrainPack terrains) {
+		this.terrains = terrains;
 		viewMatrix = camera.getViewMatrix();
 		currentRay = calculateMouseRay();
 		currentGui = calculateGuiTexture();
