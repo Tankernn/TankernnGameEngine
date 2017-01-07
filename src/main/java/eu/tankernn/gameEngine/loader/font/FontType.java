@@ -1,6 +1,7 @@
 package eu.tankernn.gameEngine.loader.font;
 
 import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.util.InternalFile;
 
 /**
  * Represents a font. It holds the font's texture atlas as well as having the
@@ -24,7 +25,7 @@ public class FontType {
 	 *            - the font file containing information about each character in
 	 *            the texture atlas.
 	 */
-	public FontType(Texture texture, String fontFile) {
+	public FontType(Texture texture, InternalFile fontFile) {
 		this.textureAtlas = texture;
 		this.loader = new TextMeshCreator(fontFile);
 	}

@@ -3,6 +3,8 @@ package eu.tankernn.gameEngine.loader.font;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.tankernn.gameEngine.util.InternalFile;
+
 public class TextMeshCreator {
 
 	protected static final double LINE_HEIGHT = 0.03f;
@@ -10,8 +12,8 @@ public class TextMeshCreator {
 
 	private MetaFile metaData;
 
-	protected TextMeshCreator(String metaFile) {
-		metaData = new MetaFile(metaFile);
+	protected TextMeshCreator(InternalFile fontFile) {
+		metaData = new MetaFile(fontFile);
 	}
 
 	protected TextMeshData createTextMesh(GUIText text) {

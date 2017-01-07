@@ -98,7 +98,7 @@ public class MainLoop {
 		ParticleMaster particleMaster = new ParticleMaster(loader, camera.getProjectionMatrix());
 		TextMaster textMaster = new TextMaster(loader);
 
-		FontType font = new FontType(loader.loadTexture("arial.png"), "arial.fnt");
+		FontType font = new FontType(loader.loadTexture("arial.png"), new InternalFile("arial.fnt"));
 		GUIText text = new GUIText("Sample text", 1, font, new Vector2f(0.5f, 0.0f), 0.5f, false).setColor(0, 1, 0);
 		GUIText fpsText = new GUIText("FPS: ", 1, font, new Vector2f(0.0f, 0.0f), 0.5f, false).setColor(1, 1, 1);
 		textMaster.loadText(fpsText);

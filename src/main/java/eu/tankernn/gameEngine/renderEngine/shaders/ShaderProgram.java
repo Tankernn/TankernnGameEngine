@@ -1,7 +1,7 @@
 package eu.tankernn.gameEngine.renderEngine.shaders;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.util.InternalFile;
 
 public class ShaderProgram {
 
@@ -23,8 +24,14 @@ public class ShaderProgram {
 	protected UniformVec3[] attenuation;
 
 	public ShaderProgram(String vertexFile, String fragmentFile, String... inVariables) {
-		int vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
-		int fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
+		int vertexShaderID, fragmentShaderID;
+		try {
+			vertexShaderID = loadShader(new InternalFile(vertexFile), GL20.GL_VERTEX_SHADER);
+			fragmentShaderID = loadShader(new InternalFile(fragmentFile), GL20.GL_FRAGMENT_SHADER);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
 		programID = GL20.glCreateProgram();
 		GL20.glAttachShader(programID, vertexShaderID);
 		GL20.glAttachShader(programID, fragmentShaderID);
@@ -100,11 +107,10 @@ public class ShaderProgram {
 		GL20.glBindAttribLocation(programID, attributeId, variable);
 	}
 
-	private int loadShader(String file, int type) {
+	private int loadShader(InternalFile file, int type) {
 		StringBuilder shaderSource = new StringBuilder();
 		try {
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(ShaderProgram.class.getResourceAsStream(file)));
+			BufferedReader reader = file.getReader();
 			String line;
 			while ((line = reader.readLine()) != null) {
 				shaderSource.append(line).append("//\n");

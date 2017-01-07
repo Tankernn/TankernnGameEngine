@@ -2,11 +2,12 @@ package eu.tankernn.gameEngine.loader.font;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.lwjgl.opengl.Display;
+
+import eu.tankernn.gameEngine.util.InternalFile;
 
 /**
  * Provides functionality for getting the values from a font file.
@@ -45,12 +46,12 @@ public class MetaFile {
 	/**
 	 * Opens a font file in preparation for reading.
 	 * 
-	 * @param file
+	 * @param fontFile
 	 *            - the font file.
 	 */
-	protected MetaFile(String file) {
+	protected MetaFile(InternalFile fontFile) {
 		this.aspectRatio = (double) Display.getWidth() / (double) Display.getHeight();
-		openFile(file);
+		openFile(fontFile);
 		loadPaddingData();
 		loadLineSizes();
 		int imageWidth = getValueOfVariable("scaleW");
@@ -132,12 +133,12 @@ public class MetaFile {
 	/**
 	 * Opens the font file, ready for reading.
 	 * 
-	 * @param file
+	 * @param fontFile
 	 *            - the font file.
 	 */
-	private void openFile(String file) {
+	private void openFile(InternalFile fontFile) {
 		try {
-			reader = new BufferedReader(new InputStreamReader(MetaFile.class.getResourceAsStream("/" + file)));
+			reader = fontFile.getReader();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Couldn't read font meta file!");

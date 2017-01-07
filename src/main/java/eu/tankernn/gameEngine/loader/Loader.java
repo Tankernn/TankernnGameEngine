@@ -116,10 +116,14 @@ public class Loader {
 	 * @return The texture ID
 	 * @throws FileNotFoundException
 	 */
-	public Texture loadTexture(String filename) throws FileNotFoundException {
-		Texture texture = Texture.newTexture(new InternalFile(filename)).create();
+	public Texture loadTexture(InternalFile file) {
+		Texture texture = Texture.newTexture(file).create();
 		textures.add(texture);
 		return texture;
+	}
+	
+	public Texture loadTexture(String filename) throws FileNotFoundException {
+		return loadTexture(new InternalFile(filename));
 	}
 
 	/**
