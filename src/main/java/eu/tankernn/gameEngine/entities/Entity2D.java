@@ -7,6 +7,7 @@ import eu.tankernn.gameEngine.renderEngine.gui.GuiTexture;
 
 public class Entity2D extends GuiTexture {
 	protected Vector2f velocity = new Vector2f(0, 0);
+	protected boolean alive = true;
 	
 	public Entity2D(Texture texture, Vector2f position, Vector2f scale) {
 		super(texture, position, scale);
@@ -35,5 +36,9 @@ public class Entity2D extends GuiTexture {
 	
 	public Vector2f getSize() {
 		return super.getScale();
+	}
+	
+	public boolean isAlive() {
+		return alive;
 	}
 }
