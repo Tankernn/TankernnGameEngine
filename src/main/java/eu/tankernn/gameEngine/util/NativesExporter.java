@@ -14,54 +14,49 @@ import javax.swing.JOptionPane;
 
 public class NativesExporter {
 	public static void exportNatives() {
-		File nativeDir = new File("natives");
-		if (!nativeDir.isDirectory() || nativeDir.list().length == 0) {
+		try {
+			File jarFile = null;
 			try {
-				nativeDir.mkdir();
+				jarFile = new File(NativesExporter.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+			} catch (URISyntaxException e1) {
+				e1.printStackTrace();
+			}
 
-				File jarFile = null;
-				try {
-					jarFile = new File(
-							NativesExporter.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-				} catch (URISyntaxException e1) {
-					e1.printStackTrace();
+			if (jarFile != null && jarFile.isFile()) { // Run with JAR file
+				File nativeDir = new File("natives");
+				if (!nativeDir.isDirectory() || nativeDir.list().length == 0) {
+					nativeDir.mkdir();
 				}
-
-				if (jarFile != null && jarFile.isFile()) { // Run with JAR file
-					final JarFile jar = new JarFile(jarFile);
-					final Enumeration<JarEntry> entries = jar.entries(); // gives
-																			// ALL
-																			// entries
-																			// in
-																			// jar
-					while (entries.hasMoreElements()) {
-						final String name = entries.nextElement().getName();
-						if (name.endsWith(".dll") || name.endsWith(".so") || name.endsWith(".dylib")
-								|| name.endsWith(".jnilb")) { // filter
-																// according to
-																// the path
-							System.out.println(name);
-							try {
-								exportFile(name, "natives");
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+				final JarFile jar = new JarFile(jarFile);
+				final Enumeration<JarEntry> entries = jar.entries(); // gives
+																		// ALL
+																		// entries
+																		// in
+																		// jar
+				while (entries.hasMoreElements()) {
+					final String name = entries.nextElement().getName();
+					if (name.endsWith(".dll") || name.endsWith(".so") || name.endsWith(".dylib") || name.endsWith(".jnilb")) { // filter
+																																// according
+																																// to
+																																// the
+																																// path
+						System.out.println(name);
+						try {
+							exportFile(name, "natives");
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
-					jar.close();
-					System.setProperty("org.lwjgl.librarypath", nativeDir.getAbsolutePath());
-				} else { // Run with IDE
-					System.out.println("Running in IDE environment. Setting native path to target/natives.");
-					System.setProperty("org.lwjgl.librarypath", new File("target/natives").getAbsolutePath());
 				}
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null,
-						"Could not export natives. Execute in terminal to see full error output.", "Export natives",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
+				jar.close();
+				System.setProperty("org.lwjgl.librarypath", nativeDir.getAbsolutePath());
+			} else { // Run with IDE
+				System.out.println("Running in IDE environment. Setting native path to target/natives.");
+				System.setProperty("org.lwjgl.librarypath", new File("target/natives").getAbsolutePath());
 			}
-		} else {
-			System.setProperty("org.lwjgl.librarypath", nativeDir.getAbsolutePath());
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Could not export natives. Execute in terminal to see full error output.", "Export natives", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		}
 	}
 
@@ -70,25 +65,25 @@ public class NativesExporter {
 		OutputStream resStreamOut = null;
 		try {
 			stream = NativesExporter.class.getResourceAsStream("/" + classPath);// note
-																			// that
-																			// each
-																			// /
-																			// is
-																			// a
-																			// directory
-																			// down
-																			// in
-																			// the
-																			// "jar
-																			// tree"
-																			// been
-																			// the
-																			// jar
-																			// the
-																			// root
-																			// of
-																			// the
-																			// tree
+			// that
+			// each
+			// /
+			// is
+			// a
+			// directory
+			// down
+			// in
+			// the
+			// "jar
+			// tree"
+			// been
+			// the
+			// jar
+			// the
+			// root
+			// of
+			// the
+			// tree
 			if (stream == null) {
 				throw new Exception("Cannot get resource \"" + classPath + "\" from Jar file.");
 			}
