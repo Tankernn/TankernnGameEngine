@@ -98,4 +98,10 @@ public class ModelTexture {
 		this.refractivity = refractivity;
 		return this;
 	}
+	
+	public void delete() {
+		colorTexture.delete();
+		normalMap.delete();
+		specularMap.delete();
+	}
 }

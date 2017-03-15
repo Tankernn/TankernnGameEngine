@@ -6,12 +6,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.Maths;
 
 public class GuiRenderer {
 	
-	private final RawModel quad;
+	private final Vao quad;
 	private GuiShader shader;
 	
 	public GuiRenderer(Loader loader) {

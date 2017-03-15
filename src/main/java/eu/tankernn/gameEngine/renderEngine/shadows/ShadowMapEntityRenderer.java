@@ -12,7 +12,7 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.Maths;
 
 public class ShadowMapEntityRenderer {
@@ -42,22 +42,21 @@ public class ShadowMapEntityRenderer {
 	 */
 	protected void render(Map<TexturedModel, List<Entity3D>> entities) {
 		for (TexturedModel model : entities.keySet()) {
-			RawModel rawModel = model.getRawModel();
+			Vao rawModel = model.getModel();
 			bindModel(rawModel);
-			model.getModelTexture().getTexture().bindToUnit(0);
-			if (model.getModelTexture().hasTransparency()) {
+			model.getTexture().getTexture().bindToUnit(0);
+			if (model.getTexture().hasTransparency()) {
 				MasterRenderer.disableCulling();
 			}
 			for (Entity3D entity : entities.get(model)) {
 				prepareInstance(entity);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
-			if (model.getModelTexture().hasTransparency()) {
+			if (model.getTexture().hasTransparency()) {
 				MasterRenderer.enableCulling();
 			}
 		}
 		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
 		GL30.glBindVertexArray(0);
 	}
 
@@ -69,8 +68,8 @@ public class ShadowMapEntityRenderer {
 	 * @param rawModel
 	 *            - the model to be bound.
 	 */
-	private void bindModel(RawModel rawModel) {
-		rawModel.bind(0, 1);
+	private void bindModel(Vao rawModel) {
+		rawModel.bind(0);
 	}
 
 	/**

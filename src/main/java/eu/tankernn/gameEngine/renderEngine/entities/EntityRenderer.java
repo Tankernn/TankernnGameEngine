@@ -75,7 +75,7 @@ public class EntityRenderer<S extends EntityShader> {
 			List<Entity3D> batch = entities.get(model);
 			for (Entity3D entity : batch) {
 				prepareInstance(entity, model);
-				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
+				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
 			unbindTexturedModel(model);
 		}
@@ -87,8 +87,8 @@ public class EntityRenderer<S extends EntityShader> {
 	}
 
 	private void prepareTexturedModel(TexturedModel model, Texture environmentMap) {
-		model.getRawModel().bind(0, 1, 2, 3);
-		ModelTexture texture = model.getModelTexture();
+		model.getModel().bind(0, 1, 2, 3);
+		ModelTexture texture = model.getTexture();
 		shader.numberOfRows.loadFloat(texture.getNumberOfRows());
 		if (texture.hasTransparency())
 			MasterRenderer.disableCulling();
@@ -96,7 +96,7 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.shineDamper.loadFloat(texture.getShineDamper());
 		shader.reflectivity.loadFloat(texture.getReflectivity());
 		shader.refractivity.loadFloat(texture.getRefractivity());
-		model.getModelTexture().getTexture().bindToUnit(0);
+		model.getTexture().getTexture().bindToUnit(0);
 		shader.usesSpecularMap.loadBoolean(texture.hasSpecularMap());
 		if (texture.hasSpecularMap()) {
 			texture.getSpecularMap().bindToUnit(2);
@@ -113,7 +113,7 @@ public class EntityRenderer<S extends EntityShader> {
 
 	private void unbindTexturedModel(TexturedModel model) {
 		MasterRenderer.enableCulling();
-		model.getRawModel().unbind(0, 1, 2, 3);
+		model.getModel().unbind(0, 1, 2, 3);
 	}
 
 	protected void prepareInstance(Entity3D entity, TexturedModel model) {

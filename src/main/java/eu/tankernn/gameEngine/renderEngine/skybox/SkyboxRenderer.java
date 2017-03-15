@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.ICamera;
 
 public class SkyboxRenderer {
@@ -34,7 +34,7 @@ public class SkyboxRenderer {
 		skybox.getCubeVao().bind();
 		GL20.glEnableVertexAttribArray(0);
 		bindTextures();
-		RawModel model = skybox.getCubeVao();
+		Vao model = skybox.getCubeVao();
 		model.bind(0);
 		GL11.glDrawElements(GL11.GL_TRIANGLES, model.getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 		model.unbind(0);

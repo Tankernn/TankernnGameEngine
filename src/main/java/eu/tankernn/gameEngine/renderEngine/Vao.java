@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL30;
 
 public class Vao {
 	
-	private static final int BYTES_PER_FLOAT = 4;
+	protected static final int BYTES_PER_FLOAT = 4;
 	private static final int BYTES_PER_INT = 4;
 	public final int id;
 	private List<Vbo> dataVbos = new ArrayList<Vbo>();
@@ -22,7 +22,7 @@ public class Vao {
 		return new Vao(id);
 	}
 
-	private Vao(int id) {
+	protected Vao(int id) {
 		this.id = id;
 	}
 	
@@ -84,5 +84,4 @@ public class Vao {
 	private void unbind() {
 		GL30.glBindVertexArray(0);
 	}
-
 }

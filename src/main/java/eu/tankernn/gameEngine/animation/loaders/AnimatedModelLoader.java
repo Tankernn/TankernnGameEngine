@@ -7,6 +7,7 @@ import eu.tankernn.gameEngine.loader.colladaLoader.ColladaLoader;
 import eu.tankernn.gameEngine.loader.colladaLoader.JointData;
 import eu.tankernn.gameEngine.loader.colladaLoader.JointsData;
 import eu.tankernn.gameEngine.loader.colladaLoader.MeshData;
+import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.InternalFile;
@@ -24,25 +25,12 @@ public class AnimatedModelLoader {
 	 *            - the file containing the data for the entity.
 	 * @return The animated entity (no animation applied though)
 	 */
-	public static AnimatedModel loadEntity(InternalFile modelFile, InternalFile textureFile) {
+	public static AnimatedModel loadEntity(InternalFile modelFile, ModelTexture texture) {
 		AnimatedModelData entityData = ColladaLoader.loadColladaModel(modelFile, MAX_WEIGHTS);
 		Vao model = createVao(entityData.getMeshData());
-		Texture texture = loadTexture(textureFile);
 		JointsData skeletonData = entityData.getJointsData();
 		Joint headJoint = createJoints(skeletonData.headJoint);
 		return new AnimatedModel(model, texture, headJoint, skeletonData.jointCount);
-	}
-
-	/**
-	 * Loads up the diffuse texture for the model.
-	 * 
-	 * @param textureFile
-	 *            - the texture file.
-	 * @return The diffuse texture.
-	 */
-	private static Texture loadTexture(InternalFile textureFile) {
-		Texture diffuseTexture = Texture.newTexture(textureFile).anisotropic().create();
-		return diffuseTexture;
 	}
 
 	/**

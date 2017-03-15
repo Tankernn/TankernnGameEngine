@@ -92,7 +92,7 @@ public class MainLoop {
 		InternalFile[] dayTextures = InternalFile.fromFilenames("skybox", TEXTURE_FILES, "png"),
 				nightTextures = InternalFile.fromFilenames("skybox", NIGHT_TEXTURE_FILES, "png");
 
-		Skybox skybox = new Skybox(Texture.newCubeMap(dayTextures, 200), Texture.newCubeMap(nightTextures, 200), 200);
+		Skybox skybox = new Skybox(loader, Texture.newCubeMap(dayTextures, 200), Texture.newCubeMap(nightTextures, 200), 200);
 
 		MasterRenderer renderer = new MasterRenderer(loader, camera, skybox);
 		ParticleMaster particleMaster = new ParticleMaster(loader, camera.getProjectionMatrix());

@@ -12,14 +12,14 @@ import eu.tankernn.gameEngine.postProcessing.bloom.BrightFilter;
 import eu.tankernn.gameEngine.postProcessing.bloom.CombineFilter;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.HorizontalBlur;
 import eu.tankernn.gameEngine.postProcessing.gaussianBlur.VerticalBlur;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 
 public class PostProcessor {
 
 	private final int blurFactor = 0;
 
 	private final float[] POSITIONS = { -1, 1, -1, -1, 1, 1, 1, -1 };
-	private RawModel quad;
+	private Vao quad;
 	private List<PostProcessingEffect<?>> effects = new ArrayList<PostProcessingEffect<?>>();
 	private CombineFilter combineFilter;
 	

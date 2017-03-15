@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.InternalFile;
 
 public class TerrainModelData {
@@ -156,7 +156,7 @@ public class TerrainModelData {
 		return generator.generateHeight(x, z);
 	}
 
-	public RawModel getModel(Loader loader) {
+	public Vao getModel(Loader loader) {
 		return loader.loadToVAO(vertices, textureCoords, normals, indices);
 	}
 

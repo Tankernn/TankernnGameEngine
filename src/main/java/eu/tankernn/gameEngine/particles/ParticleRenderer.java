@@ -14,7 +14,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 
 public class ParticleRenderer {
 	
@@ -24,7 +24,7 @@ public class ParticleRenderer {
 	
 	private static final FloatBuffer buffer = BufferUtils.createFloatBuffer(MAX_INSTANCES * INSTANCE_DATA_LENGTH);
 	
-	private RawModel quad;
+	private Vao quad;
 	private ParticleShader shader;
 	
 	private Loader loader;

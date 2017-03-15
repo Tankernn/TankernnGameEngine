@@ -4,7 +4,8 @@ import org.lwjgl.util.vector.Matrix4f;
 
 import eu.tankernn.gameEngine.animation.animation.Animation;
 import eu.tankernn.gameEngine.animation.animation.Animator;
-import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.loader.models.TexturedModel;
+import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.renderEngine.Vao;
 
 /**
@@ -19,11 +20,7 @@ import eu.tankernn.gameEngine.renderEngine.Vao;
  * @author Karl
  *
  */
-public class AnimatedModel {
-
-	// skin
-	private final Vao model;
-	private final Texture texture;
+public class AnimatedModel extends TexturedModel {
 
 	// skeleton
 	private final Joint rootJoint;
@@ -53,27 +50,12 @@ public class AnimatedModel {
 	 *            this entity.
 	 * 
 	 */
-	public AnimatedModel(Vao model, Texture texture, Joint rootJoint, int jointCount) {
-		this.model = model;
-		this.texture = texture;
+	public AnimatedModel(Vao model, ModelTexture texture, Joint rootJoint, int jointCount) {
+		super(model, texture);
 		this.rootJoint = rootJoint;
 		this.jointCount = jointCount;
 		this.animator = new Animator(this);
 		rootJoint.calcInverseBindTransform(new Matrix4f());
-	}
-
-	/**
-	 * @return The VAO containing all the mesh data for this entity.
-	 */
-	public Vao getModel() {
-		return model;
-	}
-
-	/**
-	 * @return The diffuse texture for this entity.
-	 */
-	public Texture getTexture() {
-		return texture;
 	}
 
 	/**
@@ -90,8 +72,8 @@ public class AnimatedModel {
 	 * (VAO) and texture.
 	 */
 	public void delete() {
-		model.delete();
-		texture.delete();
+		getModel().delete();
+		getTexture().delete();
 	}
 
 	/**

@@ -15,6 +15,7 @@ import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.loader.Loader;
+import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.postProcessing.PostProcessor;
 import eu.tankernn.gameEngine.renderEngine.Fbo;
@@ -48,11 +49,10 @@ public class TankernnGame3D extends TankernnGame {
 	private Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE),
 			outputFbo2 = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 	
-	public TankernnGame3D(String name, Skybox skybox, String dudvMap, String normalMap, Light sun) {
+	public TankernnGame3D(String name, String[] dayTextures, String[] nightTextures, String dudvMap, String normalMap, Light sun) {
 		super(name);
 		entities = new ArrayList<Entity3D>();
 		lights = new ArrayList<Light>();
-		this.sky = skybox;
 		this.sun = sun;
 		lights.add(sun);
 		try {
@@ -61,8 +61,10 @@ public class TankernnGame3D extends TankernnGame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		this.sky = new Skybox(loader, Texture.newCubeMap(InternalFile.fromFilenames("skybox", dayTextures, "png"), 200),
+				Texture.newCubeMap(InternalFile.fromFilenames("skybox", nightTextures, "png"), 200), 400);
 		camera = new Camera();
-		renderer = new MasterRenderer(loader, camera, skybox);
+		renderer = new MasterRenderer(loader, camera, sky);
 		try {
 			waterMaster = new WaterMaster(loader, loader.loadTexture(dudvMap), loader.loadTexture(normalMap), camera);
 		} catch (FileNotFoundException e) {

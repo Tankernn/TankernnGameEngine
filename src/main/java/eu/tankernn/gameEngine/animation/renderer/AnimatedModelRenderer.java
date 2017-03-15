@@ -43,7 +43,7 @@ public class AnimatedModelRenderer {
 	 */
 	public void render(AnimatedModel entity, ICamera camera, Vector3f lightDir) {
 		prepare(camera, lightDir);
-		entity.getTexture().bindToUnit(0);
+		entity.getTexture().getTexture().bindToUnit(0);
 		entity.getModel().bind(0, 1, 2, 3, 4);
 		shader.jointTransforms.loadMatrixArray(entity.getJointTransforms());
 		GL11.glDrawElements(GL11.GL_TRIANGLES, entity.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);

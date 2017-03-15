@@ -27,7 +27,7 @@ import eu.tankernn.gameEngine.loader.obj.ModelData;
 import eu.tankernn.gameEngine.loader.obj.ObjLoader;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.loader.textures.Texture;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.InternalFile;
 
 /**
@@ -39,21 +39,33 @@ import eu.tankernn.gameEngine.util.InternalFile;
 public class Loader {
 	private List<Integer> vaos = new ArrayList<Integer>();
 	private List<Integer> vbos = new ArrayList<Integer>();
-	private List<RawModel> rawModels = new ArrayList<RawModel>();
+	private List<Vao> rawModels = new ArrayList<Vao>();
 	private List<Texture> textures = new ArrayList<Texture>();
 	private Map<Integer, TexturedModel> models = new HashMap<Integer, TexturedModel>();
+	private List<AABB> boundingBoxes = new ArrayList<>();
 
-	public RawModel loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
-		RawModel model = RawModel.create();
-		model.storeData(indices, vertices.length / 3, vertices, textureCoords, normals);
+	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
+		Vao model = Vao.create();
+		model.bind();
+		model.createIndexBuffer(indices);
+		model.createAttribute(0, vertices, 3);
+		model.createAttribute(1, textureCoords, 2);
+		model.createAttribute(2, normals, 3);
+		model.unbind();
 		rawModels.add(model);
 		return model;
 	}
 
-	public RawModel loadToVAO(float[] vertices, float[] textureCoords, float[] normals, float[] tangents,
+	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, float[] tangents,
 			int[] indices) {
-		RawModel model = RawModel.create();
-		model.storeData(indices, vertices.length / 3, vertices, textureCoords, normals, tangents);
+		Vao model = Vao.create();
+		model.bind();
+		model.createIndexBuffer(indices);
+		model.createAttribute(0, vertices, 3);
+		model.createAttribute(1, textureCoords, 2);
+		model.createAttribute(2, normals, 3);
+		model.createAttribute(3, tangents, 3);
+		model.unbind();
 		rawModels.add(model);
 		return model;
 	}
@@ -95,15 +107,16 @@ public class Loader {
 		return vaoID;
 	}
 
-	public RawModel loadToVAO(float[] positions, int dimensions) {
-		int vaoID = createVAO();
-		this.storeDataInAttributeList(0, dimensions, positions);
-		unbindVAO();
-		return new RawModel(vaoID, positions.length / 2);
+	public Vao loadToVAO(float[] positions, int dimensions) {
+		Vao vao = Vao.create();
+		vao.bind();
+		vao.createAttribute(0, positions, dimensions);
+		vao.unbind();
+		return vao;
 	}
 
-	public RawModel loadToVAO(ModelData data) {
-		return (RawModel) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(),
+	public Vao loadToVAO(ModelData data) {
+		return (Vao) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(),
 				data.getIndices());
 	}
 
@@ -141,6 +154,25 @@ public class Loader {
 		textures.add(cubeMap);
 		return cubeMap;
 	}
+	
+	private static final int[] CUBE_INDICES = { 0, 1, 3, 1, 2, 3, 1, 5, 2, 2, 5, 6, 4, 7, 5, 5, 7, 6, 0,
+			3, 4, 4, 3, 7, 7, 3, 6, 6, 3, 2, 4, 5, 0, 0, 5, 1 };
+
+	public Vao generateCube(float size) {
+		Vao vao = Vao.create();
+		vao.bind();
+		vao.createIndexBuffer(CUBE_INDICES);
+		vao.createAttribute(0, getCubeVertexPositions(size), 3);
+		vao.unbind();
+		rawModels.add(vao);
+		return vao;
+	}
+
+	private static float[] getCubeVertexPositions(float size) {
+		return new float[] { -size, size, size, size, size, size, size, -size, size, -size, -size,
+				size, -size, size, -size, size, size, -size, size, -size, -size, -size, -size,
+				-size };
+	}
 
 	public void cleanUp() {
 		for (int vao : vaos)
@@ -149,7 +181,7 @@ public class Loader {
 			GL15.glDeleteBuffers(vbo);
 		for (Texture tex : textures)
 			tex.delete();
-		for (RawModel model : rawModels)
+		for (Vao model : rawModels)
 			model.delete();
 	}
 
@@ -181,13 +213,14 @@ public class Loader {
 		return buffer;
 	}
 
-	public RawModel loadOBJ(InternalFile objFile) {
+	public Vao loadOBJ(InternalFile objFile) {
 		ModelData data = ObjLoader.loadOBJ(objFile);
-		return this.loadToVAO(data).withBoundingBox(data);
+		boundingBoxes.add(new AABB(data));
+		return this.loadToVAO(data);
 	}
 
 	public void readModelSpecification(InternalFile file) throws IOException {
-		Map<InternalFile, RawModel> cachedRawModels = new HashMap<InternalFile, RawModel>();
+		Map<InternalFile, Vao> cachedRawModels = new HashMap<InternalFile, Vao>();
 		Map<InternalFile, Texture> cachedTextures = new HashMap<InternalFile, Texture>();
 		JSONObject spec;
 
@@ -197,7 +230,7 @@ public class Loader {
 			spec = jsonArr.getJSONObject(j);
 
 			int id;
-			RawModel model;
+			Vao model;
 			ModelTexture modelTexture;
 
 			id = spec.getInt("id");
@@ -288,6 +321,6 @@ public class Loader {
 	}
 
 	public AABB getBoundingBox(int id) {
-		return getModel(id).getBoundingBox();
+		return boundingBoxes.get(id);
 	}
 }
