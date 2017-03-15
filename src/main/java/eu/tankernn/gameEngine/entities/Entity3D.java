@@ -2,17 +2,19 @@ package eu.tankernn.gameEngine.entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
 import eu.tankernn.gameEngine.loader.models.AABB;
+import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.util.IPositionable;
 
 public class Entity3D implements IPositionable {
-	private int model;
+	private TexturedModel model;
 	private Vector3f position;
 	private Vector3f rotation;
 	private float scale;
 	private AABB boundingBox;
 	
-	public Entity3D(int model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox) {
+	public Entity3D(TexturedModel model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox) {
 		this.model = model;
 		this.position = position;
 		this.rotation = rotation;
@@ -25,22 +27,23 @@ public class Entity3D implements IPositionable {
 		this.position.x += dx;
 		this.position.y += dy;
 		this.position.z += dz;
-		updateBoundingBox();
 	}
 	
 	public void increaseRotation(Vector3f deltaRotation) {
 		Vector3f.add(this.rotation, deltaRotation, this.rotation);
 	}
 	
-	private void updateBoundingBox() {
+	public void update() {
 		this.boundingBox.updatePosition(this.position);
+		if (model instanceof AnimatedModel)
+			((AnimatedModel) model).update();
 	}
 	
-	public int getModel() {
+	public TexturedModel getModel() {
 		return model;
 	}
 	
-	public void setModel(int model) {
+	public void setModel(TexturedModel model) {
 		this.model = model;
 	}
 	

@@ -8,7 +8,6 @@ import eu.tankernn.gameEngine.loader.colladaLoader.JointData;
 import eu.tankernn.gameEngine.loader.colladaLoader.JointsData;
 import eu.tankernn.gameEngine.loader.colladaLoader.MeshData;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
-import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.InternalFile;
 

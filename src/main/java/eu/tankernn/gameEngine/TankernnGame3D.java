@@ -77,6 +77,8 @@ public class TankernnGame3D extends TankernnGame {
 
 	public void update() {
 		super.update();
+		for (Entity3D e : entities)
+			e.update();
 		player.move();
 		picker.update(terrainPack);
 		camera.update();

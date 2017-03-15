@@ -37,8 +37,6 @@ import eu.tankernn.gameEngine.util.ICamera;
 public class MasterRenderer {
 	private static final Vector4f NO_CLIP = new Vector4f(0, 0, 0, 1);
 	
-	private Loader loader;
-	
 	private EntityRenderer<EntityShader> entityRenderer;
 	private TerrainRenderer terrainRenderer;
 	private SkyboxRenderer skyboxRenderer;
@@ -57,7 +55,6 @@ public class MasterRenderer {
 	 */
 	public MasterRenderer(Loader loader, Camera camera, Skybox skybox) {
 		enableCulling();
-		this.loader = loader;
 		terrainRenderer = new TerrainRenderer(camera.getProjectionMatrix());
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
 		skyboxRenderer = new SkyboxRenderer(loader, camera.getProjectionMatrix(), skybox);
@@ -135,7 +132,7 @@ public class MasterRenderer {
 	 *            Entity to add to the list
 	 */
 	public void processEntity(Entity3D entity) {
-		TexturedModel entityModel = loader.getModel(entity.getModel());
+		TexturedModel entityModel = entity.getModel();
 		List<Entity3D> batch = entities.get(entityModel);
 		if (batch != null) {
 			batch.add(entity);
