@@ -13,7 +13,6 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
-import eu.tankernn.gameEngine.animation.renderer.AnimatedModelRenderer;
 import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
@@ -22,6 +21,7 @@ import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.util.ICamera;
 import eu.tankernn.gameEngine.util.Maths;
+import eu.tankernn.gameEngine.util.OpenGlUtils;
 
 /**
  * Renderer for entities.
@@ -29,8 +29,6 @@ import eu.tankernn.gameEngine.util.Maths;
  * @author Frans
  */
 public class EntityRenderer<S extends EntityShader> {
-	private AnimatedModelRenderer animatedRenderer;
-	
 	protected S shader;
 	
 	/**
@@ -51,7 +49,6 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.projectionMatrix.loadMatrix(projectionMatrix);
 		shader.connectTextureUnits();
 		shader.stop();
-		animatedRenderer = new AnimatedModelRenderer();
 	}
 	
 	/**
@@ -62,6 +59,9 @@ public class EntityRenderer<S extends EntityShader> {
 	 *        applying shadows.
 	 */
 	public void render(Map<TexturedModel, List<Entity3D>> entities, Matrix4f toShadowSpace, ICamera cam, Vector4f clipPlane, List<Light> lights, Texture environmentMap) {
+		OpenGlUtils.antialias(true);
+		OpenGlUtils.disableBlending();
+		OpenGlUtils.enableDepthTesting(true);
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
 		shader.skyColor.loadVec3(RED, GREEN, BLUE);
@@ -72,16 +72,15 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.cameraPosition.loadVec3(cam.getPosition());
 		for (TexturedModel model: entities.keySet()) {
 			if (model instanceof AnimatedModel)
-				animatedRenderer.render((AnimatedModel) model, cam, lights.get(0).getPosition());
-			else {
-				prepareTexturedModel(model, environmentMap);
-				List<Entity3D> batch = entities.get(model);
-				for (Entity3D entity: batch) {
-					prepareInstance(entity, model);
-					GL11.glDrawElements(GL11.GL_TRIANGLES, model.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
-				}
-				unbindTexturedModel(model);
+				shader.jointTransforms.loadMatrixArray(((AnimatedModel) model).getJointTransforms());
+			prepareTexturedModel(model, environmentMap);
+			List<Entity3D> batch = entities.get(model);
+			for (Entity3D entity: batch) {
+				prepareInstance(entity, model);
+				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
+			unbindTexturedModel(model);
+			
 		}
 		shader.stop();
 	}
@@ -91,7 +90,10 @@ public class EntityRenderer<S extends EntityShader> {
 	}
 	
 	private void prepareTexturedModel(TexturedModel model, Texture environmentMap) {
-		model.getModel().bind(0, 1, 2, 3);
+		if (model instanceof AnimatedModel)
+			model.getModel().bind(0, 1, 2, 4, 5);
+		else
+			model.getModel().bind(0, 1, 2, 3);
 		ModelTexture texture = model.getTexture();
 		shader.numberOfRows.loadFloat(texture.getNumberOfRows());
 		if (texture.hasTransparency())
@@ -117,7 +119,10 @@ public class EntityRenderer<S extends EntityShader> {
 	
 	private void unbindTexturedModel(TexturedModel model) {
 		MasterRenderer.enableCulling();
-		model.getModel().unbind(0, 1, 2, 3);
+		if (model instanceof AnimatedModel)
+			model.getModel().unbind(0, 1, 2, 4, 5);
+		else
+			model.getModel().unbind(0, 1, 2, 3);
 	}
 	
 	protected void prepareInstance(Entity3D entity, TexturedModel model) {

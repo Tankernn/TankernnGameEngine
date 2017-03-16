@@ -10,6 +10,7 @@ import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformBoolean;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
+import eu.tankernn.gameEngine.renderEngine.shaders.UniformMat4Array;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformMatrix;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformSampler;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec2;
@@ -18,7 +19,8 @@ import eu.tankernn.gameEngine.renderEngine.shaders.UniformVec4;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformViewMatrix;
 
 public class EntityShader extends ShaderProgram {
-
+	private static final int MAX_JOINTS = 50;// max number of joints in a skeleton
+	
 	private static final String VERTEX_FILE = "/eu/tankernn/gameEngine/renderEngine/entities/vertexShader.glsl";
 	private static final String FRAGMENT_FILE = "/eu/tankernn/gameEngine/renderEngine/entities/fragmentShader.glsl";
 
@@ -42,13 +44,14 @@ public class EntityShader extends ShaderProgram {
 	protected UniformSampler enviroMap = new UniformSampler("enviroMap");
 	protected UniformSampler normalMap = new UniformSampler("normalMap");
 	public UniformBoolean usesNormalMap = new UniformBoolean("usesNormalMap");
+	protected UniformMat4Array jointTransforms = new UniformMat4Array("jointTransforms", MAX_JOINTS);
 
 	public EntityShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE, "position", "textureCoords", "normal", "tangent");
+		super(VERTEX_FILE, FRAGMENT_FILE, "position", "textureCoords", "normal", "tangent", "in_jointIndices", "in_weights");
 		super.getLightUniformLocations();
 		super.storeAllUniformLocations(transformationMatrix, projectionMatrix, viewMatrix, shineDamper, reflectivity,
 				refractivity, useFakeLighting, skyColor, numberOfRows, offset, plane, toShadowMapSpace, shadowMap,
-				specularMap, usesSpecularMap, modelTexture, cameraPosition, enviroMap, normalMap, usesNormalMap);
+				specularMap, usesSpecularMap, modelTexture, cameraPosition, enviroMap, normalMap, usesNormalMap, jointTransforms);
 	}
 
 	public EntityShader(String vertexFile, String fragmentFile, String... string) {

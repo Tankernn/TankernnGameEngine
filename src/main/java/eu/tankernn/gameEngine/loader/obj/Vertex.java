@@ -28,7 +28,6 @@ public class Vertex {
 		tangents.add(tangent);
 	}
 	
-	//NEW
 	protected Vertex duplicate(int newIndex){
 		Vertex vertex = new Vertex(newIndex, position);
 		vertex.tangents = this.tangents;

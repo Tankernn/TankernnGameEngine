@@ -107,11 +107,10 @@ public class Loader {
 	}
 	
 	public Vao loadToVAO(float[] positions, int dimensions) {
-		Vao vao = Vao.create();
-		vao.bind();
-		vao.createAttribute(0, positions, dimensions);
-		vao.unbind();
-		return vao;
+		int vaoID = createVAO();
+		storeDataInAttributeList(0, dimensions, positions);
+		unbindVAO();
+		return new Vao(vaoID, positions.length / 2);
 	}
 	
 	public Vao loadToVAO(ModelData data) {
@@ -212,8 +211,8 @@ public class Loader {
 		return this.loadToVAO(data);
 	}
 	
-	public AnimatedModel loadDAE(InternalFile colladaFile) {
-		return AnimatedModelLoader.loadEntity(colladaFile, new ModelTexture(textures.get(0)));
+	public AnimatedModel loadDAE(InternalFile colladaFile, ModelTexture texture) {
+		return AnimatedModelLoader.loadEntity(colladaFile, texture);
 	}
 	
 	public void readModelSpecification(InternalFile file) throws IOException {

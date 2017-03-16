@@ -61,8 +61,8 @@ public class TankernnGame3D extends TankernnGame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		this.sky = new Skybox(loader, Texture.newCubeMap(InternalFile.fromFilenames("skybox", dayTextures, "png"), 200),
-				Texture.newCubeMap(InternalFile.fromFilenames("skybox", nightTextures, "png"), 200), 400);
+		this.sky = new Skybox(loader, Texture.newCubeMap(InternalFile.fromFilenames("skybox", dayTextures, "png"), 400),
+				Texture.newCubeMap(InternalFile.fromFilenames("skybox", nightTextures, "png"), 400), 400);
 		camera = new Camera();
 		renderer = new MasterRenderer(loader, camera, sky);
 		try {

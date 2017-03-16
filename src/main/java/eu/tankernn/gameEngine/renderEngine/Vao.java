@@ -22,10 +22,15 @@ public class Vao {
 		return new Vao(id);
 	}
 
-	protected Vao(int id) {
+	private Vao(int id) {
 		this.id = id;
 	}
 	
+	public Vao(int id, int indexCount) {
+		this(id);
+		this.indexCount = indexCount;
+	}
+
 	public int getIndexCount(){
 		return indexCount;
 	}
