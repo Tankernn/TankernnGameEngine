@@ -10,7 +10,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.util.ICamera;
 import eu.tankernn.gameEngine.util.IPositionable;
-import eu.tankernn.gameEngine.util.Maths;
 
 /**
  * Camera for determining the view frustum when rendering.
@@ -20,7 +19,6 @@ import eu.tankernn.gameEngine.util.Maths;
 public class Camera implements IPositionable, ICamera {
 	
 	private Matrix4f projectionMatrix;
-	private Matrix4f viewMatrix = new Matrix4f();
 	
 	protected Vector3f position = new Vector3f(0, 10, 0);
 	protected float pitch = 20;
@@ -54,7 +52,6 @@ public class Camera implements IPositionable, ICamera {
 	}
 	
 	public void update() {
-		updateViewMatrix();
 	}
 	
 	public Vector3f getPosition() {
@@ -87,15 +84,6 @@ public class Camera implements IPositionable, ICamera {
 		this.roll = -roll;
 	}
 	
-	private void updateViewMatrix() {
-		viewMatrix.setIdentity();
-		Matrix4f.rotate((float) Math.toRadians(pitch), new Vector3f(1, 0, 0), viewMatrix,
-				viewMatrix);
-		Matrix4f.rotate((float) Math.toRadians(yaw), new Vector3f(0, 1, 0), viewMatrix, viewMatrix);
-		Vector3f negativeCameraPos = new Vector3f(-position.x,-position.y,-position.z);
-		Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
-	}
-	
 	private static Matrix4f createProjectionMatrix(){
 		Matrix4f projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
@@ -114,14 +102,21 @@ public class Camera implements IPositionable, ICamera {
 
 	@Override
 	public Matrix4f getViewMatrix() {
-		return Maths.createViewMatrix(this);
+		Matrix4f viewMatrix = new Matrix4f();
+		viewMatrix.setIdentity();
+		Matrix4f.rotate((float) Math.toRadians(getPitch()), new Vector3f(1, 0, 0), viewMatrix, viewMatrix);
+		Matrix4f.rotate((float) Math.toRadians(getYaw()), new Vector3f(0, 1, 0), viewMatrix, viewMatrix);
+		Matrix4f.rotate((float) Math.toRadians(getRoll()), new Vector3f(0, 0, 1), viewMatrix, viewMatrix);
+		Vector3f cameraPos = getPosition();
+		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+		Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
+		return viewMatrix;
 	}
 	
 	@Override
 	public void reflect(float height){
 		this.pitch = -pitch;
 		this.position.y = position.y - 2 * (position.y - height);
-		updateViewMatrix();
 	}
 
 	@Override
@@ -131,7 +126,7 @@ public class Camera implements IPositionable, ICamera {
 
 	@Override
 	public Matrix4f getProjectionViewMatrix() {
-		return Matrix4f.mul(projectionMatrix, viewMatrix, null);
+		return Matrix4f.mul(projectionMatrix, getViewMatrix(), null);
 	}
 	
 }

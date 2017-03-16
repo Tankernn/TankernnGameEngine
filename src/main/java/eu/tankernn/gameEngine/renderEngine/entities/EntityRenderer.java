@@ -71,8 +71,6 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.toShadowMapSpace.loadMatrix(toShadowSpace);
 		shader.cameraPosition.loadVec3(cam.getPosition());
 		for (TexturedModel model: entities.keySet()) {
-			if (model instanceof AnimatedModel)
-				shader.jointTransforms.loadMatrixArray(((AnimatedModel) model).getJointTransforms());
 			prepareTexturedModel(model, environmentMap);
 			List<Entity3D> batch = entities.get(model);
 			for (Entity3D entity: batch) {
@@ -90,10 +88,14 @@ public class EntityRenderer<S extends EntityShader> {
 	}
 	
 	private void prepareTexturedModel(TexturedModel model, Texture environmentMap) {
-		if (model instanceof AnimatedModel)
+		if (model instanceof AnimatedModel) {
 			model.getModel().bind(0, 1, 2, 4, 5);
-		else
+			shader.animated.loadBoolean(true);
+			shader.jointTransforms.loadMatrixArray(((AnimatedModel) model).getJointTransforms());
+		} else {
 			model.getModel().bind(0, 1, 2, 3);
+			shader.animated.loadBoolean(false);
+		}
 		ModelTexture texture = model.getTexture();
 		shader.numberOfRows.loadFloat(texture.getNumberOfRows());
 		if (texture.hasTransparency())

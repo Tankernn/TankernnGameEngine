@@ -37,7 +37,6 @@ public class MousePicker {
 	public MousePicker(Camera cam, Matrix4f projection, List<Entity3D> entities, List<GuiTexture> guis) {
 		camera = cam;
 		projectionMatrix = projection;
-		viewMatrix = camera.getViewMatrix();
 		this.entities = entities;
 		this.guis = guis;
 	}

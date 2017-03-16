@@ -41,19 +41,26 @@ const float gradient = 2.0;
 uniform vec4 plane;
 
 uniform mat4 jointTransforms[MAX_JOINTS];
+uniform float isAnimated;
 
 void main(void) {
 	
-	vec4 totalLocalPos = vec4(0.0);
-	vec4 totalNormal = vec4(0.0);
+	vec4 totalLocalPos = vec4(position, 1.0);
+	vec4 totalNormal = vec4(normal, 0.0);
 	
-	for(int i=0;i<MAX_WEIGHTS;i++){
-		mat4 jointTransform = jointTransforms[in_jointIndices[i]];
-		vec4 posePosition = jointTransform * vec4(position, 1.0);
-		totalLocalPos += posePosition * in_weights[i];
+	
+	if (isAnimated > 0.5) {
+		totalLocalPos = vec4(0.0);
+		totalNormal = vec4(0.0);
 		
-		vec4 worldNormal = jointTransform * vec4(normal, 0.0);
-		totalNormal += worldNormal * in_weights[i];
+		for(int i=0;i<MAX_WEIGHTS;i++){
+			mat4 jointTransform = jointTransforms[in_jointIndices[i]];
+			vec4 posePosition = jointTransform * vec4(position, 1.0);
+			totalLocalPos += posePosition * in_weights[i];
+			
+			vec4 worldNormal = jointTransform * vec4(normal, 0.0);
+			totalNormal += worldNormal * in_weights[i];
+		}
 	}
 	
 	vec4 worldPosition = transformationMatrix * totalLocalPos;
