@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
@@ -66,11 +67,15 @@ public class Player extends Entity3D {
 	
 	protected void checkInputs() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_W) || (Mouse.isButtonDown(0) && Mouse.isButtonDown(1))) {
+			if (this.getModel() instanceof AnimatedModel)
+				((AnimatedModel) getModel()).doAnimation(0);
 			this.currentSpeed = RUN_SPEED;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			this.currentSpeed = -RUN_SPEED;
 		} else {
 			this.currentSpeed = 0;
+			if (this.getModel() instanceof AnimatedModel)
+				((AnimatedModel) getModel()).doAnimation(null);
 		}
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {

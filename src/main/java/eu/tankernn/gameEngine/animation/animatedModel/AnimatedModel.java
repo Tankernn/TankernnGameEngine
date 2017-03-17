@@ -1,5 +1,8 @@
 package eu.tankernn.gameEngine.animation.animatedModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lwjgl.util.vector.Matrix4f;
 
 import eu.tankernn.gameEngine.animation.animation.Animation;
@@ -27,6 +30,7 @@ public class AnimatedModel extends TexturedModel {
 	private final int jointCount;
 
 	private final Animator animator;
+	private List<Animation> animations = new ArrayList<>();
 
 	/**
 	 * Creates a new entity capable of animation. The inverse bind transform for
@@ -86,6 +90,14 @@ public class AnimatedModel extends TexturedModel {
 	 */
 	public void doAnimation(Animation animation) {
 		animator.doAnimation(animation);
+	}
+	
+	public void doAnimation(int animationId) {
+		doAnimation(animations.get(animationId));
+	}
+	
+	public void registerAnimation(Animation animation) {
+		animations.add(animation);
 	}
 
 	/**
