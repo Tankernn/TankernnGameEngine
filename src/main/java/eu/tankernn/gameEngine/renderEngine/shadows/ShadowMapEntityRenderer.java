@@ -9,10 +9,10 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
 import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
-import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.Maths;
 
 public class ShadowMapEntityRenderer {
@@ -39,15 +39,14 @@ public class ShadowMapEntityRenderer {
 	 */
 	protected void render(Map<TexturedModel, List<Entity3D>> entities) {
 		for (TexturedModel model: entities.keySet()) {
-			Vao rawModel = model.getModel();
-			bindModel(rawModel);
+			bindModel(model);
 			model.getTexture().getTexture().bindToUnit(0);
 			if (model.getTexture().hasTransparency()) {
 				MasterRenderer.disableCulling();
 			}
 			for (Entity3D entity: entities.get(model)) {
 				prepareInstance(entity);
-				GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
+				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
 			if (model.getTexture().hasTransparency()) {
 				MasterRenderer.enableCulling();
@@ -55,6 +54,8 @@ public class ShadowMapEntityRenderer {
 		}
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
+		GL20.glDisableVertexAttribArray(4);
+		GL20.glDisableVertexAttribArray(5);
 		GL30.glBindVertexArray(0);
 	}
 	
@@ -66,8 +67,15 @@ public class ShadowMapEntityRenderer {
 	 * 
 	 * @param rawModel - the model to be bound.
 	 */
-	private void bindModel(Vao rawModel) {
-		rawModel.bind(0, 1);
+	private void bindModel(TexturedModel model) {
+		if (model instanceof AnimatedModel) {
+			model.getModel().bind(0, 1, 4, 5);
+			shader.animated.loadBoolean(true);
+			shader.jointTransforms.loadMatrixArray(((AnimatedModel) model).getJointTransforms());
+		} else {
+			model.getModel().bind(0, 1);
+			shader.animated.loadBoolean(false);
+		}
 	}
 	
 	/**

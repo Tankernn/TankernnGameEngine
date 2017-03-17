@@ -15,4 +15,9 @@ public class Settings {
 	
 	public static final float ANISOTROPIC_FILTERING_AMOUNT = 4f;
 	public static final int MULTISAMPLING = 2;
+	
+	/**
+	 * Maximum number of joints in a skeleton.
+	 */
+	public static final int MAX_JOINTS = 50;
 }
