@@ -115,7 +115,7 @@ public class InternalFile {
 	}
 
 	public String getExtension() {
-		String[] split = getName().split(".");
+		String[] split = getName().split("\\.");
 		return split[split.length - 1];
 	}
 

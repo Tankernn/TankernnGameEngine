@@ -233,16 +233,16 @@ public class Loader {
 			id = spec.getInt("id");
 			InternalFile modelFile;
 			try {
-				modelFile = new InternalFile(optFilename(spec, "model", ".obj"));
+				modelFile = new InternalFile("models/" + optFilename(spec, "model", ".obj"));
 			} catch (FileNotFoundException e) {
-				modelFile = new InternalFile(optFilename(spec, "model", ".dae"));
+				modelFile = new InternalFile("models/" + optFilename(spec, "model", ".dae"));
 			}
 			
 			String[] textureFiles = {optFilename(spec, "texture", ".png"), optFilename(spec, "specular", "S.png"), optFilename(spec, "normal", "N.png")};
 			
 			Texture[] textures = Arrays.stream(textureFiles).map(fileName -> {
 				try {
-					InternalFile f = new InternalFile(fileName);
+					InternalFile f = new InternalFile("textures/" + fileName);
 					if (cachedTextures.containsKey(f)) {
 						return cachedTextures.get(f);
 					} else {
@@ -269,26 +269,30 @@ public class Loader {
 			
 			modelTexture.setHasTransparency(spec.optBoolean("transparency"));
 			
-			if (cachedRawModels.containsKey(modelFile))
+			if (cachedRawModels.containsKey(modelFile)) {
 				model = cachedRawModels.get(modelFile);
-			else {
-				if (modelFile.getName().endsWith(".obj")) {
+				models.put(id, new TexturedModel(model, modelTexture));
+			} else {
+				switch (modelFile.getExtension()) {
+				case "obj":
 					model = loadOBJ(modelFile);
 					cachedRawModels.put(modelFile, model);
 					models.put(id, new TexturedModel(model, modelTexture));
-				} else if (modelFile.getName().endsWith(".dae")) {
+					break;
+				case "dae":
 					AnimatedModel animatedModel = AnimatedModelLoader.loadEntity(modelFile, modelTexture);
 					JSONObject animations = spec.getJSONObject("animations");
 					for (Object key: animations.names().toList()) {
 						String name = (String) key;
-						animatedModel.registerAnimation(name, AnimationLoader.loadAnimation(new InternalFile(animations.getString(name))));
+						//TODO Create a file format to specify animation frame ranges, then glue all animations together in Blender before exporting
+						animatedModel.registerAnimation(name, AnimationLoader.loadAnimation(modelFile));
 					}
 					models.put(id, animatedModel);
-				} else {
+					break;
+				default:
 					throw new UnsupportedOperationException("Unsupported file format: " + modelFile.getExtension());
 				}
 			}
-			
 		}
 	}
 	
