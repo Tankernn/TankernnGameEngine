@@ -17,47 +17,52 @@ public class Vao {
 	private List<Vbo> dataVbos = new ArrayList<Vbo>();
 	private Vbo indexVbo;
 	private int indexCount;
-
+	
 	public static Vao create() {
 		int id = GL30.glGenVertexArrays();
 		return new Vao(id);
 	}
 
+	public static Vao create(int indexCount) {
+		int id = GL30.glGenVertexArrays();
+		return new Vao(id, indexCount);
+	}
+	
 	private Vao(int id) {
 		this.id = id;
 	}
 	
-	public Vao(int id, int indexCount) {
+	private Vao(int id, int indexCount) {
 		this(id);
 		this.indexCount = indexCount;
 	}
-
-	public int getIndexCount(){
+	
+	public int getIndexCount() {
 		return indexCount;
 	}
-
-	public void bind(int... attributes){
+	
+	public void bind(int... attributes) {
 		bind();
-		for (int i : attributes) {
+		for (int i: attributes) {
 			GL20.glEnableVertexAttribArray(i);
 		}
 	}
-
-	public void unbind(int... attributes){
-		for (int i : attributes) {
+	
+	public void unbind(int... attributes) {
+		for (int i: attributes) {
 			GL20.glDisableVertexAttribArray(i);
 		}
 		unbind();
 	}
 	
-	public void createIndexBuffer(int[] indices){
+	public void createIndexBuffer(int[] indices) {
 		this.indexVbo = Vbo.create(GL15.GL_ELEMENT_ARRAY_BUFFER);
 		indexVbo.bind();
 		indexVbo.storeData(indices);
 		this.indexCount = indices.length;
 	}
-
-	public void createAttribute(int attribute, float[] data, int attrSize){
+	
+	public void createAttribute(int attribute, float[] data, int attrSize) {
 		Vbo dataVbo = Vbo.create(GL15.GL_ARRAY_BUFFER);
 		dataVbo.bind();
 		dataVbo.storeData(data);
@@ -66,7 +71,7 @@ public class Vao {
 		dataVbos.add(dataVbo);
 	}
 	
-	public void createIntAttribute(int attribute, int[] data, int attrSize){
+	public void createIntAttribute(int attribute, int[] data, int attrSize) {
 		Vbo dataVbo = Vbo.create(GL15.GL_ARRAY_BUFFER);
 		dataVbo.bind();
 		dataVbo.storeData(data);
@@ -84,18 +89,27 @@ public class Vao {
 		this.unbind();
 	}
 	
+	public void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
+		Vbo dataVbo = Vbo.create(GL15.GL_ARRAY_BUFFER, GL15.GL_STATIC_DRAW);
+		dataVbo.bind();
+		dataVbo.storeData(data);
+		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
+		dataVbo.unbind();
+		dataVbos.add(dataVbo);
+	}
+	
 	public void delete() {
 		GL30.glDeleteVertexArrays(id);
-		for(Vbo vbo : dataVbos){
+		for (Vbo vbo: dataVbos) {
 			vbo.delete();
 		}
 		indexVbo.delete();
 	}
-
+	
 	private void bind() {
 		GL30.glBindVertexArray(id);
 	}
-
+	
 	private void unbind() {
 		GL30.glBindVertexArray(0);
 	}

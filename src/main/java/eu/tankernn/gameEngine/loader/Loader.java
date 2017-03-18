@@ -3,22 +3,14 @@ package eu.tankernn.gameEngine.loader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
 import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
 import eu.tankernn.gameEngine.animation.loaders.AnimatedModelLoader;
@@ -38,11 +30,9 @@ import eu.tankernn.gameEngine.util.InternalFile;
  * @author Frans
  */
 public class Loader {
-	private List<Integer> vaos = new ArrayList<Integer>();
-	private List<Integer> vbos = new ArrayList<Integer>();
-	private List<Vao> rawModels = new ArrayList<Vao>();
-	private List<Texture> textures = new ArrayList<Texture>();
-	private Map<Integer, TexturedModel> models = new HashMap<Integer, TexturedModel>();
+	private List<Vao> vaos = new ArrayList<>();
+	private List<Texture> textures = new ArrayList<>();
+	private Map<Integer, TexturedModel> models = new HashMap<>();
 	private List<AABB> boundingBoxes = new ArrayList<>();
 	
 	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
@@ -59,23 +49,25 @@ public class Loader {
 		if (tangents != null)
 			model.createAttribute(3, tangents, 3);
 		model.unbind();
-		rawModels.add(model);
+		vaos.add(model);
 		return model;
 	}
 	
-	public int loadToVAO(float[] positions, float[] textureCoords) {
-		int vaoID = createVAO();
-		storeDataInAttributeList(0, 2, positions);
-		storeDataInAttributeList(1, 2, textureCoords);
-		unbindVAO();
-		return vaoID;
+	public Vao loadToVAO(float[] positions, float[] textureCoords) {
+		Vao vao = Vao.create();
+		vao.bind();
+		vao.storeDataInAttributeList(0, 2, positions);
+		vao.storeDataInAttributeList(1, 2, textureCoords);
+		vao.unbind();
+		return vao;
 	}
 	
 	public Vao loadToVAO(float[] positions, int dimensions) {
-		int vaoID = createVAO();
-		storeDataInAttributeList(0, dimensions, positions);
-		unbindVAO();
-		return new Vao(vaoID, positions.length / 2);
+		Vao vao = Vao.create(positions.length / 2);
+		vao.bind();
+		vao.storeDataInAttributeList(0, dimensions, positions);
+		vao.unbind();
+		return vao;
 	}
 	
 	public Vao loadToVAO(ModelData data) {
@@ -123,7 +115,7 @@ public class Loader {
 		vao.createIndexBuffer(CUBE_INDICES);
 		vao.createAttribute(0, getCubeVertexPositions(size), 3);
 		vao.unbind();
-		rawModels.add(vao);
+		vaos.add(vao);
 		return vao;
 	}
 	
@@ -132,52 +124,16 @@ public class Loader {
 	}
 	
 	public void cleanUp() {
-		for (int vao: vaos)
-			GL30.glDeleteVertexArrays(vao);
-		for (int vbo: vbos)
-			GL15.glDeleteBuffers(vbo);
 		for (Texture tex: textures)
 			tex.delete();
-		for (Vao model: rawModels)
+		for (Vao model: vaos)
 			model.delete();
-	}
-	
-	private int createVAO() {
-		int vaoID = GL30.glGenVertexArrays();
-		vaos.add(vaoID);
-		GL30.glBindVertexArray(vaoID);
-		return vaoID;
-	}
-	
-	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
-		int vboID = GL15.glGenBuffers();
-		vbos.add(vboID);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
-		FloatBuffer buffer = storeDataInFloatBuffer(data);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-	}
-	
-	private void unbindVAO() {
-		GL30.glBindVertexArray(0);
-	}
-	
-	private FloatBuffer storeDataInFloatBuffer(float[] data) {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
-		buffer.put(data);
-		buffer.flip();
-		return buffer;
 	}
 	
 	public Vao loadOBJ(InternalFile objFile) {
 		ModelData data = ObjLoader.loadOBJ(objFile);
 		boundingBoxes.add(new AABB(data));
 		return this.loadToVAO(data);
-	}
-	
-	public AnimatedModel loadDAE(InternalFile colladaFile, ModelTexture texture) {
-		return AnimatedModelLoader.loadEntity(colladaFile, texture);
 	}
 	
 	public void readModelSpecification(InternalFile file) throws IOException {
@@ -266,31 +222,6 @@ public class Loader {
 	
 	private String optFilename(JSONObject spec, String key, String extension) {
 		return spec.has(key) ? spec.getString(key) : spec.get("name") + extension;
-	}
-	
-	public int registerModel(int id, TexturedModel model) throws Exception {
-		if (models.containsKey(id)) {
-			throw new Exception("There is already a model registered for the key " + id + ".");
-		} else {
-			models.put(id, model);
-			return id;
-		}
-	}
-	
-	public int registerModel(TexturedModel model) throws Exception {
-		if (models.containsValue(model)) {
-			Iterator<Entry<Integer, TexturedModel>> i = models.entrySet().iterator();
-			
-			while (i.hasNext()) {
-				Entry<Integer, TexturedModel> e = i.next();
-				if (e.getValue().equals(model)) {
-					return e.getKey();
-				}
-			}
-			// Should be impossible
-			throw new IllegalStateException();
-		} else
-			return registerModel(models.size(), model);
 	}
 	
 	public TexturedModel getModel(int id) {
