@@ -1,6 +1,5 @@
 package eu.tankernn.gameEngine;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,6 @@ import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
-import eu.tankernn.gameEngine.entities.PlayerCamera;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;

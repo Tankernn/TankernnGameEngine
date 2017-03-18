@@ -19,7 +19,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL33;
 
 import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
 import eu.tankernn.gameEngine.animation.loaders.AnimatedModelLoader;
@@ -47,15 +46,7 @@ public class Loader {
 	private List<AABB> boundingBoxes = new ArrayList<>();
 	
 	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
-		Vao model = Vao.create();
-		model.bind();
-		model.createIndexBuffer(indices);
-		model.createAttribute(0, vertices, 3);
-		model.createAttribute(1, textureCoords, 2);
-		model.createAttribute(2, normals, 3);
-		model.unbind();
-		rawModels.add(model);
-		return model;
+		return loadToVAO(vertices, textureCoords, normals, null, indices);
 	}
 	
 	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, float[] tangents, int[] indices) {
@@ -65,38 +56,11 @@ public class Loader {
 		model.createAttribute(0, vertices, 3);
 		model.createAttribute(1, textureCoords, 2);
 		model.createAttribute(2, normals, 3);
-		model.createAttribute(3, tangents, 3);
+		if (tangents != null)
+			model.createAttribute(3, tangents, 3);
 		model.unbind();
 		rawModels.add(model);
 		return model;
-	}
-	
-	public int createEmptyVBO(int floatCount) {
-		int vboID = GL15.glGenBuffers();
-		vbos.add(vboID);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, floatCount * 4, GL15.GL_STREAM_DRAW);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		return vboID;
-	}
-	
-	public void addInstacedAttribute(int vao, int vbo, int attribute, int dataSize, int instancedDataLength, int offset) {
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
-		GL30.glBindVertexArray(vao);
-		GL20.glVertexAttribPointer(attribute, dataSize, GL11.GL_FLOAT, false, instancedDataLength * 4, offset * 4);
-		GL33.glVertexAttribDivisor(attribute, 1);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		GL30.glBindVertexArray(0);
-	}
-	
-	public void updateVBO(int vboID, float[] data, FloatBuffer buffer) {
-		buffer.clear();
-		buffer.put(data);
-		buffer.flip();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer.capacity() * 4, GL15.GL_STREAM_DRAW);
-		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, buffer);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 	}
 	
 	public int loadToVAO(float[] positions, float[] textureCoords) {

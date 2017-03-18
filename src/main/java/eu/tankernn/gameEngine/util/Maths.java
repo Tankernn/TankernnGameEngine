@@ -5,8 +5,6 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import eu.tankernn.gameEngine.entities.Camera;
-
 public class Maths {
 	public static float distanceBetweenPoints(Vector3f pos1, Vector3f pos2) {
 		float baseWidth = pos1.x - pos2.x;

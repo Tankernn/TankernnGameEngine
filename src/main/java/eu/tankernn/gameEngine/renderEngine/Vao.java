@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL33;
 
 public class Vao {
 	
@@ -72,6 +73,15 @@ public class Vao {
 		GL30.glVertexAttribIPointer(attribute, attrSize, GL11.GL_INT, attrSize * BYTES_PER_INT, 0);
 		dataVbo.unbind();
 		dataVbos.add(dataVbo);
+	}
+	
+	public void addInstacedAttribute(Vbo vbo, int attribute, int dataSize, int instancedDataLength, int offset) {
+		vbo.bind();
+		this.bind();
+		GL20.glVertexAttribPointer(attribute, dataSize, GL11.GL_FLOAT, false, instancedDataLength * 4, offset * 4);
+		GL33.glVertexAttribDivisor(attribute, 1);
+		vbo.unbind();
+		this.unbind();
 	}
 	
 	public void delete() {

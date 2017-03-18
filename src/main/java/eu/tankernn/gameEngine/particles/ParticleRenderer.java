@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
@@ -15,6 +16,7 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.renderEngine.Vao;
+import eu.tankernn.gameEngine.renderEngine.Vbo;
 
 public class ParticleRenderer {
 	
@@ -27,17 +29,15 @@ public class ParticleRenderer {
 	private Vao quad;
 	private ParticleShader shader;
 	
-	private Loader loader;
-	private int vbo;
+	private Vbo vbo;
 	private int pointer = 0;
 	
 	protected ParticleRenderer(Loader loader, Matrix4f projectionMatrix) {
-		this.loader = loader;
-		this.vbo = loader.createEmptyVBO(INSTANCE_DATA_LENGTH * MAX_INSTANCES);
+		this.vbo = Vbo.create(GL15.GL_ARRAY_BUFFER, GL15.GL_STREAM_DRAW, INSTANCE_DATA_LENGTH * MAX_INSTANCES);
 		quad = loader.loadToVAO(VERTICES, 2);
 		for (int i = 0; i < 5; i++)
-			loader.addInstacedAttribute(quad.id, vbo, i + 1, 4, INSTANCE_DATA_LENGTH, i * 4);
-		loader.addInstacedAttribute(quad.id, vbo, 6, 1, INSTANCE_DATA_LENGTH, 20);
+			quad.addInstacedAttribute(vbo, i + 1, 4, INSTANCE_DATA_LENGTH, i * 4);
+		quad.addInstacedAttribute(vbo, 6, 1, INSTANCE_DATA_LENGTH, 20);
 		shader = new ParticleShader();
 		shader.start();
 		shader.projectionMatrix.loadMatrix(projectionMatrix);
@@ -56,7 +56,7 @@ public class ParticleRenderer {
 				updateModelViewMatrix(p.getPosition(), p.getRotation(), p.getScale(), viewMatrix, vboData);
 				updateTexCoordInfo(p, vboData);
 			}
-			loader.updateVBO(vbo, vboData, buffer);
+			vbo.updateData(vboData, buffer);
 			GL31.glDrawArraysInstanced(GL11.GL_TRIANGLE_STRIP, 0, quad.getIndexCount(), particleList.size());
 		}
 		finishRendering();
