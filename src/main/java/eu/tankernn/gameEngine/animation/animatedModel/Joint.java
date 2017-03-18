@@ -59,6 +59,12 @@ public class Joint {
 		this.name = name;
 		this.localBindTransform = bindLocalTransform;
 	}
+	
+	public Joint(Joint joint) {
+		this(joint.index, joint.name, joint.localBindTransform);
+		for (Joint j : joint.children)
+			this.children.add(new Joint(j));
+	}
 
 	/**
 	 * Adds a child joint to this joint. Used during the creation of the joint

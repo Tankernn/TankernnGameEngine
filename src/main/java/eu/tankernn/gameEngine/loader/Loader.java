@@ -23,6 +23,7 @@ import org.lwjgl.opengl.GL33;
 
 import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
 import eu.tankernn.gameEngine.animation.loaders.AnimatedModelLoader;
+import eu.tankernn.gameEngine.animation.loaders.AnimationLoader;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
@@ -230,17 +231,14 @@ public class Loader {
 			ModelTexture modelTexture;
 			
 			id = spec.getInt("id");
-			
-			InternalFile objFile = new InternalFile(optFilename(spec, "model", ".obj"));
+			InternalFile modelFile;
+			try {
+				modelFile = new InternalFile(optFilename(spec, "model", ".obj"));
+			} catch (FileNotFoundException e) {
+				modelFile = new InternalFile(optFilename(spec, "model", ".dae"));
+			}
 			
 			String[] textureFiles = {optFilename(spec, "texture", ".png"), optFilename(spec, "specular", "S.png"), optFilename(spec, "normal", "N.png")};
-			
-			if (cachedRawModels.containsKey(objFile))
-				model = cachedRawModels.get(objFile);
-			else {
-				model = loadOBJ(objFile);
-				cachedRawModels.put(objFile, model);
-			}
 			
 			Texture[] textures = Arrays.stream(textureFiles).map(fileName -> {
 				try {
@@ -271,7 +269,26 @@ public class Loader {
 			
 			modelTexture.setHasTransparency(spec.optBoolean("transparency"));
 			
-			models.put(id, new TexturedModel(model, modelTexture));
+			if (cachedRawModels.containsKey(modelFile))
+				model = cachedRawModels.get(modelFile);
+			else {
+				if (modelFile.getName().endsWith(".obj")) {
+					model = loadOBJ(modelFile);
+					cachedRawModels.put(modelFile, model);
+					models.put(id, new TexturedModel(model, modelTexture));
+				} else if (modelFile.getName().endsWith(".dae")) {
+					AnimatedModel animatedModel = AnimatedModelLoader.loadEntity(modelFile, modelTexture);
+					JSONObject animations = spec.getJSONObject("animations");
+					for (Object key: animations.names().toList()) {
+						String name = (String) key;
+						animatedModel.registerAnimation(name, AnimationLoader.loadAnimation(new InternalFile(animations.getString(name))));
+					}
+					models.put(id, animatedModel);
+				} else {
+					throw new UnsupportedOperationException("Unsupported file format: " + modelFile.getExtension());
+				}
+			}
+			
 		}
 	}
 	
@@ -309,7 +326,11 @@ public class Loader {
 	}
 	
 	public TexturedModel getModel(int id) {
-		return models.get(id);
+		TexturedModel model = models.get(id);
+		if (model instanceof AnimatedModel)
+			return new AnimatedModel((AnimatedModel) model);
+		else
+			return model;
 	}
 	
 	public AABB getBoundingBox(int id) {

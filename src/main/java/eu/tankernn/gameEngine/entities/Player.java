@@ -68,14 +68,14 @@ public class Player extends Entity3D {
 	protected void checkInputs() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_W) || (Mouse.isButtonDown(0) && Mouse.isButtonDown(1))) {
 			if (this.getModel() instanceof AnimatedModel)
-				((AnimatedModel) getModel()).doAnimation(0);
+				((AnimatedModel) getModel()).doAnimation("run");
 			this.currentSpeed = RUN_SPEED;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			this.currentSpeed = -RUN_SPEED;
 		} else {
 			this.currentSpeed = 0;
 			if (this.getModel() instanceof AnimatedModel)
-				((AnimatedModel) getModel()).doAnimation(null);
+				((AnimatedModel) getModel()).doAnimation("idle");
 		}
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
