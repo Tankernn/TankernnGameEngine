@@ -6,6 +6,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Matrix4f;
 
 import eu.tankernn.gameEngine.animation.animation.Animator;
+import eu.tankernn.gameEngine.loader.colladaLoader.JointData;
 
 /**
  * 
@@ -64,6 +65,20 @@ public class Joint {
 		this(joint.index, joint.name, joint.localBindTransform);
 		for (Joint j : joint.children)
 			this.children.add(new Joint(j));
+	}
+	
+	/**
+	 * Constructs the joint-hierarchy skeleton from the data extracted from the
+	 * collada file.
+	 * 
+	 * @param data
+	 *            - the joints data from the collada file for the head joint.
+	 * @return The created joint, with all its descendants added.
+	 */
+	public Joint(JointData data) {
+		this(data.index, data.nameId, data.bindLocalTransform);
+		for (JointData child : data.children)
+			this.addChild(new Joint(child));
 	}
 
 	/**

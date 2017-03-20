@@ -13,8 +13,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
-import eu.tankernn.gameEngine.animation.loaders.AnimatedModelLoader;
+import eu.tankernn.gameEngine.animation.animatedModel.Joint;
 import eu.tankernn.gameEngine.animation.loaders.AnimationLoader;
+import eu.tankernn.gameEngine.loader.colladaLoader.AnimatedModelData;
+import eu.tankernn.gameEngine.loader.colladaLoader.ColladaLoader;
+import eu.tankernn.gameEngine.loader.colladaLoader.JointsData;
+import eu.tankernn.gameEngine.loader.colladaLoader.MeshData;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
@@ -30,16 +34,18 @@ import eu.tankernn.gameEngine.util.InternalFile;
  * @author Frans
  */
 public class Loader {
+	public static final int MAX_WEIGHTS = 3;
+	
 	private List<Vao> vaos = new ArrayList<>();
 	private List<Texture> textures = new ArrayList<>();
 	private Map<Integer, TexturedModel> models = new HashMap<>();
-	private List<AABB> boundingBoxes = new ArrayList<>();
+	private Map<Integer, AABB> boundingBoxes = new HashMap<>();
 	
 	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
-		return loadToVAO(vertices, textureCoords, normals, null, indices);
+		return loadToVAO(vertices, textureCoords, normals, null, null, null, indices);
 	}
 	
-	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, float[] tangents, int[] indices) {
+	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, float[] tangents, int[] jointIds, float[] weights, int[] indices) {
 		Vao model = Vao.create();
 		model.bind();
 		model.createIndexBuffer(indices);
@@ -48,6 +54,10 @@ public class Loader {
 		model.createAttribute(2, normals, 3);
 		if (tangents != null)
 			model.createAttribute(3, tangents, 3);
+		if (jointIds != null)
+			model.createIntAttribute(4, jointIds, 3);
+		if (weights != null)
+			model.createAttribute(5, weights, 3);
 		model.unbind();
 		vaos.add(model);
 		return model;
@@ -73,7 +83,11 @@ public class Loader {
 	}
 	
 	public Vao loadToVAO(ModelData data) {
-		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), data.getIndices());
+		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), null, null, data.getIndices());
+	}
+	
+	public Vao loadToVAO(MeshData data) {
+		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), data.getJointIds(), data.getVertexWeights(), data.getIndices());
 	}
 	
 	/**
@@ -134,8 +148,25 @@ public class Loader {
 	
 	public Vao loadOBJ(InternalFile objFile) {
 		ModelData data = ObjLoader.loadOBJ(objFile);
-		boundingBoxes.add(new AABB(data));
-		return this.loadToVAO(data);
+		Vao vao = this.loadToVAO(data);
+		boundingBoxes.put(vao.id, new AABB(data));
+		return vao;
+	}
+	
+	/**
+	 * Creates an AnimatedEntity from the data in an entity file. It loads up
+	 * the collada model data, stores the extracted data in a VAO, sets up the
+	 * joint heirarchy, and loads up the entity's texture.
+	 * 
+	 * @param entityFile - the file containing the data for the entity.
+	 * @return The animated entity (no animation applied though)
+	 */
+	public AnimatedModel loadDAE(InternalFile modelFile, ModelTexture texture) {
+		AnimatedModelData entityData = ColladaLoader.loadColladaModel(modelFile, MAX_WEIGHTS);
+		Vao model = loadToVAO(entityData.getMeshData());
+		JointsData skeletonData = entityData.getJointsData();
+		Joint headJoint = new Joint(skeletonData.headJoint);
+		return new AnimatedModel(model, texture, headJoint, skeletonData.jointCount);
 	}
 	
 	public void readModelSpecification(InternalFile file) throws IOException {
@@ -202,10 +233,9 @@ public class Loader {
 					models.put(id, new TexturedModel(model, modelTexture));
 					break;
 				case "dae":
-					AnimatedModel animatedModel = AnimatedModelLoader.loadEntity(modelFile, modelTexture);
+					AnimatedModel animatedModel = loadDAE(modelFile, modelTexture);
 					String animations = spec.getString("animations");
 					animatedModel.registerAnimations(AnimationLoader.loadAnimations(modelFile, new InternalFile("models/" + animations)));
-					
 					models.put(id, animatedModel);
 					break;
 				default:
@@ -231,7 +261,7 @@ public class Loader {
 			return model;
 	}
 	
-	public AABB getBoundingBox(int id) {
-		return boundingBoxes.get(id);
+	public AABB getBoundingBox(int vaoId) {
+		return boundingBoxes.get(vaoId);
 	}
 }
