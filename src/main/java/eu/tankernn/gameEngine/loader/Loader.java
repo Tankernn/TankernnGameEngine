@@ -13,8 +13,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
-import eu.tankernn.gameEngine.animation.loaders.AnimatedModelLoader;
+import eu.tankernn.gameEngine.animation.animatedModel.Joint;
 import eu.tankernn.gameEngine.animation.loaders.AnimationLoader;
+import eu.tankernn.gameEngine.loader.colladaLoader.AnimatedModelData;
+import eu.tankernn.gameEngine.loader.colladaLoader.ColladaLoader;
+import eu.tankernn.gameEngine.loader.colladaLoader.JointsData;
+import eu.tankernn.gameEngine.loader.colladaLoader.MeshData;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.obj.ModelData;
@@ -30,16 +34,19 @@ import eu.tankernn.gameEngine.util.InternalFile;
  * @author Frans
  */
 public class Loader {
+	public static final int MAX_WEIGHTS = 3;
+
 	private List<Vao> vaos = new ArrayList<>();
 	private List<Texture> textures = new ArrayList<>();
 	private Map<Integer, TexturedModel> models = new HashMap<>();
-	private List<AABB> boundingBoxes = new ArrayList<>();
-	
+	private Map<Integer, AABB> boundingBoxes = new HashMap<>();
+
 	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
-		return loadToVAO(vertices, textureCoords, normals, null, indices);
+		return loadToVAO(vertices, textureCoords, normals, null, null, null, indices);
 	}
-	
-	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, float[] tangents, int[] indices) {
+
+	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, float[] tangents, int[] jointIds,
+			float[] weights, int[] indices) {
 		Vao model = Vao.create();
 		model.bind();
 		model.createIndexBuffer(indices);
@@ -48,11 +55,15 @@ public class Loader {
 		model.createAttribute(2, normals, 3);
 		if (tangents != null)
 			model.createAttribute(3, tangents, 3);
+		if (jointIds != null)
+			model.createIntAttribute(4, jointIds, 3);
+		if (weights != null)
+			model.createAttribute(5, weights, 3);
 		model.unbind();
 		vaos.add(model);
 		return model;
 	}
-	
+
 	public Vao loadToVAO(float[] positions, float[] textureCoords) {
 		Vao vao = Vao.create();
 		vao.bind();
@@ -61,7 +72,7 @@ public class Loader {
 		vao.unbind();
 		return vao;
 	}
-	
+
 	public Vao loadToVAO(float[] positions, int dimensions) {
 		Vao vao = Vao.create(positions.length / 2);
 		vao.bind();
@@ -69,16 +80,23 @@ public class Loader {
 		vao.unbind();
 		return vao;
 	}
-	
+
 	public Vao loadToVAO(ModelData data) {
-		return (Vao) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), data.getIndices());
+		return (Vao) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), null,
+				null, data.getIndices());
 	}
-	
+
+	public Vao loadToVAO(MeshData data) {
+		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(),
+				data.getJointIds(), data.getVertexWeights(), data.getIndices());
+	}
+
 	/**
 	 * Loads a texture to the GPU.
 	 * 
-	 * @param filename The path, relative to the root of the jar file, of the
-	 *        file to load.
+	 * @param filename
+	 *            The path, relative to the root of the jar file, of the file to
+	 *            load.
 	 * @return The texture ID
 	 * @throws FileNotFoundException
 	 */
@@ -87,28 +105,30 @@ public class Loader {
 		textures.add(texture);
 		return texture;
 	}
-	
+
 	public Texture loadTexture(String filename) throws FileNotFoundException {
 		return loadTexture(new InternalFile(filename));
 	}
-	
+
 	/**
 	 * Creates a new cube map from the images specified. File 0: Right face File
 	 * 1: Left face File 2: Top face File 3: Bottom face File 4: Back face File
 	 * 5: Front face
 	 * 
-	 * @param textureFiles Filenames of images that make up the cube map
+	 * @param textureFiles
+	 *            Filenames of images that make up the cube map
 	 * @return The ID of the new cube map
 	 */
-	
+
 	public Texture loadCubeMap(InternalFile[] textureFiles) {
 		Texture cubeMap = Texture.newCubeMap(textureFiles, 500);
 		textures.add(cubeMap);
 		return cubeMap;
 	}
-	
-	private static final int[] CUBE_INDICES = {0, 1, 3, 1, 2, 3, 1, 5, 2, 2, 5, 6, 4, 7, 5, 5, 7, 6, 0, 3, 4, 4, 3, 7, 7, 3, 6, 6, 3, 2, 4, 5, 0, 0, 5, 1};
-	
+
+	private static final int[] CUBE_INDICES = { 0, 1, 3, 1, 2, 3, 1, 5, 2, 2, 5, 6, 4, 7, 5, 5, 7, 6, 0, 3, 4, 4, 3, 7,
+			7, 3, 6, 6, 3, 2, 4, 5, 0, 0, 5, 1 };
+
 	public Vao generateCube(float size) {
 		Vao vao = Vao.create();
 		vao.bind();
@@ -118,38 +138,56 @@ public class Loader {
 		vaos.add(vao);
 		return vao;
 	}
-	
+
 	private static float[] getCubeVertexPositions(float size) {
-		return new float[] {-size, size, size, size, size, size, size, -size, size, -size, -size, size, -size, size, -size, size, size, -size, size, -size, -size, -size, -size, -size};
+		return new float[] { -size, size, size, size, size, size, size, -size, size, -size, -size, size, -size, size,
+				-size, size, size, -size, size, -size, -size, -size, -size, -size };
 	}
-	
+
 	public void cleanUp() {
-		for (Texture tex: textures)
+		for (Texture tex : textures)
 			tex.delete();
-		for (Vao model: vaos)
+		for (Vao model : vaos)
 			model.delete();
 	}
-	
+
 	public Vao loadOBJ(InternalFile objFile) {
 		ModelData data = ObjLoader.loadOBJ(objFile);
-		boundingBoxes.add(new AABB(data));
-		return this.loadToVAO(data);
+		Vao vao = this.loadToVAO(data);
+		boundingBoxes.put(vao.id, new AABB(data));
+		return vao;
 	}
-	
+	/**
+	 * Creates an AnimatedEntity from the data in an entity file. It loads up
+	 * the collada model data, stores the extracted data in a VAO, sets up the
+	 * joint heirarchy, and loads up the entity's texture.
+	 * 
+	 * @param entityFile
+	 *            - the file containing the data for the entity.
+	 * @return The animated entity (no animation applied though)
+	 */
+	public AnimatedModel loadDAE(InternalFile modelFile, ModelTexture texture) {
+		AnimatedModelData entityData = ColladaLoader.loadColladaModel(modelFile, MAX_WEIGHTS);
+		Vao model = loadToVAO(entityData.getMeshData());
+		JointsData skeletonData = entityData.getJointsData();
+		Joint headJoint = new Joint(skeletonData.headJoint);
+		return new AnimatedModel(model, texture, headJoint, skeletonData.jointCount);
+	}
+
 	public void readModelSpecification(InternalFile file) throws IOException {
 		Map<InternalFile, Vao> cachedRawModels = new HashMap<InternalFile, Vao>();
 		Map<InternalFile, Texture> cachedTextures = new HashMap<InternalFile, Texture>();
 		JSONObject spec;
-		
+
 		JSONArray jsonArr = new JSONArray(file.readFile());
-		
+
 		for (int j = 0; j < jsonArr.length(); j++) {
 			spec = jsonArr.getJSONObject(j);
-			
+
 			int id;
 			Vao model;
 			ModelTexture modelTexture;
-			
+
 			id = spec.getInt("id");
 			InternalFile modelFile;
 			try {
@@ -157,9 +195,10 @@ public class Loader {
 			} catch (FileNotFoundException e) {
 				modelFile = new InternalFile("models/" + optFilename(spec, "model", ".dae"));
 			}
-			
-			String[] textureFiles = {optFilename(spec, "texture", ".png"), optFilename(spec, "specular", "S.png"), optFilename(spec, "normal", "N.png")};
-			
+
+			String[] textureFiles = { optFilename(spec, "texture", ".png"), optFilename(spec, "specular", "S.png"),
+					optFilename(spec, "normal", "N.png") };
+
 			Texture[] textures = Arrays.stream(textureFiles).map(fileName -> {
 				try {
 					InternalFile f = new InternalFile("textures/" + fileName);
@@ -176,19 +215,19 @@ public class Loader {
 					return null;
 				}
 			}).toArray(size -> new Texture[size]);
-			
+
 			modelTexture = new ModelTexture(textures[0]);
 			if (textures[1] != null)
 				modelTexture.setNormalMap(textures[2]);
 			if (textures[2] != null)
 				modelTexture.setSpecularMap(textures[1]);
-			
+
 			modelTexture.setShineDamper(optFloat(spec, "shinedamper", 10.0f));
 			modelTexture.setReflectivity(optFloat(spec, "reflectivity", 0f));
 			modelTexture.setRefractivity(optFloat(spec, "refractivity", 0f));
-			
+
 			modelTexture.setHasTransparency(spec.optBoolean("transparency"));
-			
+
 			if (cachedRawModels.containsKey(modelFile)) {
 				model = cachedRawModels.get(modelFile);
 				models.put(id, new TexturedModel(model, modelTexture));
@@ -200,11 +239,13 @@ public class Loader {
 					models.put(id, new TexturedModel(model, modelTexture));
 					break;
 				case "dae":
-					AnimatedModel animatedModel = AnimatedModelLoader.loadEntity(modelFile, modelTexture);
+					AnimatedModel animatedModel = loadDAE(modelFile, modelTexture);
 					JSONObject animations = spec.getJSONObject("animations");
-					for (Object key: animations.names().toList()) {
+					for (Object key : animations.names().toList()) {
 						String name = (String) key;
-						//TODO Create a file format to specify animation frame ranges, then glue all animations together in Blender before exporting
+						// TODO Create a file format to specify animation frame
+						// ranges, then glue all animations together in Blender
+						// before exporting
 						animatedModel.registerAnimation(name, AnimationLoader.loadAnimation(modelFile));
 					}
 					models.put(id, animatedModel);
@@ -215,15 +256,15 @@ public class Loader {
 			}
 		}
 	}
-	
+
 	private float optFloat(JSONObject spec, String key, float defaultValue) {
 		return BigDecimal.valueOf(spec.optDouble(key, (double) defaultValue)).floatValue();
 	}
-	
+
 	private String optFilename(JSONObject spec, String key, String extension) {
 		return spec.has(key) ? spec.getString(key) : spec.get("name") + extension;
 	}
-	
+
 	public TexturedModel getModel(int id) {
 		TexturedModel model = models.get(id);
 		if (model instanceof AnimatedModel)
@@ -231,8 +272,8 @@ public class Loader {
 		else
 			return model;
 	}
-	
-	public AABB getBoundingBox(int id) {
-		return boundingBoxes.get(id);
+
+	public AABB getBoundingBox(int vaoId) {
+		return boundingBoxes.get(vaoId);
 	}
 }
