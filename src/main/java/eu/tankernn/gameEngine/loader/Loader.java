@@ -164,6 +164,7 @@ public class Loader {
 	public AnimatedModel loadDAE(InternalFile modelFile, ModelTexture texture) {
 		AnimatedModelData entityData = ColladaLoader.loadColladaModel(modelFile, MAX_WEIGHTS);
 		Vao model = loadToVAO(entityData.getMeshData());
+		boundingBoxes.put(model.id, new AABB(entityData.getMeshData()));
 		JointsData skeletonData = entityData.getJointsData();
 		Joint headJoint = new Joint(skeletonData.headJoint);
 		return new AnimatedModel(model, texture, headJoint, skeletonData.jointCount);
