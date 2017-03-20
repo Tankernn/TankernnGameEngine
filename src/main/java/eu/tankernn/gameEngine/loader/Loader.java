@@ -263,6 +263,8 @@ public class Loader {
 	}
 	
 	public AABB getBoundingBox(int vaoId) {
+		if (!boundingBoxes.containsKey(vaoId))
+			throw new NullPointerException("Unable to find bounding box for vaoId " + vaoId);
 		return boundingBoxes.get(vaoId);
 	}
 }

@@ -194,6 +194,7 @@ public class GeometryLoader {
 		this.verticesArray = new float[vertices.size() * 3];
 		this.texturesArray = new float[vertices.size() * 2];
 		this.normalsArray = new float[vertices.size() * 3];
+		this.tangentsArray = new float[vertices.size() * 3];
 		this.jointIdsArray = new int[vertices.size() * 3];
 		this.weightsArray = new float[vertices.size() * 3];
 	}
