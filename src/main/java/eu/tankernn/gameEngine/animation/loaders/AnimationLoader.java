@@ -1,5 +1,7 @@
 package eu.tankernn.gameEngine.animation.loaders;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,50 +23,59 @@ import eu.tankernn.gameEngine.util.InternalFile;
  * and then creates and returns an {@link Animation} from the extracted data.
  * 
  * @author Karl
- *
  */
 public class AnimationLoader {
-
+	
 	/**
 	 * Loads up a collada animation file, and returns and animation created from
 	 * the extracted animation data from the file.
 	 * 
-	 * @param colladaFile
-	 *            - the collada file containing data about the desired
-	 *            animation.
+	 * @param colladaFile - the collada file containing data about the desired
+	 *        animation.
 	 * @return The animation made from the data in the file.
+	 * @throws IOException 
 	 */
-	public static Animation loadAnimation(InternalFile colladaFile) {
+	public static Map<String, Animation> loadAnimations(InternalFile colladaFile, InternalFile animationFile) throws IOException {
+		Map<String, Animation> animations = new HashMap<>();
 		AnimationData animationData = ColladaLoader.loadColladaAnimation(colladaFile);
-		KeyFrame[] frames = new KeyFrame[animationData.keyFrames.length];
-		for (int i = 0; i < frames.length; i++) {
-			frames[i] = createKeyFrame(animationData.keyFrames[i]);
+		int dataIndex = 0;
+		BufferedReader r = animationFile.getReader();
+		String line;
+		while (r.ready()) {
+			line = r.readLine();
+			String[] split = line.split(" ");
+			KeyFrame[] frames = new KeyFrame[Integer.parseInt(split[1])];
+			float animationStart = animationData.keyFrames[dataIndex].time;
+			for (int i = 0; i < frames.length; i++) {
+				frames[i] = createKeyFrame(animationData.keyFrames[dataIndex++], animationStart);
+			}
+			float animationEnd = animationData.keyFrames[dataIndex -1].time;
+			animations.put(split[0], new Animation(animationEnd - animationStart, frames));
 		}
-		return new Animation(animationData.lengthSeconds, frames);
+		
+		return animations;
 	}
-
+	
 	/**
 	 * Creates a keyframe from the data extracted from the collada file.
 	 * 
-	 * @param data
-	 *            - the data about the keyframe that was extracted from the
-	 *            collada file.
+	 * @param data - the data about the keyframe that was extracted from the
+	 *        collada file.
 	 * @return The keyframe.
 	 */
-	private static KeyFrame createKeyFrame(KeyFrameData data) {
+	private static KeyFrame createKeyFrame(KeyFrameData data, float animationStart) {
 		Map<String, JointTransform> map = new HashMap<String, JointTransform>();
-		for (JointTransformData jointData : data.jointTransforms) {
+		for (JointTransformData jointData: data.jointTransforms) {
 			JointTransform jointTransform = createTransform(jointData);
 			map.put(jointData.jointNameId, jointTransform);
 		}
-		return new KeyFrame(data.time, map);
+		return new KeyFrame(data.time - animationStart, map);
 	}
-
+	
 	/**
 	 * Creates a joint transform from the data extracted from the collada file.
 	 * 
-	 * @param data
-	 *            - the data from the collada file.
+	 * @param data - the data from the collada file.
 	 * @return The joint transform.
 	 */
 	private static JointTransform createTransform(JointTransformData data) {
@@ -73,5 +84,5 @@ public class AnimationLoader {
 		Quaternion rotation = new Quaternion(mat);
 		return new JointTransform(translation, rotation);
 	}
-
+	
 }

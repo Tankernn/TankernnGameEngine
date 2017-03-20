@@ -101,8 +101,8 @@ public class AnimatedModel extends TexturedModel {
 		doAnimation(animations.get(animationId));
 	}
 	
-	public void registerAnimation(String key, Animation animation) {
-		animations.put(key, animation);
+	public void registerAnimations(Map<String, Animation> animations) {
+		this.animations = new HashMap<>(animations);
 	}
 
 	/**

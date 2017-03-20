@@ -59,6 +59,7 @@ public class Loader {
 		vao.storeDataInAttributeList(0, 2, positions);
 		vao.storeDataInAttributeList(1, 2, textureCoords);
 		vao.unbind();
+		vaos.add(vao);
 		return vao;
 	}
 	
@@ -67,11 +68,12 @@ public class Loader {
 		vao.bind();
 		vao.storeDataInAttributeList(0, dimensions, positions);
 		vao.unbind();
+		vaos.add(vao);
 		return vao;
 	}
 	
 	public Vao loadToVAO(ModelData data) {
-		return (Vao) loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), data.getIndices());
+		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getTangents(), data.getIndices());
 	}
 	
 	/**
@@ -201,12 +203,9 @@ public class Loader {
 					break;
 				case "dae":
 					AnimatedModel animatedModel = AnimatedModelLoader.loadEntity(modelFile, modelTexture);
-					JSONObject animations = spec.getJSONObject("animations");
-					for (Object key: animations.names().toList()) {
-						String name = (String) key;
-						//TODO Create a file format to specify animation frame ranges, then glue all animations together in Blender before exporting
-						animatedModel.registerAnimation(name, AnimationLoader.loadAnimation(modelFile));
-					}
+					String animations = spec.getString("animations");
+					animatedModel.registerAnimations(AnimationLoader.loadAnimations(modelFile, new InternalFile("models/" + animations)));
+					
 					models.put(id, animatedModel);
 					break;
 				default:

@@ -39,6 +39,8 @@ public class Animator {
 	private float animationTime = 0;
 	private Animation currentAnimation;
 
+	private float speed;
+
 	/**
 	 * @param entity
 	 *            - the entity which will by animated by this animator.
@@ -54,11 +56,16 @@ public class Animator {
 	 * @param animation
 	 *            - the new animation to carry out.
 	 */
-	public void doAnimation(Animation animation) {
+	public void doAnimation(Animation animation, float speed) {
 		if (this.currentAnimation != null && this.currentAnimation.equals(animation))
 			return;
+		this.speed = speed;
 		this.animationTime = 0;
 		this.currentAnimation = animation;
+	}
+	
+	public void doAnimation(Animation animation) {
+		this.doAnimation(animation, 1);
 	}
 
 	/**
@@ -84,7 +91,7 @@ public class Animator {
 	 * reset, causing the animation to loop.
 	 */
 	private void increaseAnimationTime() {
-		animationTime += DisplayManager.getFrameTimeSeconds();
+		animationTime += DisplayManager.getFrameTimeSeconds() * speed;
 		if (animationTime > currentAnimation.getLength()) {
 			this.animationTime %= currentAnimation.getLength();
 		}

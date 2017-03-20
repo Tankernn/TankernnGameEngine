@@ -22,7 +22,7 @@ public class Vao {
 		int id = GL30.glGenVertexArrays();
 		return new Vao(id);
 	}
-
+	
 	public static Vao create(int indexCount) {
 		int id = GL30.glGenVertexArrays();
 		return new Vao(id, indexCount);
@@ -103,7 +103,8 @@ public class Vao {
 		for (Vbo vbo: dataVbos) {
 			vbo.delete();
 		}
-		indexVbo.delete();
+		if (indexVbo != null)
+			indexVbo.delete();
 	}
 	
 	private void bind() {

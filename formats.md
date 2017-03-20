@@ -14,3 +14,7 @@ Available options:
 - reflectivity (float)
 - refractivity (float)
 - transparency (boolean)
+
+## *.anim
+
+name(string, no spaces) length(int)
