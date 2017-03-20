@@ -25,6 +25,7 @@ public class GeometryLoader {
 	private float[] verticesArray;
 	private float[] normalsArray;
 	private float[] texturesArray;
+	private float[] tangentsArray;
 	private int[] indicesArray;
 	private int[] jointIdsArray;
 	private float[] weightsArray;
@@ -48,7 +49,7 @@ public class GeometryLoader {
 		initArrays();
 		convertDataToArrays();
 		convertIndicesListToArray();
-		return new MeshData(verticesArray, texturesArray, normalsArray, indicesArray, jointIdsArray, weightsArray, 1);
+		return new MeshData(verticesArray, texturesArray, normalsArray, tangentsArray, indicesArray, jointIdsArray, weightsArray, 1);
 	}
 
 	private void readRawData() {
@@ -144,6 +145,7 @@ public class GeometryLoader {
 			Vector3f position = currentVertex.getPosition();
 			Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
 			Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
+			Vector3f tangent = currentVertex.getAverageTangent();
 			verticesArray[i * 3] = position.x;
 			verticesArray[i * 3 + 1] = position.y;
 			verticesArray[i * 3 + 2] = position.z;
@@ -152,6 +154,9 @@ public class GeometryLoader {
 			normalsArray[i * 3] = normalVector.x;
 			normalsArray[i * 3 + 1] = normalVector.y;
 			normalsArray[i * 3 + 2] = normalVector.z;
+			tangentsArray[i * 3] = tangent.x;
+			tangentsArray[i * 3 + 1] = tangent.y;
+			tangentsArray[i * 3 + 2] = tangent.z;
 			VertexSkinData weights = currentVertex.getWeightsData();
 			jointIdsArray[i * 3] = weights.jointIds.get(0);
 			jointIdsArray[i * 3 + 1] = weights.jointIds.get(1);
