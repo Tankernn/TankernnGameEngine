@@ -30,7 +30,7 @@ public class GeometryLoader {
 	private int[] jointIdsArray;
 	private float[] weightsArray;
 
-	List<Vertex> vertices = new ArrayList<Vertex>();
+	List<WeightedVertex> vertices = new ArrayList<WeightedVertex>();
 	List<Vector2f> textures = new ArrayList<Vector2f>();
 	List<Vector3f> normals = new ArrayList<Vector3f>();
 	List<Integer> indices = new ArrayList<Integer>();
@@ -69,7 +69,7 @@ public class GeometryLoader {
 			float z = Float.parseFloat(posData[i * 3 + 2]);
 			Vector4f position = new Vector4f(x, y, z, 1);
 			Matrix4f.transform(correction, position, position);
-			vertices.add(new Vertex(vertices.size(), new Vector3f(position.x, position.y, position.z), vertexWeights.get(vertices.size())));
+			vertices.add(new WeightedVertex(vertices.size(), new Vector3f(position.x, position.y, position.z), vertexWeights.get(vertices.size())));
 		}
 	}
 
@@ -115,8 +115,8 @@ public class GeometryLoader {
 	}
 	
 
-	private Vertex processVertex(int posIndex, int normIndex, int texIndex) {
-		Vertex currentVertex = vertices.get(posIndex);
+	private WeightedVertex processVertex(int posIndex, int normIndex, int texIndex) {
+		WeightedVertex currentVertex = vertices.get(posIndex);
 		if (!currentVertex.isSet()) {
 			currentVertex.setTextureIndex(texIndex);
 			currentVertex.setNormalIndex(normIndex);
@@ -138,7 +138,7 @@ public class GeometryLoader {
 	private float convertDataToArrays() {
 		float furthestPoint = 0;
 		for (int i = 0; i < vertices.size(); i++) {
-			Vertex currentVertex = vertices.get(i);
+			WeightedVertex currentVertex = vertices.get(i);
 			if (currentVertex.getLength() > furthestPoint) {
 				furthestPoint = currentVertex.getLength();
 			}
@@ -169,16 +169,16 @@ public class GeometryLoader {
 		return furthestPoint;
 	}
 
-	private Vertex dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex, int newNormalIndex) {
+	private WeightedVertex dealWithAlreadyProcessedVertex(WeightedVertex previousVertex, int newTextureIndex, int newNormalIndex) {
 		if (previousVertex.hasSameTextureAndNormal(newTextureIndex, newNormalIndex)) {
 			indices.add(previousVertex.getIndex());
 			return previousVertex;
 		} else {
-			Vertex anotherVertex = previousVertex.getDuplicateVertex();
+			WeightedVertex anotherVertex = previousVertex.getDuplicateVertex();
 			if (anotherVertex != null) {
 				return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex);
 			} else {
-				Vertex duplicateVertex = new Vertex(vertices.size(), previousVertex.getPosition(), previousVertex.getWeightsData());
+				WeightedVertex duplicateVertex = new WeightedVertex(vertices.size(), previousVertex.getPosition(), previousVertex.getWeightsData());
 				duplicateVertex.setTextureIndex(newTextureIndex);
 				duplicateVertex.setNormalIndex(newNormalIndex);
 				previousVertex.setDuplicateVertex(duplicateVertex);
@@ -200,7 +200,7 @@ public class GeometryLoader {
 	}
 
 	private void removeUnusedVertices() {
-		for (Vertex vertex : vertices) {
+		for (WeightedVertex vertex : vertices) {
 			vertex.averageTangents();
 			if (!vertex.isSet()) {
 				vertex.setTextureIndex(0);
