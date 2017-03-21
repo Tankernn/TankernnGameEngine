@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
@@ -51,6 +52,19 @@ public class WaterMaster {
 		// Screen
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		buffers.getReflectionFbo().unbindFrameBuffer();
+	}
+	
+	public boolean isPointUnderWater(Vector3f point) {
+		for (WaterTile tile : waterTiles) {
+			if (point.y < tile.getHeight()) {
+				if (tile.getX() - tile.getSize() <= point.x && point.x <= tile.getX() + tile.getSize()) {
+					if (tile.getZ() - tile.getSize() <= point.z && point.z <= tile.getZ() + tile.getSize()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	public void renderWater(Camera camera, List<Light> lights) {
