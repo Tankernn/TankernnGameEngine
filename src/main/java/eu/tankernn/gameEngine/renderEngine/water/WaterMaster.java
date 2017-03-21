@@ -14,6 +14,7 @@ import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
+import eu.tankernn.gameEngine.util.DistanceSorter;
 import eu.tankernn.gameEngine.util.ICamera;
 
 public class WaterMaster {
@@ -31,7 +32,8 @@ public class WaterMaster {
 	}
 	
 	public void renderBuffers(MasterRenderer renderer, Scene scene) {
-		float waterHeight = waterTiles.get(0).getHeight(); //TODO Using only the first watertile is BAD
+		DistanceSorter.sort(waterTiles, scene.getCamera());
+		float waterHeight = waterTiles.get(0).getHeight();
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		
 		// Reflection

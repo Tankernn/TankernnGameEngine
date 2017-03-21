@@ -1,6 +1,10 @@
 package eu.tankernn.gameEngine.renderEngine.water;
 
-public class WaterTile {
+import org.lwjgl.util.vector.Vector3f;
+
+import eu.tankernn.gameEngine.util.IPositionable;
+
+public class WaterTile implements IPositionable {
 	
 	private float height;
 	private float x, z;
@@ -27,6 +31,11 @@ public class WaterTile {
 	
 	public float getSize() {
 		return size;
+	}
+
+	@Override
+	public Vector3f getPosition() {
+		return new Vector3f(x, height, z);
 	}
 	
 }
