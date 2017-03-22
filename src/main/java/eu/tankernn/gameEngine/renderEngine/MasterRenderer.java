@@ -133,6 +133,8 @@ public class MasterRenderer {
 	 */
 	public void processEntity(Entity3D entity) {
 		TexturedModel entityModel = entity.getModel();
+		if (entityModel == null)
+			return;
 		List<Entity3D> batch = entities.get(entityModel);
 		if (batch != null) {
 			batch.add(entity);

@@ -9,10 +9,11 @@ import eu.tankernn.gameEngine.util.IPositionable;
 
 public class Entity3D implements IPositionable {
 	private TexturedModel model;
-	private Vector3f position;
+	protected Vector3f position;
 	private Vector3f rotation;
 	private float scale;
 	private AABB boundingBox;
+	protected boolean dead;
 	
 	public Entity3D(TexturedModel model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox) {
 		this.model = model;
@@ -23,10 +24,10 @@ public class Entity3D implements IPositionable {
 		this.boundingBox.updatePosition(position);
 	}
 	
-	public void increasePosition(float dx, float dy, float dz) {
-		this.position.x += dx;
-		this.position.y += dy;
-		this.position.z += dz;
+	public void increasePosition(Vector3f velocity) {
+		this.position.x += velocity.x;
+		this.position.y += velocity.y;
+		this.position.z += velocity.z;
 	}
 	
 	public void increaseRotation(Vector3f deltaRotation) {
@@ -69,6 +70,10 @@ public class Entity3D implements IPositionable {
 	
 	public AABB getBoundingBox() {
 		return boundingBox;
+	}
+	
+	public boolean isDead() {
+		return dead;
 	}
 	
 }

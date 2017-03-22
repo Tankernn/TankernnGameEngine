@@ -38,9 +38,8 @@ public class Player extends Entity3D {
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotation().y)));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotation().y)));
-		super.increasePosition(dx, 0, dz);
 		upwardsSpeed += Physics.GRAVITY * DisplayManager.getFrameTimeSeconds();
-		super.increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+		super.increasePosition(new Vector3f(dx, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), dz));
 		
 		Terrain currentTerrain = terrainPack.getTerrainByWorldPos(this.getPosition().x, this.getPosition().z);
 		
@@ -105,6 +104,12 @@ public class Player extends Entity3D {
 	
 	public Terrain getCurrentTerrain() {
 		return terrainPack.getTerrainByWorldPos(this.getPosition().x, this.getPosition().z);
+	}
+	
+	public Vector3f get2dRotation() {
+		float dx = (float) (Math.sin(Math.toRadians(super.getRotation().y)));
+		float dz = (float) (Math.cos(Math.toRadians(super.getRotation().y)));
+		return new Vector3f(dx, 0, dz);
 	}
 	
 }

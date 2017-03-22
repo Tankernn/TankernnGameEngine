@@ -26,10 +26,10 @@ public class Car extends Player {
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotation().y)));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotation().y)));
-		super.increasePosition(dx, 0, dz);
+		super.increasePosition(new Vector3f(dx, 0, dz));
 
 		upwardsSpeed += Physics.GRAVITY * DisplayManager.getFrameTimeSeconds();
-		super.increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+		super.increasePosition(new Vector3f(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0));
 
 		Terrain currentTerrain = terrainPack.getTerrainByWorldPos(this.getPosition().x, this.getPosition().z);
 

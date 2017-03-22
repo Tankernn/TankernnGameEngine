@@ -47,6 +47,8 @@ public class ParticleMaster {
 			if (!entry.getKey().usesAdditiveBlending())
 				DistanceSorter.sort(list, camera);
 		}
+		
+		systems.removeIf(ParticleSystem::isDead);
 	}
 
 	public void renderParticles(Camera camera) {

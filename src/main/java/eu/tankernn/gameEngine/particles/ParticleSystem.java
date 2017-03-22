@@ -12,6 +12,7 @@ public class ParticleSystem {
 	private Vector3f position;
 	
 	private ParticleTexture texture;
+	private boolean dead;
 	
 	public ParticleSystem(ParticleTexture texture, float pps, float speed, float gravityComplient, float lifeLength) {
 		this.texture = texture;
@@ -47,5 +48,13 @@ public class ParticleSystem {
 		velocity.normalise();
 		velocity.scale(speed);
 		return new Particle(texture, new Vector3f(center), velocity, gravityComplient, lifeLength, 0, 1);
+	}
+
+	public void remove() {
+		this.dead = true;
+	}
+	
+	public boolean isDead() {
+		return dead;
 	}
 }

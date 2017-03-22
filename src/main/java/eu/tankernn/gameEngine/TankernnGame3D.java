@@ -12,6 +12,7 @@ import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
+import eu.tankernn.gameEngine.entities.Projectile;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
@@ -37,7 +38,8 @@ public class TankernnGame3D extends TankernnGame {
 	protected MousePicker picker;
 
 	protected List<Entity3D> entities = new ArrayList<>();
-	protected List<Light> lights= new ArrayList<>();
+	protected List<Projectile> projectiles = new ArrayList<>();
+	protected List<Light> lights = new ArrayList<>();
 	private Light sun;
 	protected TerrainPack terrainPack;
 	protected Player player;
@@ -62,8 +64,13 @@ public class TankernnGame3D extends TankernnGame {
 
 	public void update() {
 		super.update();
-		for (Entity3D e : entities)
-			e.update();
+		entities.forEach(Entity3D::update);
+		entities.removeIf(Entity3D::isDead);
+		
+		projectiles.forEach(Projectile::update);
+		projectiles.removeIf(Projectile::isDead);
+		projectiles.forEach((p) -> p.checkCollision(entities));
+		
 		player.move();
 		picker.update(terrainPack);
 		camera.update();
