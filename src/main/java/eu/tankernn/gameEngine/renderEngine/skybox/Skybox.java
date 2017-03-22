@@ -1,20 +1,21 @@
 package eu.tankernn.gameEngine.renderEngine.skybox;
 
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 
 public class Skybox {
 
-	private RawModel cube;
+	private Vao cube;
 	private Texture dayTexture, nightTexture;
 
-	public Skybox(Texture dayTexture, Texture nightTexture, float size) {
-		cube = CubeGenerator.generateCube(size);
+	public Skybox(Loader loader, Texture dayTexture, Texture nightTexture, float size) {
+		cube = loader.generateCube(size);
 		this.dayTexture = dayTexture;
 		this.nightTexture = nightTexture;
 	}
 
-	public RawModel getCubeVao() {
+	public Vao getCubeVao() {
 		return cube;
 	}
 

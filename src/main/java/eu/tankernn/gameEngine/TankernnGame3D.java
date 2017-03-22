@@ -1,6 +1,5 @@
 package eu.tankernn.gameEngine;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
-import eu.tankernn.gameEngine.loader.Loader;
+import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.postProcessing.PostProcessor;
 import eu.tankernn.gameEngine.renderEngine.Fbo;
@@ -37,8 +36,8 @@ public class TankernnGame3D extends TankernnGame {
 	protected Skybox sky;
 	protected MousePicker picker;
 
-	protected List<Entity3D> entities;
-	protected List<Light> lights;
+	protected List<Entity3D> entities = new ArrayList<>();
+	protected List<Light> lights= new ArrayList<>();
 	private Light sun;
 	protected TerrainPack terrainPack;
 	protected Player player;
@@ -48,33 +47,23 @@ public class TankernnGame3D extends TankernnGame {
 	private Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE),
 			outputFbo2 = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 	
-	public TankernnGame3D(String name, Skybox skybox, String dudvMap, String normalMap, Light sun) {
+	public TankernnGame3D(String name, String[] dayTextures, String[] nightTextures, Light sun) {
 		super(name);
-		entities = new ArrayList<Entity3D>();
-		lights = new ArrayList<Light>();
-		this.sky = skybox;
 		this.sun = sun;
 		lights.add(sun);
 		try {
-			loader = new Loader();
 			loader.readModelSpecification(new InternalFile("models.json"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		camera = new Camera();
-		renderer = new MasterRenderer(loader, camera, skybox);
-		try {
-			waterMaster = new WaterMaster(loader, loader.loadTexture(dudvMap), loader.loadTexture(normalMap), camera);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		particleMaster = new ParticleMaster(loader, camera.getProjectionMatrix());
-		postProcessor = new PostProcessor(loader);
-		picker = new MousePicker(camera, camera.getProjectionMatrix(), entities, guiMaster.getGuis());
+		this.sky = new Skybox(loader, Texture.newCubeMap(InternalFile.fromFilenames("skybox", dayTextures, "png"), 400),
+				Texture.newCubeMap(InternalFile.fromFilenames("skybox", nightTextures, "png"), 400), 400);
 	}
 
 	public void update() {
 		super.update();
+		for (Entity3D e : entities)
+			e.update();
 		player.move();
 		picker.update(terrainPack);
 		camera.update();

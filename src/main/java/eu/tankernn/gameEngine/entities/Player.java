@@ -4,7 +4,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
 import eu.tankernn.gameEngine.loader.models.AABB;
+import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.settings.Physics;
 import eu.tankernn.gameEngine.terrains.Terrain;
@@ -25,7 +27,7 @@ public class Player extends Entity3D {
 	
 	private float height = 2.0f;
 	
-	public Player(int model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox, TerrainPack terrainPack) {
+	public Player(TexturedModel model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox, TerrainPack terrainPack) {
 		super(model, position, rotation, scale, boundingBox);
 		this.terrainPack = terrainPack;
 	}
@@ -65,11 +67,15 @@ public class Player extends Entity3D {
 	
 	protected void checkInputs() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_W) || (Mouse.isButtonDown(0) && Mouse.isButtonDown(1))) {
+			if (this.getModel() instanceof AnimatedModel)
+				((AnimatedModel) getModel()).doAnimation("run");
 			this.currentSpeed = RUN_SPEED;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			this.currentSpeed = -RUN_SPEED;
 		} else {
 			this.currentSpeed = 0;
+			if (this.getModel() instanceof AnimatedModel)
+				((AnimatedModel) getModel()).doAnimation("idle");
 		}
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {

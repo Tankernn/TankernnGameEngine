@@ -1,8 +1,8 @@
 package eu.tankernn.gameEngine.postProcessing.gaussianBlur;
 
 import eu.tankernn.gameEngine.loader.textures.Texture;
-import eu.tankernn.gameEngine.postProcessing.PostProcessingEffect;
 import eu.tankernn.gameEngine.postProcessing.ImageRenderer;
+import eu.tankernn.gameEngine.postProcessing.PostProcessingEffect;
 
 public class HorizontalBlur extends PostProcessingEffect<HorizontalBlurShader> {
 	

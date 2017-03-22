@@ -12,6 +12,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import eu.tankernn.gameEngine.animation.animatedModel.AnimatedModel;
 import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
@@ -20,23 +21,22 @@ import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.util.ICamera;
 import eu.tankernn.gameEngine.util.Maths;
+import eu.tankernn.gameEngine.util.OpenGlUtils;
 
 /**
  * Renderer for entities.
  * 
  * @author Frans
- *
  */
 public class EntityRenderer<S extends EntityShader> {
 	protected S shader;
-
+	
 	/**
 	 * Starts shader and loads initial values.
 	 * 
-	 * @param shader
-	 *            The shader to use when rendering entities
-	 * @param projectionMatrix
-	 *            The projection matrix to use when rendering entities
+	 * @param shader The shader to use when rendering entities
+	 * @param projectionMatrix The projection matrix to use when rendering
+	 *        entities
 	 */
 	@SuppressWarnings("unchecked")
 	public EntityRenderer(Matrix4f projectionMatrix) {
@@ -50,45 +50,53 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.connectTextureUnits();
 		shader.stop();
 	}
-
+	
 	/**
 	 * Renders entities to the current frame buffer.
 	 * 
-	 * @param entities
-	 *            The entities to render.
-	 * @param toShadowSpace
-	 *            Transformation matrix to shadow space. Used for applying
-	 *            shadows.
+	 * @param entities The entities to render.
+	 * @param toShadowSpace Transformation matrix to shadow space. Used for
+	 *        applying shadows.
 	 */
-	public void render(Map<TexturedModel, List<Entity3D>> entities, Matrix4f toShadowSpace, ICamera cam,
-			Vector4f clipPlane, List<Light> lights, Texture environmentMap) {
+	public void render(Map<TexturedModel, List<Entity3D>> entities, Matrix4f toShadowSpace, ICamera cam, Vector4f clipPlane, List<Light> lights, Texture environmentMap) {
+		OpenGlUtils.antialias(true);
+		OpenGlUtils.disableBlending();
+		OpenGlUtils.enableDepthTesting(true);
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
 		shader.skyColor.loadVec3(RED, GREEN, BLUE);
 		shader.loadLights(lights, cam.getViewMatrix());
 		shader.viewMatrix.loadCamera(cam);
-
+		
 		shader.toShadowMapSpace.loadMatrix(toShadowSpace);
 		shader.cameraPosition.loadVec3(cam.getPosition());
-		for (TexturedModel model : entities.keySet()) {
+		for (TexturedModel model: entities.keySet()) {
 			prepareTexturedModel(model, environmentMap);
 			List<Entity3D> batch = entities.get(model);
-			for (Entity3D entity : batch) {
+			for (Entity3D entity: batch) {
 				prepareInstance(entity, model);
-				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
+				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
 			unbindTexturedModel(model);
+			
 		}
 		shader.stop();
 	}
-
+	
 	public void cleanUp() {
 		shader.cleanUp();
 	}
-
+	
 	private void prepareTexturedModel(TexturedModel model, Texture environmentMap) {
-		model.getRawModel().bind(0, 1, 2, 3);
-		ModelTexture texture = model.getModelTexture();
+		if (model instanceof AnimatedModel) {
+			model.getModel().bind(0, 1, 2, 4, 5);
+			shader.animated.loadBoolean(true);
+			shader.jointTransforms.loadMatrixArray(((AnimatedModel) model).getJointTransforms());
+		} else {
+			model.getModel().bind(0, 1, 2, 3);
+			shader.animated.loadBoolean(false);
+		}
+		ModelTexture texture = model.getTexture();
 		shader.numberOfRows.loadFloat(texture.getNumberOfRows());
 		if (texture.hasTransparency())
 			MasterRenderer.disableCulling();
@@ -96,7 +104,7 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.shineDamper.loadFloat(texture.getShineDamper());
 		shader.reflectivity.loadFloat(texture.getReflectivity());
 		shader.refractivity.loadFloat(texture.getRefractivity());
-		model.getModelTexture().getTexture().bindToUnit(0);
+		model.getTexture().getTexture().bindToUnit(0);
 		shader.usesSpecularMap.loadBoolean(texture.hasSpecularMap());
 		if (texture.hasSpecularMap()) {
 			texture.getSpecularMap().bindToUnit(2);
@@ -106,20 +114,22 @@ public class EntityRenderer<S extends EntityShader> {
 			texture.getNormalMap().bindToUnit(1);
 		bindEnvironmentMap(environmentMap);
 	}
-
+	
 	private void bindEnvironmentMap(Texture environmentMap) {
 		environmentMap.bindToUnit(10);
 	}
-
+	
 	private void unbindTexturedModel(TexturedModel model) {
 		MasterRenderer.enableCulling();
-		model.getRawModel().unbind(0, 1, 2, 3);
+		if (model instanceof AnimatedModel)
+			model.getModel().unbind(0, 1, 2, 4, 5);
+		else
+			model.getModel().unbind(0, 1, 2, 3);
 	}
-
+	
 	protected void prepareInstance(Entity3D entity, TexturedModel model) {
 		Vector3f rot = entity.getRotation();
-		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), rot.x, rot.y, rot.z,
-				entity.getScale());
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), rot.x, rot.y, rot.z, entity.getScale());
 		shader.transformationMatrix.loadMatrix(transformationMatrix);
 		shader.offset.loadVec2(model.getTextureXOffset(), model.getTextureYOffset());
 	}

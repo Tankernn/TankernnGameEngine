@@ -25,7 +25,7 @@ import eu.tankernn.gameEngine.loader.textures.Texture;
  */
 public class ShadowMapMasterRenderer {
 
-	public static final int SHADOW_MAP_SIZE = 1024 * 2;
+	public static final int SHADOW_MAP_SIZE = 1024 * 4;
 
 	private ShadowFrameBuffer shadowFbo;
 	private ShadowShader shader;

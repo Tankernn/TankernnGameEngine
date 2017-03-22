@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.loader.textures.Texture;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.InternalFile;
 import eu.tankernn.gameEngine.util.Maths;
 
@@ -17,7 +17,7 @@ public class Terrain {
 
 	private float x, z;
 	private int gridX, gridZ;
-	private RawModel model;
+	private Vao model;
 	private TerrainTexturePack texturePack;
 	private Texture blendMap;
 
@@ -72,7 +72,7 @@ public class Terrain {
 		return TERRAIN_SIZE;
 	}
 
-	public RawModel getModel() {
+	public Vao getModel() {
 		return model;
 	}
 

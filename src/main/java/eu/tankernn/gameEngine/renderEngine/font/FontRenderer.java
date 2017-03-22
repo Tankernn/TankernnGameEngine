@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
 import eu.tankernn.gameEngine.loader.font.FontType;
 import eu.tankernn.gameEngine.loader.font.GUIText;
@@ -41,15 +39,11 @@ public class FontRenderer {
 	}
 	
 	private void renderText(GUIText text) {
-		GL30.glBindVertexArray(text.getMesh());
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
+		text.getMesh().bind(0, 1);
 		shader.color.loadVec3(text.getColor());
 		shader.translation.loadVec2(text.getPosition());
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		GL30.glBindVertexArray(0);
+		text.getMesh().unbind(0, 1);
 	}
 	
 	private void endRendering() {

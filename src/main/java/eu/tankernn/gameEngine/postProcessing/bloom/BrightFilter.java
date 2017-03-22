@@ -1,8 +1,8 @@
 package eu.tankernn.gameEngine.postProcessing.bloom;
 
 import eu.tankernn.gameEngine.loader.textures.Texture;
-import eu.tankernn.gameEngine.postProcessing.PostProcessingEffect;
 import eu.tankernn.gameEngine.postProcessing.ImageRenderer;
+import eu.tankernn.gameEngine.postProcessing.PostProcessingEffect;
 
 public class BrightFilter extends PostProcessingEffect<BrightFilterShader> {
 

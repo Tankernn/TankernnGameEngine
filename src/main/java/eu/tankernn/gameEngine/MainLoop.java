@@ -82,9 +82,9 @@ public class MainLoop {
 		TerrainPack terrainPack = new TerrainPack(loader, texturePack, blendMap, SEED);
 
 		// Player
-		Entity3D entity = new Entity3D(0, new Vector3f(0, 0, 20), new Vector3f(0, 0, 0), 1, loader.getBoundingBox(0));
+		Entity3D entity = new Entity3D(loader.getModel(0), new Vector3f(0, 0, 20), new Vector3f(0, 0, 0), 1, loader.getBoundingBox(0));
 		entities.add(entity);
-		Player player = new Player(0, new Vector3f(10, 0, 50), new Vector3f(0, 0, 0), 1, loader.getBoundingBox(0),
+		Player player = new Player(loader.getModel(0), new Vector3f(10, 0, 50), new Vector3f(0, 0, 0), 1, loader.getBoundingBox(0),
 				terrainPack);
 		entities.add(player);
 		Camera camera = new PlayerCamera(player, terrainPack);
@@ -92,7 +92,7 @@ public class MainLoop {
 		InternalFile[] dayTextures = InternalFile.fromFilenames("skybox", TEXTURE_FILES, "png"),
 				nightTextures = InternalFile.fromFilenames("skybox", NIGHT_TEXTURE_FILES, "png");
 
-		Skybox skybox = new Skybox(Texture.newCubeMap(dayTextures, 200), Texture.newCubeMap(nightTextures, 200), 200);
+		Skybox skybox = new Skybox(loader, Texture.newCubeMap(dayTextures, 200), Texture.newCubeMap(nightTextures, 200), 200);
 
 		MasterRenderer renderer = new MasterRenderer(loader, camera, skybox);
 		ParticleMaster particleMaster = new ParticleMaster(loader, camera.getProjectionMatrix());
@@ -105,7 +105,7 @@ public class MainLoop {
 		textMaster.loadText(text);
 
 		// Barrel
-		Entity3D barrel = new Entity3D(1, new Vector3f(75, 10, 75), new Vector3f(0, 0, 0), 1f, loader.getBoundingBox(1));
+		Entity3D barrel = new Entity3D(loader.getModel(1), new Vector3f(75, 10, 75), new Vector3f(0, 0, 0), 1f, loader.getBoundingBox(1));
 		entities.add(barrel);
 
 		Light sun = new Light(new Vector3f(100000, 150000, -70000), new Vector3f(1f, 1f, 1f));
@@ -122,7 +122,7 @@ public class MainLoop {
 			float x = rand.nextFloat() * 1000;
 			float z = rand.nextFloat() * 1000;
 
-			entities.add(new Entity3D(2, new Vector3f(x, terrainPack.getTerrainHeightByWorldPos(x, z), z), new Vector3f(),
+			entities.add(new Entity3D(loader.getModel(2), new Vector3f(x, terrainPack.getTerrainHeightByWorldPos(x, z), z), new Vector3f(),
 					1, loader.getBoundingBox(2)));
 		}
 

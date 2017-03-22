@@ -37,7 +37,6 @@ public class MousePicker {
 	public MousePicker(Camera cam, Matrix4f projection, List<Entity3D> entities, List<GuiTexture> guis) {
 		camera = cam;
 		projectionMatrix = projection;
-		viewMatrix = camera.getViewMatrix();
 		this.entities = entities;
 		this.guis = guis;
 	}
@@ -69,15 +68,13 @@ public class MousePicker {
 			currentTerrainPoint = null;
 		}
 
-		boolean foundTarget = false;
 		for (Entity3D e : entities) {
-			if (entityInstersect(e) && !foundTarget) {
-				e.setScale(2);
-				foundTarget = true;
-			} else {
-				e.setScale(1);
+			if (entityInstersect(e)) {
+				currentEntity = e;
+				return;
 			}
 		}
+		currentEntity = null;
 	}
 
 	private Vector3f calculateMouseRay() {

@@ -1,20 +1,20 @@
 package eu.tankernn.gameEngine.loader.models;
 
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 
 public class TexturedModel {
-	private RawModel rawModel;
+	private Vao rawModel;
 	private ModelTexture texture;
 	
 	private int textureIndex = 0;
 	
-	public TexturedModel(RawModel rawModel, ModelTexture texture) {
+	public TexturedModel(Vao rawModel, ModelTexture texture) {
 		this.rawModel = rawModel;
 		this.texture = texture;
 	}
 	
-	public TexturedModel(RawModel rawModel, ModelTexture texture, int textureIndex) {
+	public TexturedModel(Vao rawModel, ModelTexture texture, int textureIndex) {
 		this(rawModel, texture);
 		this.textureIndex = textureIndex;
 	}
@@ -29,15 +29,11 @@ public class TexturedModel {
 		return (float) row / (float) texture.getNumberOfRows();
 	}
 
-	public RawModel getRawModel() {
+	public Vao getModel() {
 		return rawModel;
 	}
 
-	public ModelTexture getModelTexture() {
+	public ModelTexture getTexture() {
 		return texture;
-	}
-	
-	public AABB getBoundingBox() {
-		return rawModel.getBoundingBox();
 	}
 }

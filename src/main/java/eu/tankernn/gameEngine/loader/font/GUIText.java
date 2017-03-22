@@ -3,6 +3,8 @@ package eu.tankernn.gameEngine.loader.font;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.renderEngine.Vao;
+
 /**
  * Represents a piece of text in the game.
  * 
@@ -16,7 +18,7 @@ public class GUIText {
 	
 	private float fontSize;
 
-	private int textMeshVao;
+	private Vao textMeshVao;
 	private int vertexCount;
 	private Vector3f colour = new Vector3f(0f, 0f, 0f);
 
@@ -114,7 +116,7 @@ public class GUIText {
 	 * @return the ID of the text's VAO, which contains all the vertex data for
 	 *         the quads on which the text will be rendered.
 	 */
-	public int getMesh() {
+	public Vao getMesh() {
 		return textMeshVao;
 	}
 
@@ -127,7 +129,7 @@ public class GUIText {
 	 * @param verticesCount
 	 *            - the total number of vertices in all of the quads.
 	 */
-	public void setMeshInfo(int vao, int verticesCount) {
+	public void setMeshInfo(Vao vao, int verticesCount) {
 		this.textMeshVao = vao;
 		this.vertexCount = verticesCount;
 	}

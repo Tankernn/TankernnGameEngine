@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
@@ -13,6 +14,7 @@ import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.Scene;
+import eu.tankernn.gameEngine.util.DistanceSorter;
 import eu.tankernn.gameEngine.util.ICamera;
 
 public class WaterMaster {
@@ -30,7 +32,8 @@ public class WaterMaster {
 	}
 	
 	public void renderBuffers(MasterRenderer renderer, Scene scene) {
-		float waterHeight = waterTiles.get(0).getHeight(); //TODO Using only the first watertile is BAD
+		DistanceSorter.sort(waterTiles, scene.getCamera());
+		float waterHeight = waterTiles.get(0).getHeight();
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		
 		// Reflection
@@ -51,6 +54,19 @@ public class WaterMaster {
 		// Screen
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		buffers.getReflectionFbo().unbindFrameBuffer();
+	}
+	
+	public boolean isPointUnderWater(Vector3f point) {
+		for (WaterTile tile : waterTiles) {
+			if (point.y < tile.getHeight()) {
+				if (tile.getX() - tile.getSize() <= point.x && point.x <= tile.getX() + tile.getSize()) {
+					if (tile.getZ() - tile.getSize() <= point.z && point.z <= tile.getZ() + tile.getSize()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	public void renderWater(Camera camera, List<Light> lights) {

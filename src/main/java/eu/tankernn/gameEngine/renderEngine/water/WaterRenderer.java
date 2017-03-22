@@ -13,7 +13,7 @@ import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
-import eu.tankernn.gameEngine.renderEngine.RawModel;
+import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.settings.Settings;
 import eu.tankernn.gameEngine.util.Maths;
 
@@ -24,7 +24,7 @@ public class WaterRenderer {
 	private static final float SHINE_DAMPER = 20.0f;
 	private static final float REFLECTIVITY = 0.5f;
 	
-	private RawModel quad;
+	private Vao quad;
 	private WaterShader shader;
 	private WaterFrameBuffers buffers;
 	
