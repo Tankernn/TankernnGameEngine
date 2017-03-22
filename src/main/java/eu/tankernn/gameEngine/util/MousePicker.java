@@ -68,15 +68,13 @@ public class MousePicker {
 			currentTerrainPoint = null;
 		}
 
-		boolean foundTarget = false;
 		for (Entity3D e : entities) {
-			if (entityInstersect(e) && !foundTarget) {
-				e.setScale(2);
-				foundTarget = true;
-			} else {
-				e.setScale(1);
+			if (entityInstersect(e)) {
+				currentEntity = e;
+				return;
 			}
 		}
+		currentEntity = null;
 	}
 
 	private Vector3f calculateMouseRay() {
