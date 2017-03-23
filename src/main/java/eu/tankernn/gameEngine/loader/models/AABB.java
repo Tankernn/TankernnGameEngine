@@ -2,7 +2,7 @@ package eu.tankernn.gameEngine.loader.models;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.loader.obj.ModelData;
+import eu.tankernn.gameEngine.loader.models.obj.ModelData;
 
 public class AABB {
 	protected Vector3f position;
