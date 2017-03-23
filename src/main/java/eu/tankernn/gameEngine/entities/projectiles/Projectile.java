@@ -1,9 +1,10 @@
-package eu.tankernn.gameEngine.entities;
+package eu.tankernn.gameEngine.entities.projectiles;
 
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.particles.ParticleSystem;
