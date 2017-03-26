@@ -38,7 +38,7 @@ public class GuiRenderer {
 		shader.stop();
 	}
 	
-	public void cleanUp() {
-		shader.cleanUp();
+	public void finalize() {
+		shader.finalize();
 	}
 }

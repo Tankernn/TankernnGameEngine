@@ -117,6 +117,6 @@ public class Terrain {
 	}
 	
 	public void delete() {
-		model.delete();
+		model.finalize();
 	}
 }

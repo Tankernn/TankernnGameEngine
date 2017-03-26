@@ -36,10 +36,11 @@ public class ImageRenderer {
 	public Texture getOutputTexture() {
 		return fbo.getColourTexture();
 	}
-
-	public void cleanUp() {
+	
+	@Override
+	public void finalize() {
 		if (fbo != null) {
-			fbo.cleanUp();
+			fbo.finalize();
 		}
 	}
 

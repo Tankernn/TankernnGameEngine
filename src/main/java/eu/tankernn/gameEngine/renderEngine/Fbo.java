@@ -47,7 +47,8 @@ public class Fbo {
 	/**
 	 * Deletes the frame buffer and its attachments when the game closes.
 	 */
-	public void cleanUp() {
+	@Override
+	public void finalize() {
 		GL30.glDeleteFramebuffers(frameBuffer);
 		if (colourTexture != null)
 			colourTexture.delete();

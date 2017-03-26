@@ -175,10 +175,11 @@ public class MasterRenderer {
 	/**
 	 * Runs the cleanup method for the other renderers.
 	 */
-	public void cleanUp() {
-		entityRenderer.cleanUp();
-		terrainRenderer.cleanUp();
-		shadowMapRenderer.cleanUp();
+	@Override
+	public void finalize() {
+		entityRenderer.finalize();
+		terrainRenderer.finalize();
+		shadowMapRenderer.finalize();
 	}
 
 	/**

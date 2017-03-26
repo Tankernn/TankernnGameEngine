@@ -29,9 +29,9 @@ public class TankernnGame {
 	}
 	
 	public void cleanUp() {
-		textMaster.cleanUp();
-		guiMaster.cleanUp();
-		loader.cleanUp();
+		textMaster.finalize();
+		guiMaster.finalize();
+		loader.finalize();
 	}
 	
 	public String getName() {

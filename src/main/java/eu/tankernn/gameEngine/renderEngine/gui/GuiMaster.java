@@ -29,7 +29,7 @@ public class GuiMaster {
 		return guis;
 	}
 
-	public void cleanUp() {
-		renderer.cleanUp();
+	public void finalize() {
+		renderer.finalize();
 	}
 }

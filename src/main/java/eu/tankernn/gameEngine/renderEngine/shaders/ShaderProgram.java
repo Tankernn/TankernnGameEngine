@@ -92,7 +92,7 @@ public class ShaderProgram {
 		GL20.glUseProgram(0);
 	}
 
-	public void cleanUp() {
+	public void finalize() {
 		stop();
 		GL20.glDeleteProgram(programID);
 	}

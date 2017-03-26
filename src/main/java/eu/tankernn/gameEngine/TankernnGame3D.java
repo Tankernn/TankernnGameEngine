@@ -107,13 +107,13 @@ public class TankernnGame3D extends TankernnGame {
 
 	public void cleanUp() {
 		super.cleanUp();
-		terrainPack.cleanUp();
-		particleMaster.cleanUp();
-		postProcessor.cleanUp();
-		waterMaster.cleanUp();
-		multisampleFbo.cleanUp();
-		outputFbo.cleanUp();
-		outputFbo2.cleanUp();
-		renderer.cleanUp();
+		terrainPack.finalize();
+		particleMaster.finalize();
+		postProcessor.finalize();
+		waterMaster.finalize();
+		multisampleFbo.finalize();
+		outputFbo.finalize();
+		outputFbo2.finalize();
+		renderer.finalize();
 	}
 }

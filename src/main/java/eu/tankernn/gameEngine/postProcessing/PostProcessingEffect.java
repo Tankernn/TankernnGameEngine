@@ -14,9 +14,10 @@ public abstract class PostProcessingEffect<S extends ShaderProgram> {
 	
 	public abstract void render(Texture colorTexture, Texture brightTexture);
 	
-	public void cleanUp() {
-		renderer.cleanUp();
-		shader.cleanUp();
+	@Override
+	public void finalize() {
+		renderer.finalize();
+		shader.finalize();
 	}
 	
 	public Texture getOutputColorTexture() {

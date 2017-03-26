@@ -62,8 +62,9 @@ public class ParticleRenderer {
 		finishRendering();
 	}
 	
-	protected void cleanUp() {
-		shader.cleanUp();
+	@Override
+	protected void finalize() {
+		shader.finalize();
 	}
 	
 	private void updateTexCoordInfo(Particle particle, float[] data) {

@@ -50,8 +50,8 @@ public class TerrainRenderer {
 		shader.stop();
 	}
 
-	public void cleanUp() {
-		shader.cleanUp();
+	public void finalize() {
+		shader.finalize();
 	}
 
 	private void prepareTerrain(Terrain terrain) {

@@ -83,8 +83,8 @@ public class EntityRenderer<S extends EntityShader> {
 		shader.stop();
 	}
 	
-	public void cleanUp() {
-		shader.cleanUp();
+	public void finalize() {
+		shader.finalize();
 	}
 	
 	private void prepareTexturedModel(TexturedModel model, Texture environmentMap) {

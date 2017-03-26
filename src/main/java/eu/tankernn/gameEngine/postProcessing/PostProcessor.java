@@ -50,9 +50,10 @@ public class PostProcessor {
 		end();
 	}
 	
-	public void cleanUp() {
-		effects.forEach(p -> p.cleanUp());
-		combineFilter.cleanUp();
+	@Override
+	public void finalize() {
+		effects.forEach(p -> p.finalize());
+		combineFilter.finalize();
 	}
 	
 	private void start() {

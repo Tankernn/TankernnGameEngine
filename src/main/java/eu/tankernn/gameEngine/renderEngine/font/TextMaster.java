@@ -57,7 +57,7 @@ public class TextMaster {
 		}
 	}
 
-	public void cleanUp() {
-		renderer.cleanUp();
+	public void finalize() {
+		renderer.finalilze();
 	}
 }

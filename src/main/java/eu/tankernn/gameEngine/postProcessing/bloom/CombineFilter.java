@@ -24,9 +24,10 @@ public class CombineFilter {
 		shader.stop();
 	}
 	
-	public void cleanUp(){
-		renderer.cleanUp();
-		shader.cleanUp();
+	@Override
+	public void finalize(){
+		renderer.finalize();
+		shader.finalize();
 	}
 
 }

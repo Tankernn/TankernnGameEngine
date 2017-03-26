@@ -73,9 +73,9 @@ public class WaterMaster {
 		waterRenderer.render(waterTiles, camera, lights);
 	}
 	
-	public void cleanUp() {
-		buffers.cleanUp();
-		waterShader.cleanUp();
+	public void finalize() {
+		buffers.finalize();
+		waterShader.finalize();
 	}
 
 	public WaterFrameBuffers getBuffers() {

@@ -39,7 +39,7 @@ public class ShadowFrameBuffer {
 	/**
 	 * Deletes the frame buffer and shadow map texture when the game closes.
 	 */
-	protected void cleanUp() {
+	protected void finalize() {
 		GL30.glDeleteFramebuffers(fbo);
 		shadowMap.delete();
 	}

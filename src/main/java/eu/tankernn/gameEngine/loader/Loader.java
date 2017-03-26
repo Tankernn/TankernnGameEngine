@@ -139,11 +139,12 @@ public class Loader {
 		return new float[] {-size, size, size, size, size, size, size, -size, size, -size, -size, size, -size, size, -size, size, size, -size, size, -size, -size, -size, -size, -size};
 	}
 	
-	public void cleanUp() {
+	@Override
+	public void finalize() {
 		for (Texture tex: textures)
 			tex.delete();
 		for (Vao model: vaos)
-			model.delete();
+			model.finalize();
 	}
 	
 	public Vao loadOBJ(InternalFile objFile) {

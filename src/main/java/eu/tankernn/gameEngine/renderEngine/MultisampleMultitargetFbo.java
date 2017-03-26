@@ -84,8 +84,8 @@ public class MultisampleMultitargetFbo extends Fbo {
 	};
 	
 	@Override
-	public void cleanUp() {
-		super.cleanUp();
+	public void finalize() {
+		super.finalize();
 		GL30.glDeleteRenderbuffers(colorBuffer);
 		GL30.glDeleteRenderbuffers(colorBuffer2);
 	}

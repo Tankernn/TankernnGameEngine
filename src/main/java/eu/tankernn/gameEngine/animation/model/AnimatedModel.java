@@ -81,7 +81,7 @@ public class AnimatedModel extends TexturedModel {
 	 * (VAO) and texture.
 	 */
 	public void delete() {
-		getModel().delete();
+		getModel().finalize();
 		getTexture().delete();
 	}
 

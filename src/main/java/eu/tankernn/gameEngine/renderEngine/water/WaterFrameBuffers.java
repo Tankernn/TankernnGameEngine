@@ -17,10 +17,11 @@ public class WaterFrameBuffers {
 		reflectionBuffer = new Fbo(REFLECTION_WIDTH, REFLECTION_HEIGHT, Fbo.DEPTH_RENDER_BUFFER);
 		refractionBuffer = new Fbo(REFRACTION_WIDTH, REFRACTION_HEIGHT, Fbo.DEPTH_TEXTURE);
 	}
-
-	public void cleanUp() {
-		reflectionBuffer.cleanUp();
-		refractionBuffer.cleanUp();
+	
+	@Override
+	public void finalize() {
+		reflectionBuffer.finalize();
+		refractionBuffer.finalize();
 	}
 
 	public Fbo getReflectionFbo() {

@@ -135,8 +135,9 @@ public class TerrainPack {
 			lastZ = newZ;
 		}
 	}
-
-	public void cleanUp() {
+	
+	@Override
+	public void finalize() {
 		executor.shutdown();
 	}
 

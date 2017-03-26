@@ -27,8 +27,8 @@ public class FontRenderer {
 		endRendering();
 	}
 	
-	public void cleanUp() {
-		shader.cleanUp();
+	public void finalilze() {
+		shader.finalize();
 	}
 	
 	private void prepare() {
