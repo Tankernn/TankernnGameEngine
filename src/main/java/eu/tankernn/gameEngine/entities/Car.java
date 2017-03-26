@@ -6,8 +6,6 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
-import eu.tankernn.gameEngine.settings.Physics;
-import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 
 public class Car extends Player {
@@ -22,25 +20,7 @@ public class Car extends Player {
 	@Override
 	public void move() {
 		checkInputs();
-		super.increaseRotation(new Vector3f(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0));
-		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
-		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotation().y)));
-		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotation().y)));
-		super.increasePosition(new Vector3f(dx, 0, dz));
-
-		upwardsSpeed += Physics.GRAVITY * DisplayManager.getFrameTimeSeconds();
-		super.increasePosition(new Vector3f(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0));
-
-		Terrain currentTerrain = terrainPack.getTerrainByWorldPos(this.getPosition().x, this.getPosition().z);
-
-		float terrainHeight = 0;
-		if (currentTerrain != null) {
-			terrainHeight = currentTerrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
-		}
-
-		if (super.getPosition().getY() < terrainHeight) {
-			super.getPosition().y = terrainHeight;
-		}
+		super.move();
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import eu.tankernn.gameEngine.animation.model.AnimatedModel;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
-import eu.tankernn.gameEngine.settings.Physics;
 import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 
@@ -22,45 +21,23 @@ public class Player extends Entity3D {
 	
 	protected float currentSpeed = 0;
 	protected float currentTurnSpeed = 0;
-	protected float upwardsSpeed = 0;
-	private boolean isInAir = false;
 	
 	private float height = 2.0f;
 	
 	public Player(TexturedModel model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox, TerrainPack terrainPack) {
-		super(model, position, rotation, scale, boundingBox);
+		super(model, position, rotation, scale, boundingBox, terrainPack);
 		this.terrainPack = terrainPack;
 	}
 	
 	public void move() {
 		checkInputs();
 		super.increaseRotation(new Vector3f(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0));
-		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
-		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotation().y)));
-		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotation().y)));
-		upwardsSpeed += Physics.GRAVITY * DisplayManager.getFrameTimeSeconds();
-		super.increasePosition(new Vector3f(dx, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), dz));
-		
-		Terrain currentTerrain = terrainPack.getTerrainByWorldPos(this.getPosition().x, this.getPosition().z);
-		
-		float terrainHeight = 0;
-		if (currentTerrain != null) {
-			terrainHeight = currentTerrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
-		}
-		
-		if (super.getPosition().getY() < terrainHeight) {
-			upwardsSpeed = 0;
-			this.isInAir = false;
-			super.getPosition().y = terrainHeight;
-		} else {
-			this.isInAir = true;
-		}
+		super.increasePosition(currentSpeed);
 	}
 	
 	private void jump() {
-		if (!this.isInAir) {
-			this.upwardsSpeed = JUMP_POWER;
-			this.isInAir = true;
+		if (!this.isInAir()) {
+			this.velocity.y = JUMP_POWER;
 		}
 	}
 	
@@ -92,6 +69,10 @@ public class Player extends Entity3D {
 		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			this.currentSpeed = 5 * RUN_SPEED;
 		}
+	}
+	
+	public boolean isInAir() {
+		return this.position.y > this.terrainPack.getTerrainHeightByWorldPos(this.position.x, this.position.z);
 	}
 	
 	public float getHeight() {

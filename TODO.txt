@@ -1,3 +1,4 @@
+Floating-in-world text
 Texture atlases with the new model spec system.
 Multiplayer
 Modular GUIs

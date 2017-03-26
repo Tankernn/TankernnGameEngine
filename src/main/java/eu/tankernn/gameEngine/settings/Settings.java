@@ -1,6 +1,7 @@
 package eu.tankernn.gameEngine.settings;
 
 public class Settings {
+	public static final String GAME_NAME = "Tankernn Game Engine";
 	//Display settings
 	public static final float FOV = 70;
 	public static final float NEAR_PLANE = 0.1f;
