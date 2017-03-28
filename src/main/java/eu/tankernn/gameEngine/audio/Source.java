@@ -1,6 +1,7 @@
 package eu.tankernn.gameEngine.audio;
 
 import org.lwjgl.openal.AL10;
+import org.lwjgl.util.vector.Vector3f;
 
 public class Source {
 	private int sourceId;
@@ -13,7 +14,8 @@ public class Source {
 	}
 	
 	public void play(int buffer) {
-		stop();
+		if (this.isPlaying())
+			return;
 		AL10.alSourcei(sourceId, AL10.AL_BUFFER, buffer);
 		AL10.alSourcePlay(sourceId);
 	}
@@ -35,8 +37,8 @@ public class Source {
 		AL10.alSourceStop(sourceId);
 	}
 	
-	public void setVelocity(float x, float y, float z) {
-		AL10.alSource3f(sourceId, AL10.AL_VELOCITY, x, y, z);
+	public void setVelocity(Vector3f velocity) {
+		AL10.alSource3f(sourceId, AL10.AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 	}
 	
 	public void setLooping(boolean looping) {
@@ -55,7 +57,7 @@ public class Source {
 		AL10.alSourcef(sourceId, AL10.AL_PITCH, pitch);
 	}
 	
-	public void setPosition(float x, float y, float z) {
-		AL10.alSource3f(sourceId, AL10.AL_POSITION, x, y, z);
+	public void setPosition(Vector3f pos) {
+		AL10.alSource3f(sourceId, AL10.AL_POSITION, pos.x, pos.y, pos.z);
 	}
 }

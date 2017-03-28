@@ -44,8 +44,6 @@ public class TankernnGame3D extends TankernnGame {
 	protected TerrainPack terrainPack;
 	protected Player player;
 	
-	
-	
 	private MultisampleMultitargetFbo multisampleFbo = new MultisampleMultitargetFbo(Display.getWidth(),
 			Display.getHeight());
 	private Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE),
@@ -79,6 +77,8 @@ public class TankernnGame3D extends TankernnGame {
 		terrainPack.update(player);
 		particleMaster.update(camera);
 		DistanceSorter.sort(lights, camera);
+		
+		audioMaster.setListenerPosition(player.getPosition());
 	}
 
 	public void render() {

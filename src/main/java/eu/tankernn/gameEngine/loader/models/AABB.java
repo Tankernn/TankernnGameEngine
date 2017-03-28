@@ -89,6 +89,10 @@ public class AABB {
 		return Vector3f.add(position, relativeMiddlePos, null);
 	}
 	
+	public Vector3f getSize() {
+		return (Vector3f) new Vector3f(halfSize).scale(2);
+	}
+	
 	public AABB copy() {
 		return new AABB(new Vector3f(this.relativeMiddlePos), new Vector3f(this.halfSize));
 	}

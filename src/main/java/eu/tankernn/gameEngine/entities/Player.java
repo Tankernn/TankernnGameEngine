@@ -17,27 +17,24 @@ public class Player extends Entity3D {
 	protected static final float TURN_MAX = 160;
 	private static final float JUMP_POWER = 30;
 	
-	protected TerrainPack terrainPack;
-	
 	protected float currentSpeed = 0;
 	protected float currentTurnSpeed = 0;
 	
-	private float height = 2.0f;
-	
 	public Player(TexturedModel model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox, TerrainPack terrainPack) {
 		super(model, position, rotation, scale, boundingBox, terrainPack);
-		this.terrainPack = terrainPack;
 	}
 	
 	public void move() {
 		checkInputs();
 		super.increaseRotation(new Vector3f(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0));
-		super.increasePosition(currentSpeed);
+		super.generateVelocity(currentSpeed);
 	}
 	
 	private void jump() {
 		if (!this.isInAir()) {
 			this.velocity.y = JUMP_POWER;
+			
+			// source.play(jumpSoundBuffer);
 		}
 	}
 	
@@ -72,19 +69,15 @@ public class Player extends Entity3D {
 	}
 	
 	public boolean isInAir() {
-		return this.position.y > this.terrainPack.getTerrainHeightByWorldPos(this.position.x, this.position.z);
+		return this.position.y > terrain.getTerrainHeightByWorldPos(this.position.x, this.position.z);
 	}
 	
 	public float getHeight() {
-		return height;
-	}
-	
-	public void setHeight(float height) {
-		this.height = height;
+		return getBoundingBox().getSize().y;
 	}
 	
 	public Terrain getCurrentTerrain() {
-		return terrainPack.getTerrainByWorldPos(this.getPosition().x, this.getPosition().z);
+		return terrain.getTerrainByWorldPos(this.getPosition().x, this.getPosition().z);
 	}
 	
 	public Vector3f get2dRotation() {

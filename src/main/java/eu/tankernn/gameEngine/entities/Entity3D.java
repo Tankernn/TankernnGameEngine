@@ -5,11 +5,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.animation.model.AnimatedModel;
+import eu.tankernn.gameEngine.audio.Source;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.settings.Physics;
-import eu.tankernn.gameEngine.terrains.Terrain;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 import eu.tankernn.gameEngine.util.IPositionable;
 
@@ -23,6 +23,7 @@ public class Entity3D implements IPositionable {
 	private AABB boundingBox;
 	protected boolean dead;
 	protected TerrainPack terrain;
+	protected Source source = new Source();
 	private final int id;
 	
 	public Entity3D(TexturedModel model, Vector3f position, AABB boundingBox, TerrainPack terrain) {
@@ -40,35 +41,15 @@ public class Entity3D implements IPositionable {
 		this.id = ID_GEN.incrementAndGet();
 	}
 	
-	public void increasePosition(Vector3f velocity) {
-		this.position.x += velocity.x;
-		this.position.y += velocity.y;
-		this.position.z += velocity.z;
-	}
-	
 	/**
 	 * Moves this entity in the direction of its rotation.
 	 * 
 	 * @param speed The speed with which to move the entity
 	 */
-	public void increasePosition(float speed) {
-		float distance = speed * DisplayManager.getFrameTimeSeconds();
-		float dx = (float) (distance * Math.sin(Math.toRadians(rotation.y)));
-		float dz = (float) (distance * Math.cos(Math.toRadians(rotation.y)));
+	public void generateVelocity(float speed) {
+		velocity.x = (float) (speed * Math.sin(Math.toRadians(rotation.y)));
+		velocity.z = (float) (speed * Math.cos(Math.toRadians(rotation.y)));
 		velocity.y += Physics.GRAVITY * DisplayManager.getFrameTimeSeconds();
-		this.increasePosition(new Vector3f(dx, velocity.y * DisplayManager.getFrameTimeSeconds(), dz));
-		
-		Terrain currentTerrain = terrain.getTerrainByWorldPos(this.getPosition().x, this.getPosition().z);
-		
-		float terrainHeight = 0;
-		if (currentTerrain != null) {
-			terrainHeight = currentTerrain.getHeightOfTerrain(this.getPosition().x, this.getPosition().z);
-		}
-		
-		if (position.y < terrainHeight) {
-			velocity.y = 0;
-			position.y = terrainHeight;
-		}
 	}
 	
 	public void increaseRotation(Vector3f deltaRotation) {
@@ -76,6 +57,17 @@ public class Entity3D implements IPositionable {
 	}
 	
 	public void update() {
+		Vector3f.add(position, (Vector3f) new Vector3f(velocity).scale(DisplayManager.getFrameTimeSeconds()), position);
+		
+		float terrainHeight = terrain.getTerrainHeightByWorldPos(position.x, position.z);
+		
+		if (position.y < terrainHeight) {
+			velocity.y = 0;
+			position.y = terrainHeight;
+		}
+		
+		source.setPosition(this.position);
+		source.setVelocity(this.velocity);
 		this.boundingBox.updatePosition(this.position);
 		if (model instanceof AnimatedModel)
 			((AnimatedModel) model).update();
@@ -119,7 +111,8 @@ public class Entity3D implements IPositionable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
+		if (obj == null)
+			return false;
 		if (obj instanceof Entity3D) {
 			return this.id == ((Entity3D) obj).id;
 		}

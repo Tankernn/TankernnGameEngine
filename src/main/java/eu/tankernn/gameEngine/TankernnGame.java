@@ -1,5 +1,6 @@
 package eu.tankernn.gameEngine;
 
+import eu.tankernn.gameEngine.audio.AudioMaster;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.font.TextMaster;
@@ -10,12 +11,14 @@ public class TankernnGame {
 	protected Loader loader;
 	protected GuiMaster guiMaster;
 	protected TextMaster textMaster;
+	protected AudioMaster audioMaster;
 	
 	public TankernnGame(String name) {
 		this.name = name;
 		this.loader = new Loader();
 		this.guiMaster = new GuiMaster(loader);
 		this.textMaster = new TextMaster(loader);
+		this.audioMaster = new AudioMaster();
 	}
 	
 	public void update() {
@@ -32,6 +35,7 @@ public class TankernnGame {
 		textMaster.finalize();
 		guiMaster.finalize();
 		loader.finalize();
+		audioMaster.finalize();
 	}
 	
 	public String getName() {

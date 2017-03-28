@@ -8,7 +8,6 @@ import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.particles.ParticleSystem;
-import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 
 public abstract class Projectile extends Entity3D {
@@ -26,7 +25,7 @@ public abstract class Projectile extends Entity3D {
 	}
 	
 	public void update() {
-		this.increasePosition((Vector3f) new Vector3f(velocity).scale(DisplayManager.getFrameTimeSeconds()));
+		super.update();
 		particleSystem.setPosition(this.getPosition());
 		
 		if (this.terrain != null) {
@@ -37,7 +36,6 @@ public abstract class Projectile extends Entity3D {
 		if (distance.length() > range) {
 			kill();
 		}
-		super.update();
 	}
 	
 	public void checkCollision(List<Entity3D> entities) {
