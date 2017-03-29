@@ -10,11 +10,7 @@ import eu.tankernn.gameEngine.loader.font.GUIText;
 
 public class FontRenderer {
 	
-	private FontShader shader;
-	
-	public FontRenderer() {
-		shader = new FontShader();
-	}
+	private FontShader shader = new FontShader();
 	
 	public void render(Map<FontType, List<GUIText>> texts) {
 		prepare();
