@@ -72,7 +72,7 @@ public class TankernnGame3D extends TankernnGame {
 		projectiles.forEach((p) -> p.checkCollision(entities));
 		
 		player.move();
-		picker.update(terrainPack);
+		picker.update(terrainPack, entities, guiMaster.getGuis());
 		camera.update();
 		terrainPack.update(player);
 		particleMaster.update(camera);
