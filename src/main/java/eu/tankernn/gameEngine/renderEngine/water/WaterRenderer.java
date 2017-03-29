@@ -32,7 +32,7 @@ public class WaterRenderer {
 	
 	private Texture dudvTexture;
 	private Texture normalMap;
-
+	
 	public WaterRenderer(Loader loader, Texture dudvTexture, Texture normalMap, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers buffers) {
 		this.shader = shader;
 		this.buffers = buffers;
@@ -44,20 +44,18 @@ public class WaterRenderer {
 		shader.stop();
 		setUpVAO(loader);
 	}
-
+	
 	public void render(List<WaterTile> water, Camera camera, List<Light> lights) {
-		prepareRender(camera, lights);	
-		for (WaterTile tile : water) {
-			Matrix4f modelMatrix = Maths.createTransformationMatrix(
-					new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
-					tile.getSize());
+		prepareRender(camera, lights);
+		for (WaterTile tile: water) {
+			Matrix4f modelMatrix = Maths.createTransformationMatrix(new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), new Vector3f(0, 0, 0), tile.getSize());
 			shader.modelMatrix.loadMatrix(modelMatrix);
 			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getIndexCount());
 		}
 		unbind();
 	}
 	
-	private void prepareRender(Camera camera, List<Light> lights){
+	private void prepareRender(Camera camera, List<Light> lights) {
 		shader.start();
 		shader.viewMatrix.loadCamera(camera);
 		shader.cameraPosition.loadVec3(camera.getPosition());
@@ -81,17 +79,17 @@ public class WaterRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 	
-	private void unbind(){
+	private void unbind() {
 		GL11.glDisable(GL11.GL_BLEND);
 		GL20.glDisableVertexAttribArray(0);
 		GL30.glBindVertexArray(0);
 		shader.stop();
 	}
-
+	
 	private void setUpVAO(Loader loader) {
 		// Just x and z vertex positions here, y is set to 0 in v.shader
-		float[] vertices = { -1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1 };
+		float[] vertices = {-1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1};
 		quad = loader.loadToVAO(vertices, 2);
 	}
-
+	
 }

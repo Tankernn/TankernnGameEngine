@@ -19,7 +19,7 @@ public class Entity3D implements IPositionable {
 	private TexturedModel model;
 	protected Vector3f position, velocity = new Vector3f(0, 0, 0);
 	private Vector3f rotation;
-	private float scale;
+	private Vector3f scale;
 	private AABB boundingBox;
 	protected boolean dead;
 	protected TerrainPack terrain;
@@ -27,10 +27,10 @@ public class Entity3D implements IPositionable {
 	private final int id;
 	
 	public Entity3D(TexturedModel model, Vector3f position, AABB boundingBox, TerrainPack terrain) {
-		this(model, position, new Vector3f(0, 0, 0), 1, boundingBox, terrain);
+		this(model, position, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), boundingBox, terrain);
 	}
 	
-	public Entity3D(TexturedModel model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox, TerrainPack terrain) {
+	public Entity3D(TexturedModel model, Vector3f position, Vector3f rotation, Vector3f scale, AABB boundingBox, TerrainPack terrain) {
 		this.model = model;
 		this.position = position;
 		this.rotation = rotation;
@@ -93,11 +93,11 @@ public class Entity3D implements IPositionable {
 		return rotation;
 	}
 	
-	public float getScale() {
+	public Vector3f getScale() {
 		return scale;
 	}
 	
-	public void setScale(float scale) {
+	public void setScale(Vector3f scale) {
 		this.scale = scale;
 	}
 	

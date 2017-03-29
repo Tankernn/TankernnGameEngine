@@ -29,8 +29,8 @@ public class WaterTile implements IPositionable {
 		return z;
 	}
 	
-	public float getSize() {
-		return size;
+	public Vector3f getSize() {
+		return new Vector3f(size, 0, size);
 	}
 
 	@Override

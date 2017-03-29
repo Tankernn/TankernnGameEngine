@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.animation.model.AnimatedModel;
 import eu.tankernn.gameEngine.entities.Entity3D;
@@ -87,8 +86,7 @@ public class ShadowMapEntityRenderer {
 	 * @param entity - the entity to be prepared for rendering.
 	 */
 	private void prepareInstance(Entity3D entity) {
-		Vector3f rot = entity.getRotation();
-		Matrix4f modelMatrix = Maths.createTransformationMatrix(entity.getPosition(), rot.x, rot.y, rot.z, entity.getScale());
+		Matrix4f modelMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotation(), entity.getScale());
 		Matrix4f mvpMatrix = Matrix4f.mul(projectionViewMatrix, modelMatrix, null);
 		shader.mvpMatrix.loadMatrix(mvpMatrix);
 	}

@@ -7,8 +7,6 @@ import java.util.Map;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
@@ -123,9 +121,7 @@ public class ParticleRenderer {
 	
 	private void prepare() {
 		shader.start();
-		GL30.glBindVertexArray(quad.id);
-		for (int i = 0; i < 7; i++)
-			GL20.glEnableVertexAttribArray(i);
+		quad.bind(0, 1, 2, 3, 4, 5, 6);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDepthMask(false);
@@ -134,9 +130,7 @@ public class ParticleRenderer {
 	private void finishRendering() {
 		GL11.glDepthMask(true);
 		GL11.glDisable(GL11.GL_BLEND);
-		for (int i = 0; i < 7; i++)
-			GL20.glDisableVertexAttribArray(i);
-		GL30.glBindVertexArray(0);
+		quad.unbind(0, 1, 2, 3, 4, 5, 6);
 		shader.stop();
 	}
 	

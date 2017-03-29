@@ -20,10 +20,14 @@ public class Player extends Entity3D {
 	protected float currentSpeed = 0;
 	protected float currentTurnSpeed = 0;
 	
-	public Player(TexturedModel model, Vector3f position, Vector3f rotation, float scale, AABB boundingBox, TerrainPack terrainPack) {
+	public Player(TexturedModel model, Vector3f position, Vector3f rotation, Vector3f scale, AABB boundingBox, TerrainPack terrainPack) {
 		super(model, position, rotation, scale, boundingBox, terrainPack);
 	}
 	
+	public Player(TexturedModel model, Vector3f position, AABB boundingBox, TerrainPack terrainPack) {
+		this(model, position, new Vector3f(0, 0, 0), new Vector3f(1, 1, 1), boundingBox, terrainPack);
+	}
+
 	public void move() {
 		checkInputs();
 		super.increaseRotation(new Vector3f(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0));

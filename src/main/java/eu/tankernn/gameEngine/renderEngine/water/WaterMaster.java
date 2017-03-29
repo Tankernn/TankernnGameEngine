@@ -59,8 +59,8 @@ public class WaterMaster {
 	public boolean isPointUnderWater(Vector3f point) {
 		for (WaterTile tile : waterTiles) {
 			if (point.y < tile.getHeight()) {
-				if (tile.getX() - tile.getSize() <= point.x && point.x <= tile.getX() + tile.getSize()) {
-					if (tile.getZ() - tile.getSize() <= point.z && point.z <= tile.getZ() + tile.getSize()) {
+				if (tile.getX() - tile.getSize().x <= point.x && point.x <= tile.getX() + tile.getSize().x) {
+					if (tile.getZ() - tile.getSize().z <= point.z && point.z <= tile.getZ() + tile.getSize().z) {
 						return true;
 					}
 				}

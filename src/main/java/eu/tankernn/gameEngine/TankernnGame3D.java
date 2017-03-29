@@ -21,6 +21,8 @@ import eu.tankernn.gameEngine.renderEngine.Fbo;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.MultisampleMultitargetFbo;
 import eu.tankernn.gameEngine.renderEngine.Scene;
+import eu.tankernn.gameEngine.renderEngine.gui.floating.FloatingTexture;
+import eu.tankernn.gameEngine.renderEngine.gui.floating.FloatingTextureRenderer;
 import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.renderEngine.water.WaterMaster;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
@@ -32,6 +34,7 @@ public class TankernnGame3D extends TankernnGame {
 	protected MasterRenderer renderer;
 	protected WaterMaster waterMaster;
 	protected ParticleMaster particleMaster;
+	protected FloatingTextureRenderer floatingRenderer;
 	protected PostProcessor postProcessor;
 	protected Camera camera;
 	protected Skybox sky;
@@ -40,6 +43,7 @@ public class TankernnGame3D extends TankernnGame {
 	protected List<Entity3D> entities = new ArrayList<>();
 	protected List<Projectile> projectiles = new ArrayList<>();
 	protected List<Light> lights = new ArrayList<>();
+	protected List<FloatingTexture> floatTextures = new ArrayList<>();
 	private Light sun;
 	protected TerrainPack terrainPack;
 	protected Player player;
@@ -95,6 +99,7 @@ public class TankernnGame3D extends TankernnGame {
 		renderer.renderScene(scene, new Vector4f(0, 1, 0, Float.MAX_VALUE));
 		waterMaster.renderWater(camera, lights);
 		particleMaster.renderParticles(camera);
+		floatingRenderer.render(floatTextures, camera);
 
 		multisampleFbo.unbindFrameBuffer();
 

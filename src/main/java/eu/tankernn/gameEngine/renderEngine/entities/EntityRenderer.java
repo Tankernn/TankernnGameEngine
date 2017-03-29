@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.animation.model.AnimatedModel;
@@ -128,8 +127,7 @@ public class EntityRenderer<S extends EntityShader> {
 	}
 	
 	protected void prepareInstance(Entity3D entity, TexturedModel model) {
-		Vector3f rot = entity.getRotation();
-		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), rot.x, rot.y, rot.z, entity.getScale());
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotation(), entity.getScale());
 		shader.transformationMatrix.loadMatrix(transformationMatrix);
 		shader.offset.loadVec2(model.getTextureXOffset(), model.getTextureYOffset());
 	}

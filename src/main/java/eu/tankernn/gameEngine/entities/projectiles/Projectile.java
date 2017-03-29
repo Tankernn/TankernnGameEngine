@@ -17,7 +17,7 @@ public abstract class Projectile extends Entity3D {
 	private final Vector3f startPosition;
 	
 	public Projectile(TerrainPack terrain, TexturedModel model, Vector3f position, Vector3f velocity, float range, AABB boundingBox, ParticleSystem particleSystem) {
-		super(model, position, new Vector3f(0, 0, 0), 1, boundingBox, terrain);
+		super(model, position, boundingBox, terrain);
 		this.particleSystem = particleSystem;
 		this.velocity = velocity;
 		this.range = range;

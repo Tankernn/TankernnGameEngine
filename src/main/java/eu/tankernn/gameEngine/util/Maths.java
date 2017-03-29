@@ -23,16 +23,19 @@ public class Maths {
 		// Calculate angle between them.
 		double cosHalfTheta = qa.w * qb.w + qa.x * qb.x + qa.y * qb.y + qa.z * qb.z;
 		// if qa=qb or qa=-qb then theta = 0 and we can return qa
-		if (Math.abs(cosHalfTheta) >= 1.0){
-			qm.w = qa.w;qm.x = qa.x;qm.y = qa.y;qm.z = qa.z;
+		if (Math.abs(cosHalfTheta) >= 1.0) {
+			qm.w = qa.w;
+			qm.x = qa.x;
+			qm.y = qa.y;
+			qm.z = qa.z;
 			return qm;
 		}
 		// Calculate temporary values.
 		double halfTheta = Math.acos(cosHalfTheta);
-		double sinHalfTheta = Math.sqrt(1.0 - cosHalfTheta*cosHalfTheta);
+		double sinHalfTheta = Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
 		// if theta = 180 degrees then result is not fully defined
 		// we could rotate around any axis normal to qa or qb
-		if (Math.abs(sinHalfTheta) < 0.001){ // fabs is floating point absolute
+		if (Math.abs(sinHalfTheta) < 0.001) { // fabs is floating point absolute
 			qm.w = (float) (qa.w * 0.5 + qb.w * 0.5);
 			qm.x = (float) (qa.x * 0.5 + qb.x * 0.5);
 			qm.y = (float) (qa.y * 0.5 + qb.y * 0.5);
@@ -40,7 +43,7 @@ public class Maths {
 			return qm;
 		}
 		double ratioA = Math.sin((1 - time) * halfTheta) / sinHalfTheta;
-		double ratioB = Math.sin(time * halfTheta) / sinHalfTheta; 
+		double ratioB = Math.sin(time * halfTheta) / sinHalfTheta;
 		//calculate Quaternion.
 		qm.w = (float) (qa.w * ratioA + qb.w * ratioB);
 		qm.x = (float) (qa.x * ratioA + qb.x * ratioB);
@@ -57,6 +60,10 @@ public class Maths {
 		return matrix;
 	}
 	
+	public static Matrix4f createTransformationMatrix(Vector3f translation, Vector3f scale) {
+		return createTransformationMatrix(translation, null, scale);
+	}
+	
 	public static float barryCentric(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos) {
 		float det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
 		float l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z)) / det;
@@ -65,14 +72,18 @@ public class Maths {
 		return l1 * p1.y + l2 * p2.y + l3 * p3.y;
 	}
 	
-	public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float scale) {
+	public static Matrix4f createTransformationMatrix(Vector3f translation, Vector3f rotation, Vector3f scale) {
 		Matrix4f matrix = new Matrix4f();
 		matrix.setIdentity();
-		Matrix4f.translate(translation, matrix, matrix);
-		Matrix4f.rotate((float) Math.toRadians(rx), new Vector3f(1, 0, 0), matrix, matrix);
-		Matrix4f.rotate((float) Math.toRadians(ry), new Vector3f(0, 1, 0), matrix, matrix);
-		Matrix4f.rotate((float) Math.toRadians(rz), new Vector3f(0, 0, 1), matrix, matrix);
-		Matrix4f.scale(new Vector3f(scale, scale, scale), matrix, matrix);
+		if (translation != null)
+			Matrix4f.translate(translation, matrix, matrix);
+		if (rotation != null) {
+			Matrix4f.rotate((float) Math.toRadians(rotation.x), new Vector3f(1, 0, 0), matrix, matrix);
+			Matrix4f.rotate((float) Math.toRadians(rotation.y), new Vector3f(0, 1, 0), matrix, matrix);
+			Matrix4f.rotate((float) Math.toRadians(rotation.z), new Vector3f(0, 0, 1), matrix, matrix);
+		}
+		if (scale != null)
+			Matrix4f.scale(scale, matrix, matrix);
 		return matrix;
 	}
 }
