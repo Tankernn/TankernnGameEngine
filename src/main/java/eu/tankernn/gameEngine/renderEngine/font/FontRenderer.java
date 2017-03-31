@@ -47,5 +47,12 @@ public class FontRenderer {
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
+
+	public void render(GUIText guiText) {
+		prepare();
+		guiText.getFont().getTextureAtlas().bindToUnit(0);
+		renderText(guiText);
+		endRendering();
+	}
 	
 }

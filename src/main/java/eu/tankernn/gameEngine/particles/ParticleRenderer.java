@@ -95,6 +95,7 @@ public class ParticleRenderer {
 		modelMatrix.m22 = viewMatrix.m22;
 		
 		Matrix4f.rotate((float) Math.toRadians(rotation), new Vector3f(0, 0, 1), modelMatrix, modelMatrix);
+		Matrix4f.rotate((float) Math.toRadians(180), new Vector3f(1, 0, 0), modelMatrix, modelMatrix);
 		Matrix4f.scale(new Vector3f(scale, scale, scale), modelMatrix, modelMatrix);
 		Matrix4f modelViewMatrix = Matrix4f.mul(viewMatrix, modelMatrix, null);
 		storeMatrixData(modelViewMatrix, vboData);
@@ -123,6 +124,7 @@ public class ParticleRenderer {
 		shader.start();
 		quad.bind(0, 1, 2, 3, 4, 5, 6);
 		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDepthMask(false);
 	}
@@ -130,6 +132,7 @@ public class ParticleRenderer {
 	private void finishRendering() {
 		GL11.glDepthMask(true);
 		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_CULL_FACE);
 		quad.unbind(0, 1, 2, 3, 4, 5, 6);
 		shader.stop();
 	}

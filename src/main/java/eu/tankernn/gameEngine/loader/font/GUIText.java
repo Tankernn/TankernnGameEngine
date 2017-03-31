@@ -3,6 +3,7 @@ package eu.tankernn.gameEngine.loader.font;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.renderEngine.Vao;
 
 /**
@@ -186,5 +187,11 @@ public class GUIText {
 	
 	public boolean isDirty() {
 		return this.dirty;
+	}
+	
+	public void update(Loader loader) {
+		TextMeshData data = font.loadText(this);
+		Vao vao = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
+		this.setMeshInfo(vao, data.getVertexCount());
 	}
 }

@@ -8,18 +8,29 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.loader.Loader;
+import eu.tankernn.gameEngine.loader.font.FontType;
+import eu.tankernn.gameEngine.loader.font.GUIText;
+import eu.tankernn.gameEngine.renderEngine.Fbo;
+import eu.tankernn.gameEngine.renderEngine.font.FontRenderer;
 import eu.tankernn.gameEngine.util.DistanceSorter;
 
 public class ParticleMaster {
+	private Loader loader;
+	
 	private Map<ParticleTexture, List<Particle>> particles = new HashMap<ParticleTexture, List<Particle>>();
 	private List<ParticleSystem> systems = new ArrayList<ParticleSystem>();
 	private ParticleRenderer renderer;
+	private FontRenderer fontRenderer;
 	
 	public ParticleMaster(Loader loader, Matrix4f projectionMatrix) {
+		this.loader = loader;
 		renderer = new ParticleRenderer(loader, projectionMatrix);
+		fontRenderer = new FontRenderer();
 	}
 	
 	public void update(Camera camera) {
@@ -58,6 +69,16 @@ public class ParticleMaster {
 	@Override
 	public void finalize() {
 		renderer.finalize();
+	}
+	
+	public void addTextParticle(String text, int fontSize, FontType font, Vector3f position) {
+		GUIText guiText = new GUIText(text, fontSize, font, new Vector2f(0, 0), 1.0f, false).setColor(0, 1, 0);
+		guiText.update(loader);
+		Fbo fbo = new Fbo(100 * fontSize, 100 * fontSize, 0);
+		fbo.bindFrameBuffer();
+		fontRenderer.render(guiText);
+		fbo.unbindFrameBuffer();
+		addParticle(new Particle(new ParticleTexture(fbo.getColourTexture(), 1, true), position, new Vector3f(0, 0, 0), 0.1f, 4, 0, fontSize));
 	}
 	
 	public void addParticle(Particle particle) {

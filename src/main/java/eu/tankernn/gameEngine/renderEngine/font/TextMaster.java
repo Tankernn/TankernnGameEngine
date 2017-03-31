@@ -8,8 +8,6 @@ import java.util.Map;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.font.FontType;
 import eu.tankernn.gameEngine.loader.font.GUIText;
-import eu.tankernn.gameEngine.loader.font.TextMeshData;
-import eu.tankernn.gameEngine.renderEngine.Vao;
 
 public class TextMaster {
 
@@ -33,10 +31,7 @@ public class TextMaster {
 	}
 
 	public void updateText(GUIText text) {
-		FontType font = text.getFont();
-		TextMeshData data = font.loadText(text);
-		Vao vao = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
-		text.setMeshInfo(vao, data.getVertexCount());
+		text.update(loader);
 	}
 
 	public void loadText(GUIText text) {
