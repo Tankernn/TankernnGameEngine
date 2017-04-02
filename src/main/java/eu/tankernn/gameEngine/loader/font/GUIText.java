@@ -1,7 +1,6 @@
 package eu.tankernn.gameEngine.loader.font;
 
 import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.renderEngine.Vao;
@@ -16,18 +15,15 @@ public class GUIText {
 
 	private String textString;
 	private boolean dirty;
-	
-	private float fontSize;
 
 	private Vao textMeshVao;
 	private int vertexCount;
-	private Vector3f colour = new Vector3f(0f, 0f, 0f);
 
 	private Vector2f position;
 	private float lineMaxSize;
 	private int numberOfLines;
 
-	private FontType font;
+	private Font font;
 
 	private boolean centerText = false;
 
@@ -56,10 +52,9 @@ public class GUIText {
 	 * @param centered
 	 *            - whether the text should be centered or not.
 	 */
-	public GUIText(String text, float fontSize, FontType font, Vector2f position, float maxLineLength,
+	public GUIText(String text, Font font, Vector2f position, float maxLineLength,
 			boolean centered) {
 		this.textString = text;
-		this.fontSize = fontSize;
 		this.font = font;
 		this.position = position;
 		this.lineMaxSize = maxLineLength;
@@ -69,30 +64,8 @@ public class GUIText {
 	/**
 	 * @return The font used by this text.
 	 */
-	public FontType getFont() {
+	public Font getFont() {
 		return font;
-	}
-
-	/**
-	 * Set the colour of the text.
-	 * 
-	 * @param r
-	 *            - red value, between 0 and 1.
-	 * @param g
-	 *            - green value, between 0 and 1.
-	 * @param b
-	 *            - blue value, between 0 and 1.
-	 */
-	public GUIText setColor(float r, float g, float b) {
-		colour.set(r, g, b);
-		return this;
-	}
-
-	/**
-	 * @return the colour of the text.
-	 */
-	public Vector3f getColor() {
-		return colour;
 	}
 
 	/**
@@ -143,13 +116,6 @@ public class GUIText {
 	}
 
 	/**
-	 * @return the font size of the text (a font size of 1 is normal).
-	 */
-	protected float getFontSize() {
-		return fontSize;
-	}
-
-	/**
 	 * Sets the number of lines that this text covers (method used only in
 	 * loading).
 	 * 
@@ -190,7 +156,7 @@ public class GUIText {
 	}
 	
 	public void update(Loader loader) {
-		TextMeshData data = font.loadText(this);
+		TextMeshData data = font.family.generateMesh(this);
 		Vao vao = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
 		this.setMeshInfo(vao, data.getVertexCount());
 	}

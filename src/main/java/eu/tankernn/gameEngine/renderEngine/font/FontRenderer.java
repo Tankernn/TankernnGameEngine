@@ -5,17 +5,17 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
-import eu.tankernn.gameEngine.loader.font.FontType;
+import eu.tankernn.gameEngine.loader.font.Font;
 import eu.tankernn.gameEngine.loader.font.GUIText;
 
 public class FontRenderer {
 	
 	private FontShader shader = new FontShader();
 	
-	public void render(Map<FontType, List<GUIText>> texts) {
+	public void render(Map<Font, List<GUIText>> texts) {
 		prepare();
-		for (FontType font: texts.keySet()) {
-			font.getTextureAtlas().bindToUnit(0);
+		for (Font font: texts.keySet()) {
+			loadFont(font);
 			for (GUIText text: texts.get(font)) {
 				renderText(text);
 			}
@@ -34,9 +34,18 @@ public class FontRenderer {
 		shader.start();
 	}
 	
+	private void loadFont(Font font) {
+		font.family.getTextureAtlas().bindToUnit(0);
+		shader.color.loadVec3(font.color);
+		shader.width.loadFloat(font.width);
+		shader.edge.loadFloat(font.edge);
+		shader.borderWidth.loadFloat(font.outlineWidth);
+		shader.borderEdge.loadFloat(font.outlineEdge);
+		shader.outlineColor.loadVec3(font.outlineColor);
+	}
+	
 	private void renderText(GUIText text) {
 		text.getMesh().bind(0, 1);
-		shader.color.loadVec3(text.getColor());
 		shader.translation.loadVec2(text.getPosition());
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 		text.getMesh().unbind(0, 1);
@@ -50,7 +59,7 @@ public class FontRenderer {
 
 	public void render(GUIText guiText) {
 		prepare();
-		guiText.getFont().getTextureAtlas().bindToUnit(0);
+		loadFont(guiText.getFont());
 		renderText(guiText);
 		endRendering();
 	}

@@ -10,7 +10,7 @@ import eu.tankernn.gameEngine.util.InternalFile;
  * @author Karl
  *
  */
-public class FontType {
+public class FontFamily {
 
 	private Texture textureAtlas;
 	private TextMeshCreator loader;
@@ -25,7 +25,7 @@ public class FontType {
 	 *            - the font file containing information about each character in
 	 *            the texture atlas.
 	 */
-	public FontType(Texture texture, InternalFile fontFile) {
+	public FontFamily(Texture texture, InternalFile fontFile) {
 		this.textureAtlas = texture;
 		this.loader = new TextMeshCreator(fontFile);
 	}
@@ -46,7 +46,7 @@ public class FontType {
 	 *            - the unloaded text.
 	 * @return Information about the vertices of all the quads.
 	 */
-	public TextMeshData loadText(GUIText text) {
+	public TextMeshData generateMesh(GUIText text) {
 		return loader.createTextMesh(text);
 	}
 

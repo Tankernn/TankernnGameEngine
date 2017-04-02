@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import eu.tankernn.gameEngine.loader.Loader;
-import eu.tankernn.gameEngine.loader.font.FontType;
+import eu.tankernn.gameEngine.loader.font.Font;
 import eu.tankernn.gameEngine.loader.font.GUIText;
 
 public class TextMaster {
 
 	private Loader loader;
-	private Map<FontType, List<GUIText>> texts = new HashMap<FontType, List<GUIText>>();
+	private Map<Font, List<GUIText>> texts = new HashMap<>();
 	private FontRenderer renderer;
 
 	public TextMaster(Loader load) {
