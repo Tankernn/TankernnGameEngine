@@ -18,4 +18,20 @@ public class Font {
 		this.outlineColor = outlineColor;
 	}
 	
+	public Font(FontFamily family, float size, Vector3f color, Vector3f outlineColor) {
+		this(family, size, 0.5f, 0.1f, 0, 0, color, outlineColor);
+	}
+	
+	public Font(FontFamily family, float size, Vector3f color) {
+		this(family, size, color, new Vector3f(0, 0, 0));
+	}
+	
+	public Font(FontFamily family, float size) {
+		this(family, size, new Vector3f(1, 1, 1));
+	}
+	
+	public Font(FontFamily family) {
+		this(family, 1);
+	}
+	
 }
