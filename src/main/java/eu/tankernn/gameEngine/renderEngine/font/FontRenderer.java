@@ -23,7 +23,7 @@ public class FontRenderer {
 		endRendering();
 	}
 	
-	public void finalilze() {
+	public void finalize() {
 		shader.finalize();
 	}
 	

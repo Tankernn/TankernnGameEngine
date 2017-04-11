@@ -106,8 +106,8 @@ public class MousePicker {
 		for (GuiTexture gui: guis) {
 			float posX = gui.getPosition().x;
 			float posY = gui.getPosition().y;
-			float scaleX = gui.getScale().x;
-			float scaleY = gui.getScale().y;
+			float scaleX = gui.getSize().x;
+			float scaleY = gui.getSize().y;
 			
 			if (mouseCoords.x > posX - scaleX && mouseCoords.x < posX + scaleX && mouseCoords.y > posY - scaleY && mouseCoords.y < posY + scaleY) {
 				return gui;

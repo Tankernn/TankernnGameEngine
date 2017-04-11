@@ -2,6 +2,7 @@ package eu.tankernn.gameEngine.loader.textures;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.util.vector.Vector2f;
 
 import eu.tankernn.gameEngine.util.InternalFile;
 
@@ -9,17 +10,17 @@ public class Texture {
 
 	public final int textureId;
 	public final int size;
+	public final Vector2f ratio;
 	private final int type;
 
-	protected Texture(int textureId, int size) {
-		this.textureId = textureId;
-		this.size = size;
-		this.type = GL11.GL_TEXTURE_2D;
+	protected Texture(int textureId, int width, int height) {
+		this(textureId, GL11.GL_TEXTURE_2D, width, height);
 	}
 
-	protected Texture(int textureId, int type, int size) {
+	protected Texture(int textureId, int type, int width, int height) {
 		this.textureId = textureId;
-		this.size = size;
+		this.ratio = (Vector2f) new Vector2f(width, height).normalise();
+		this.size = width * height;
 		this.type = type;
 	}
 
@@ -44,6 +45,14 @@ public class Texture {
 	public static Texture newEmptyCubeMap(int size) {
 		int cubeMapId = TextureUtils.createEmptyCubeMap(size);
 		return new Texture(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, size);
+	}
+
+	public int getWidth() {
+		return (int) (size * ratio.x);
+	}
+	
+	public int getHeight() {
+		return (int) (size * ratio.y);
 	}
 
 }

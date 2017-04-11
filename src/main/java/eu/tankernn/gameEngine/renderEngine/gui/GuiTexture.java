@@ -8,9 +8,9 @@ public class GuiTexture {
 	
 	private Texture texture;
 	protected Vector2f position;
-	protected Vector2f scale;
+	protected float scale;
 	
-	public GuiTexture(Texture texture, Vector2f position, Vector2f scale) {
+	public GuiTexture(Texture texture, Vector2f position, float scale) {
 		this.texture = texture;
 		this.position = position;
 		this.scale = scale;
@@ -24,15 +24,15 @@ public class GuiTexture {
 		return position;
 	}
 
-	public Vector2f getScale() {
-		return scale;
+	public Vector2f getSize() {
+		return (Vector2f) new Vector2f(texture.ratio).scale(scale);
 	}
 
 	public void setPosition(Vector2f position) {
 		this.position = position;
 	}
 
-	public void setScale(Vector2f scale) {
+	public void setScale(float scale) {
 		this.scale = scale;
 	}
 	

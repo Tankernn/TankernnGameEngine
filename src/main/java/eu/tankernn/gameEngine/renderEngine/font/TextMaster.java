@@ -53,6 +53,6 @@ public class TextMaster {
 	}
 
 	public void finalize() {
-		renderer.finalilze();
+		renderer.finalize();
 	}
 }

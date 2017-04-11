@@ -9,7 +9,7 @@ public class Entity2D extends GuiTexture {
 	protected Vector2f velocity = new Vector2f(0, 0);
 	protected boolean alive = true;
 	
-	public Entity2D(Texture texture, Vector2f position, Vector2f scale) {
+	public Entity2D(Texture texture, Vector2f position, float scale) {
 		super(texture, position, scale);
 	}
 	
@@ -22,8 +22,8 @@ public class Entity2D extends GuiTexture {
 	}
 
 	public boolean collides(Entity2D b) {
-		if (Math.abs(position.x - b.getPosition().x) < scale.x + b.getSize().x) {
-			if (Math.abs(position.y - b.getPosition().y) < scale.y + b.getSize().y) {
+		if (Math.abs(position.x - b.getPosition().x) < getSize().x + b.getSize().x) {
+			if (Math.abs(position.y - b.getPosition().y) < getSize().y + b.getSize().y) {
 				return true;
 			}
 		}
@@ -35,7 +35,7 @@ public class Entity2D extends GuiTexture {
 	}
 	
 	public Vector2f getSize() {
-		return super.getScale();
+		return super.getSize();
 	}
 	
 	public boolean isAlive() {

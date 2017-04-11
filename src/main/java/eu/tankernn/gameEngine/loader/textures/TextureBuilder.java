@@ -18,7 +18,7 @@ public class TextureBuilder {
 	public Texture create(){
 		TextureData textureData = TextureUtils.decodeTextureFile(file);
 		int textureId = TextureUtils.loadTextureToOpenGL(textureData, this);
-		return new Texture(textureId, textureData.getWidth());
+		return new Texture(textureId, textureData.getWidth(), textureData.getHeight());
 	}
 	
 	public TextureBuilder clampEdges(){

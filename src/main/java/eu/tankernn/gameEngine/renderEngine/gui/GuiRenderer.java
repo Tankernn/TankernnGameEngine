@@ -28,7 +28,7 @@ public class GuiRenderer {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		for (GuiTexture gui : guis) {
 			gui.getTexture().bindToUnit(0);
-			Matrix4f matrix = Maths.createTransformationMatrix(gui.getPosition(), gui.getScale());
+			Matrix4f matrix = Maths.createTransformationMatrix(gui.getPosition(), gui.getSize());
 			shader.transformationMatrix.loadMatrix(matrix);
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getIndexCount());
 		}
