@@ -9,8 +9,7 @@ import eu.tankernn.gameEngine.util.InternalFile;
 public class Texture {
 
 	public final int textureId;
-	public final int size;
-	public final Vector2f ratio;
+	public final Vector2f dimensions;
 	private final int type;
 
 	protected Texture(int textureId, int width, int height) {
@@ -19,8 +18,7 @@ public class Texture {
 
 	protected Texture(int textureId, int type, int width, int height) {
 		this.textureId = textureId;
-		this.ratio = (Vector2f) new Vector2f(width, height).normalise();
-		this.size = width * height;
+		this.dimensions = new Vector2f(width, height);
 		this.type = type;
 	}
 
@@ -48,11 +46,19 @@ public class Texture {
 	}
 
 	public int getWidth() {
-		return (int) (size * ratio.x);
+		return (int) (dimensions.x);
 	}
 	
 	public int getHeight() {
-		return (int) (size * ratio.y);
+		return (int) (dimensions.y);
+	}
+	
+	public int getSize() {
+		return (int) (dimensions.x * dimensions.y);
+	}
+	
+	public Vector2f getRatio() {
+		return (Vector2f) new Vector2f(dimensions).normalise();
 	}
 
 }

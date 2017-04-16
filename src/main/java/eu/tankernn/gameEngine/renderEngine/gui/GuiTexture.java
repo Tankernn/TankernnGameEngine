@@ -25,7 +25,7 @@ public class GuiTexture {
 	}
 
 	public Vector2f getSize() {
-		return (Vector2f) new Vector2f(texture.ratio).scale(scale);
+		return (Vector2f) new Vector2f(texture.dimensions).scale(scale);
 	}
 
 	public void setPosition(Vector2f position) {
