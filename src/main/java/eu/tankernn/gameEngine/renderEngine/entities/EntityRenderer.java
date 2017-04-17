@@ -129,6 +129,6 @@ public class EntityRenderer<S extends EntityShader> {
 	protected void prepareInstance(Entity3D entity, TexturedModel model) {
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotation(), entity.getScale());
 		shader.transformationMatrix.loadMatrix(transformationMatrix);
-		shader.offset.loadVec2(model.getTextureXOffset(), model.getTextureYOffset());
+		shader.offset.loadVec2(model.getTexture().getTexture().getXOffset(), model.getTexture().getTexture().getYOffset());
 	}
 }

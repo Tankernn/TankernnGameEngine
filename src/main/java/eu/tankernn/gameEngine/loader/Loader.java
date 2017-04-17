@@ -25,6 +25,7 @@ import eu.tankernn.gameEngine.loader.models.obj.ModelData;
 import eu.tankernn.gameEngine.loader.models.obj.ObjLoader;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.loader.textures.TextureAtlas;
 import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.InternalFile;
 
@@ -37,7 +38,7 @@ public class Loader {
 	public static final int MAX_WEIGHTS = 3;
 	
 	private List<Vao> vaos = new ArrayList<>();
-	private List<Texture> textures = new ArrayList<>();
+	private List<TextureAtlas> textures = new ArrayList<>();
 	private Map<Integer, TexturedModel> models = new HashMap<>();
 	private Map<Integer, AABB> boundingBoxes = new HashMap<>();
 	
@@ -98,14 +99,14 @@ public class Loader {
 	 * @return The texture ID
 	 * @throws FileNotFoundException
 	 */
-	public Texture loadTexture(InternalFile file) {
-		Texture texture = Texture.newTexture(file).create();
+	public TextureAtlas loadTextureAtlas(InternalFile file) {
+		TextureAtlas texture = Texture.newTexture(file).create();
 		textures.add(texture);
 		return texture;
 	}
-	
-	public Texture loadTexture(String filename) throws FileNotFoundException {
-		return loadTexture(new InternalFile(filename));
+
+	public Texture loadTexture(InternalFile file) {
+		return new Texture(loadTextureAtlas(file));
 	}
 	
 	/**
@@ -119,7 +120,7 @@ public class Loader {
 	
 	public Texture loadCubeMap(InternalFile[] textureFiles) {
 		Texture cubeMap = Texture.newCubeMap(textureFiles, 500);
-		textures.add(cubeMap);
+		textures.add(cubeMap.atlas);
 		return cubeMap;
 	}
 	
@@ -141,7 +142,7 @@ public class Loader {
 	
 	@Override
 	public void finalize() {
-		for (Texture tex: textures)
+		for (TextureAtlas tex: textures)
 			tex.delete();
 		for (Vao model: vaos)
 			model.finalize();
@@ -157,7 +158,7 @@ public class Loader {
 	/**
 	 * Creates an AnimatedEntity from the data in an entity file. It loads up
 	 * the collada model data, stores the extracted data in a VAO, sets up the
-	 * joint heirarchy, and loads up the entity's texture.
+	 * joint hierarchy, and loads up the entity's texture.
 	 * 
 	 * @param entityFile - the file containing the data for the entity.
 	 * @return The animated entity (no animation applied though)
@@ -201,7 +202,7 @@ public class Loader {
 					if (cachedTextures.containsKey(f)) {
 						return cachedTextures.get(f);
 					} else {
-						Texture t = loadTexture(f.getPath());
+						Texture t = loadTexture(f);
 						cachedTextures.put(f, t);
 						return t;
 					}

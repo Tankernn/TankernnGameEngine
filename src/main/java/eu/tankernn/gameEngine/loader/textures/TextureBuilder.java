@@ -15,10 +15,10 @@ public class TextureBuilder {
 		this.file = textureFile;
 	}
 	
-	public Texture create(){
+	public TextureAtlas create(){
 		TextureData textureData = TextureUtils.decodeTextureFile(file);
 		int textureId = TextureUtils.loadTextureToOpenGL(textureData, this);
-		return new Texture(textureId, textureData.getWidth(), textureData.getHeight());
+		return new TextureAtlas(textureId, textureData.getWidth(), textureData.getHeight());
 	}
 	
 	public TextureBuilder clampEdges(){

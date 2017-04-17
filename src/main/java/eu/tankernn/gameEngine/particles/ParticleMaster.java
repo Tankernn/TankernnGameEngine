@@ -71,7 +71,6 @@ public class ParticleMaster {
 	}
 
 	public void addTextParticle(String text, Font font, Vector3f position) {
-
 		GUIText guiText = new GUIText(text, font, new Vector2f(0, 0), 1.0f, false);
 		guiText.update(loader);
 		Fbo fbo = new Fbo((int) (100 * font.size), (int) (100 * font.size), 0);

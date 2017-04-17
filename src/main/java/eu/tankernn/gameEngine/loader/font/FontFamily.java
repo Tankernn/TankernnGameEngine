@@ -1,6 +1,6 @@
 package eu.tankernn.gameEngine.loader.font;
 
-import eu.tankernn.gameEngine.loader.textures.Texture;
+import eu.tankernn.gameEngine.loader.textures.TextureAtlas;
 import eu.tankernn.gameEngine.util.InternalFile;
 
 /**
@@ -12,7 +12,7 @@ import eu.tankernn.gameEngine.util.InternalFile;
  */
 public class FontFamily {
 
-	private Texture textureAtlas;
+	private TextureAtlas textureAtlas;
 	private TextMeshCreator loader;
 
 	/**
@@ -25,7 +25,7 @@ public class FontFamily {
 	 *            - the font file containing information about each character in
 	 *            the texture atlas.
 	 */
-	public FontFamily(Texture texture, InternalFile fontFile) {
+	public FontFamily(TextureAtlas texture, InternalFile fontFile) {
 		this.textureAtlas = texture;
 		this.loader = new TextMeshCreator(fontFile);
 	}
@@ -33,7 +33,7 @@ public class FontFamily {
 	/**
 	 * @return The font texture atlas.
 	 */
-	public Texture getTextureAtlas() {
+	public TextureAtlas getTextureAtlas() {
 		return textureAtlas;
 	}
 
