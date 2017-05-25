@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.entities.ILight;
 import eu.tankernn.gameEngine.loader.textures.TerrainTexturePack;
 import eu.tankernn.gameEngine.renderEngine.shadows.ShadowBox;
 import eu.tankernn.gameEngine.renderEngine.shadows.ShadowMapMasterRenderer;
@@ -31,7 +31,7 @@ public class TerrainRenderer {
 	}
 
 	public void render(List<Terrain> terrains, Matrix4f toShadowSpace, ICamera camera, Vector4f clipPlane,
-			List<Light> lights) {
+			List<ILight> lights) {
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
 		shader.skyColor.loadVec3(RED, GREEN, BLUE);

@@ -16,6 +16,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity3D;
+import eu.tankernn.gameEngine.entities.ILight;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
@@ -107,7 +108,7 @@ public class MasterRenderer {
 	 * @param clipPlane
 	 *            The clip plane.
 	 */
-	public void render(List<Light> lights, ICamera camera, Vector4f clipPlane, Texture environmentMap) {
+	public void render(List<ILight> lights, ICamera camera, Vector4f clipPlane, Texture environmentMap) {
 		prepareBuffer();
 		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, clipPlane, lights, environmentMap);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix(), camera, clipPlane, lights);

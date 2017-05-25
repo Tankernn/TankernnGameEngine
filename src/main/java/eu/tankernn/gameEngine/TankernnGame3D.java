@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity3D;
+import eu.tankernn.gameEngine.entities.ILight;
 import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
 import eu.tankernn.gameEngine.entities.projectiles.Projectile;
@@ -42,7 +43,7 @@ public class TankernnGame3D extends TankernnGame {
 
 	protected List<Entity3D> entities = new ArrayList<>();
 	protected List<Projectile> projectiles = new ArrayList<>();
-	protected List<Light> lights = new ArrayList<>();
+	protected List<ILight> lights = new ArrayList<>();
 	protected List<FloatingTexture> floatTextures = new ArrayList<>();
 	protected Light sun;
 	protected TerrainPack terrainPack;
@@ -53,10 +54,8 @@ public class TankernnGame3D extends TankernnGame {
 	private Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE),
 			outputFbo2 = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 	
-	public TankernnGame3D(String name, String[] dayTextures, String[] nightTextures, Light sun) {
+	public TankernnGame3D(String name, String[] dayTextures, String[] nightTextures) {
 		super(name);
-		this.sun = sun;
-		lights.add(sun);
 		try {
 			loader.readModelSpecification(new InternalFile("models.json"));
 		} catch (IOException e) {

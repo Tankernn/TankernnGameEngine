@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.entities.ILight;
 import eu.tankernn.gameEngine.renderEngine.shaders.ShaderProgram;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformBoolean;
 import eu.tankernn.gameEngine.renderEngine.shaders.UniformFloat;
@@ -60,7 +60,7 @@ public class EntityShader extends ShaderProgram {
 		super(vertexFile, fragmentFile, string);
 	}
 
-	public void loadLights(List<Light> lights, Matrix4f viewMatrix) {
+	public void loadLights(List<ILight> lights, Matrix4f viewMatrix) {
 		super.loadLights(lights);
 		for (int i = 0; i < MAX_LIGHTS; i++) {
 			if (i < lights.size()) {
@@ -79,7 +79,7 @@ public class EntityShader extends ShaderProgram {
 		enviroMap.loadTexUnit(10);
 	}
 
-	private Vector3f getEyeSpacePosition(Light light, Matrix4f viewMatrix) {
+	private Vector3f getEyeSpacePosition(ILight light, Matrix4f viewMatrix) {
 		Vector3f position = light.getPosition();
 		Vector4f eyeSpacePos = new Vector4f(position.x, position.y, position.z, 1f);
 		Matrix4f.transform(viewMatrix, eyeSpacePos, eyeSpacePos);

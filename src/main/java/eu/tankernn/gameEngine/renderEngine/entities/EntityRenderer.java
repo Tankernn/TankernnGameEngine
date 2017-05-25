@@ -13,7 +13,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.animation.model.AnimatedModel;
 import eu.tankernn.gameEngine.entities.Entity3D;
-import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.entities.ILight;
 import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.loader.textures.Texture;
@@ -57,7 +57,7 @@ public class EntityRenderer<S extends EntityShader> {
 	 * @param toShadowSpace Transformation matrix to shadow space. Used for
 	 *        applying shadows.
 	 */
-	public void render(Map<TexturedModel, List<Entity3D>> entities, Matrix4f toShadowSpace, ICamera cam, Vector4f clipPlane, List<Light> lights, Texture environmentMap) {
+	public void render(Map<TexturedModel, List<Entity3D>> entities, Matrix4f toShadowSpace, ICamera cam, Vector4f clipPlane, List<ILight> lights, Texture environmentMap) {
 		OpenGlUtils.antialias(true);
 		OpenGlUtils.disableBlending();
 		OpenGlUtils.enableDepthTesting(true);

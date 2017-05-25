@@ -4,7 +4,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.util.IPositionable;
 
-public class Light implements IPositionable {
+public class Light implements ILight, IPositionable {
 	private Vector3f position;
 	private Vector3f color;
 	private Vector3f attenuation = new Vector3f(1, 0, 0);

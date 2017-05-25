@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.entities.ILight;
 import eu.tankernn.gameEngine.util.InternalFile;
 
 public class ShaderProgram {
@@ -56,7 +56,7 @@ public class ShaderProgram {
 		}
 	}
 
-	public void loadLights(List<Light> lights) {
+	public void loadLights(List<ILight> lights) {
 		for (int i = 0; i < MAX_LIGHTS; i++) {
 			if (i < lights.size()) {
 				lightPosition[i].loadVec3(lights.get(i).getPosition());

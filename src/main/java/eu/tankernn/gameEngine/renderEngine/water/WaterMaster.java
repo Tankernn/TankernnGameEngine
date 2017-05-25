@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
-import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.entities.ILight;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
@@ -69,7 +69,7 @@ public class WaterMaster {
 		return false;
 	}
 	
-	public void renderWater(Camera camera, List<Light> lights) {
+	public void renderWater(Camera camera, List<ILight> lights) {
 		waterRenderer.render(waterTiles, camera, lights);
 	}
 	

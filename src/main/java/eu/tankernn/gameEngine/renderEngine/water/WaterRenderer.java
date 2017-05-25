@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.entities.Camera;
-import eu.tankernn.gameEngine.entities.Light;
+import eu.tankernn.gameEngine.entities.ILight;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
@@ -45,7 +45,7 @@ public class WaterRenderer {
 		setUpVAO(loader);
 	}
 	
-	public void render(List<WaterTile> water, Camera camera, List<Light> lights) {
+	public void render(List<WaterTile> water, Camera camera, List<ILight> lights) {
 		prepareRender(camera, lights);
 		for (WaterTile tile: water) {
 			Matrix4f modelMatrix = Maths.createTransformationMatrix(new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), new Vector3f(0, 0, 0), tile.getSize());
@@ -55,7 +55,7 @@ public class WaterRenderer {
 		unbind();
 	}
 	
-	private void prepareRender(Camera camera, List<Light> lights) {
+	private void prepareRender(Camera camera, List<ILight> lights) {
 		shader.start();
 		shader.viewMatrix.loadCamera(camera);
 		shader.cameraPosition.loadVec3(camera.getPosition());
