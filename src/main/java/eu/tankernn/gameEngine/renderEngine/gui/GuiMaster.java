@@ -32,4 +32,8 @@ public class GuiMaster {
 	public void finalize() {
 		renderer.finalize();
 	}
+
+	public GuiRenderer getRenderer() {
+		return renderer;
+	}
 }

@@ -9,12 +9,16 @@ public class GuiTexture {
 	private Texture texture;
 	protected Vector2f position;
 	protected float scale;
-	private boolean additive;
+	private float opacity;
 	
 	public GuiTexture(Texture texture, Vector2f position, float scale) {
 		this.texture = texture;
 		this.position = position;
 		this.scale = scale;
+	}
+	
+	public GuiTexture(Texture texture, float scale) {
+		this(texture, new Vector2f(0, 0), scale);
 	}
 
 	public Texture getTexture() {
@@ -37,12 +41,12 @@ public class GuiTexture {
 		this.scale = scale;
 	}
 
-	public boolean isAdditive() {
-		return additive;
+	public float getOpacity() {
+		return opacity;
 	}
 
-	public void setAdditive(boolean additive) {
-		this.additive = additive;
+	public void setOpacity(float opacity) {
+		this.opacity = opacity;
 	}
 	
 }

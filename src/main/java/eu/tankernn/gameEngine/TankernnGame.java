@@ -25,10 +25,14 @@ public class TankernnGame {
 		
 	}
 	
-	public void render() {
+	protected void render() {
 		guiMaster.render();
 		textMaster.render();
 		DisplayManager.updateDisplay();
+	}
+	
+	public void fullRender() {
+		this.render();
 	}
 	
 	public void cleanUp() {

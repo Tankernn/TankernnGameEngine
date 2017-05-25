@@ -11,7 +11,6 @@ import org.lwjgl.util.vector.Vector4f;
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.ILight;
-import eu.tankernn.gameEngine.entities.Light;
 import eu.tankernn.gameEngine.entities.Player;
 import eu.tankernn.gameEngine.entities.projectiles.Projectile;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
@@ -45,7 +44,6 @@ public class TankernnGame3D extends TankernnGame {
 	protected List<Projectile> projectiles = new ArrayList<>();
 	protected List<ILight> lights = new ArrayList<>();
 	protected List<FloatingTexture> floatTextures = new ArrayList<>();
-	protected Light sun;
 	protected TerrainPack terrainPack;
 	protected Player player;
 	
@@ -83,10 +81,12 @@ public class TankernnGame3D extends TankernnGame {
 		
 		audioMaster.setListenerPosition(player.getPosition());
 	}
-
-	public void render() {
-		renderer.renderShadowMap(entities, sun);
-
+	
+	protected void preRender() {
+		
+	}
+	
+	protected void render() {
 		Scene scene = new Scene(entities, terrainPack, lights, camera, sky);
 
 		EnvironmentMapRenderer.renderEnvironmentMap(scene.getEnvironmentMap(), scene, player.getPosition(), renderer);
@@ -99,7 +99,9 @@ public class TankernnGame3D extends TankernnGame {
 		waterMaster.renderWater(camera, lights);
 		particleMaster.renderParticles(camera);
 		floatingRenderer.render(floatTextures, camera);
-
+	}
+	
+	protected void postRender() {
 		multisampleFbo.unbindFrameBuffer();
 
 		multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT0, outputFbo);
@@ -107,6 +109,12 @@ public class TankernnGame3D extends TankernnGame {
 
 		postProcessor.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
 		super.render();
+	}
+	
+	public void fullRender() {
+		this.preRender();
+		this.render();
+		this.postRender();
 	}
 
 	public void cleanUp() {

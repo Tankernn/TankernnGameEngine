@@ -13,7 +13,7 @@ public class GameLauncher {
 
 		while (!Display.isCloseRequested()) {
 			instance.update();
-			instance.render();
+			instance.fullRender();
 		}
 
 		instance.cleanUp();

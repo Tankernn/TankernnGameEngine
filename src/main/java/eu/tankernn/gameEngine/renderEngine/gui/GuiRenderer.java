@@ -27,11 +27,12 @@ public class GuiRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		for (GuiTexture gui : guis) {
-			if (gui.isAdditive()) {
+			if (gui.getOpacity() < 1) {
 				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 			} else {
 				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			}
+			shader.opacity.loadFloat(gui.getOpacity());
 			gui.getTexture().bindToUnit(0);
 			Matrix4f matrix = Maths.createTransformationMatrix(gui.getPosition(), gui.getSize());
 			shader.transformationMatrix.loadMatrix(matrix);
