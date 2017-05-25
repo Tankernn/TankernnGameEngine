@@ -37,12 +37,12 @@ public class Texture {
 
 	public static Texture newCubeMap(InternalFile[] textureFiles, int size) {
 		int cubeMapId = TextureUtils.loadCubeMap(textureFiles);
-		return new Texture(new TextureAtlas(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, size));
+		return new Texture(new TextureAtlas(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, size, size, 1));
 	}
 	
 	public static Texture newEmptyCubeMap(int size) {
 		int cubeMapId = TextureUtils.createEmptyCubeMap(size);
-		return new Texture(new TextureAtlas(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, size));
+		return new Texture(new TextureAtlas(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, size, size, 1));
 	}
 
 	public int getWidth() {
