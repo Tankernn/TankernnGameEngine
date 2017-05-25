@@ -6,10 +6,9 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.settings.Physics;
-import eu.tankernn.gameEngine.util.IPositionable;
 
 
-public class Particle implements IPositionable {
+public class Particle implements IParticle {
 	private Vector3f position;
 	private Vector3f velocity;
 	private float gravityEffect;
@@ -70,7 +69,7 @@ public class Particle implements IPositionable {
 		return distance;
 	}
 
-	protected boolean update(Camera camera) {
+	public boolean update(Camera camera) {
 		velocity.y += Physics.GRAVITY * gravityEffect * DisplayManager.getFrameTimeSeconds();
 		change.set(velocity);
 		change.scale(DisplayManager.getFrameTimeSeconds());

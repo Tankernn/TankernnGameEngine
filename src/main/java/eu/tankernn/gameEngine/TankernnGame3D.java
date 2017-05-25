@@ -44,7 +44,7 @@ public class TankernnGame3D extends TankernnGame {
 	protected List<Projectile> projectiles = new ArrayList<>();
 	protected List<Light> lights = new ArrayList<>();
 	protected List<FloatingTexture> floatTextures = new ArrayList<>();
-	private Light sun;
+	protected Light sun;
 	protected TerrainPack terrainPack;
 	protected Player player;
 	

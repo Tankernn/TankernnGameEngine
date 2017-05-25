@@ -42,15 +42,15 @@ public class ParticleRenderer {
 		shader.stop();
 	}
 	
-	protected void render(Map<ParticleTexture, List<Particle>> particles, Camera camera) {
+	protected void render(Map<ParticleTexture, List<IParticle>> particles, Camera camera) {
 		Matrix4f viewMatrix = camera.getViewMatrix();
 		prepare();
 		for (ParticleTexture texture: particles.keySet()) {
 			bindTexture(texture);
-			List<Particle> particleList = particles.get(texture);
+			List<IParticle> particleList = particles.get(texture);
 			pointer = 0;
 			float[] vboData = new float[particleList.size() * INSTANCE_DATA_LENGTH];
-			for (Particle p: particleList) {
+			for (IParticle p: particleList) {
 				updateModelViewMatrix(p.getPosition(), p.getRotation(), p.getScale(), viewMatrix, vboData);
 				updateTexCoordInfo(p, vboData);
 			}
@@ -65,12 +65,12 @@ public class ParticleRenderer {
 		shader.finalize();
 	}
 	
-	private void updateTexCoordInfo(Particle particle, float[] data) {
-		data[pointer++] = particle.getTexOffset1().x;
-		data[pointer++] = particle.getTexOffset1().y;
-		data[pointer++] = particle.getTexOffset2().x;
-		data[pointer++] = particle.getTexOffset2().y;
-		data[pointer++] = particle.getBlend();
+	private void updateTexCoordInfo(IParticle p, float[] data) {
+		data[pointer++] = p.getTexOffset1().x;
+		data[pointer++] = p.getTexOffset1().y;
+		data[pointer++] = p.getTexOffset2().x;
+		data[pointer++] = p.getTexOffset2().y;
+		data[pointer++] = p.getBlend();
 	}
 	
 	private void bindTexture(ParticleTexture texture) {

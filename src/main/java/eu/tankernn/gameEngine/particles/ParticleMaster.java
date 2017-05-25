@@ -22,7 +22,7 @@ import eu.tankernn.gameEngine.util.DistanceSorter;
 public class ParticleMaster {
 	private Loader loader;
 
-	private Map<ParticleTexture, List<Particle>> particles = new HashMap<>();
+	private Map<ParticleTexture, List<IParticle>> particles = new HashMap<>();
 	private List<ParticleSystem> systems = new ArrayList<>();
 	private ParticleRenderer renderer;
 	private FontRenderer fontRenderer = new FontRenderer();
@@ -39,13 +39,13 @@ public class ParticleMaster {
 			}
 		}
 
-		Iterator<Entry<ParticleTexture, List<Particle>>> mapIterator = particles.entrySet().iterator();
+		Iterator<Entry<ParticleTexture, List<IParticle>>> mapIterator = particles.entrySet().iterator();
 		while (mapIterator.hasNext()) {
-			Entry<ParticleTexture, List<Particle>> entry = mapIterator.next();
-			List<Particle> list = entry.getValue();
-			Iterator<Particle> iterator = list.iterator();
+			Entry<ParticleTexture, List<IParticle>> entry = mapIterator.next();
+			List<IParticle> list = entry.getValue();
+			Iterator<IParticle> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				Particle p = iterator.next();
+				IParticle p = iterator.next();
 				boolean stillAlive = p.update(camera);
 				if (!stillAlive) {
 					iterator.remove();
@@ -81,10 +81,10 @@ public class ParticleMaster {
 				0.1f, 4, 0, font.size));
 	}
 
-	public void addParticle(Particle particle) {
-		List<Particle> list = particles.get(particle.getTexture());
+	public void addParticle(IParticle particle) {
+		List<IParticle> list = particles.get(particle.getTexture());
 		if (list == null) {
-			list = new ArrayList<Particle>();
+			list = new ArrayList<IParticle>();
 			particles.put(particle.getTexture(), list);
 		}
 		list.add(particle);

@@ -21,7 +21,7 @@ public class TextureAtlas {
 		this.type = type;
 		this.rows = rows;
 	}
-	
+
 	public void bindToUnit(int unit) {
 		GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
 		GL11.glBindTexture(type, textureId);
