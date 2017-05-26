@@ -128,4 +128,8 @@ public class TankernnGame3D extends TankernnGame {
 		outputFbo2.finalize();
 		renderer.finalize();
 	}
+
+	public List<Entity3D> getEntities() {
+		return entities;
+	}
 }

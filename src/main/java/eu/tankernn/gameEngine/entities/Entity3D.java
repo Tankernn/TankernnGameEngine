@@ -123,5 +123,9 @@ public class Entity3D implements IPositionable {
 	public int hashCode() {
 		return id;
 	}
+
+	public int getId() {
+		return id;
+	}
 	
 }
