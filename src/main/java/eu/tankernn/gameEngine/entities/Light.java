@@ -5,6 +5,12 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.util.IPositionable;
 
 public class Light implements ILight, IPositionable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1324162074890620897L;
+	
 	private Vector3f position;
 	private Vector3f color;
 	private Vector3f attenuation = new Vector3f(1, 0, 0);

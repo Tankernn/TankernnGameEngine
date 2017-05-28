@@ -8,6 +8,11 @@ import eu.tankernn.gameEngine.entities.ILight;
 
 public class Sun implements IParticle, ILight {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4224790312871439692L;
+
 	private static final float SUN_DIS = 50;// fairly arbitrary - but make sure
 											// it doesn't go behind skybox
 

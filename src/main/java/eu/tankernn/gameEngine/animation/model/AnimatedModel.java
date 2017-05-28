@@ -54,8 +54,8 @@ public class AnimatedModel extends TexturedModel {
 	 *            this entity.
 	 * 
 	 */
-	public AnimatedModel(Vao model, ModelTexture texture, Joint rootJoint, int jointCount) {
-		super(model, texture);
+	public AnimatedModel(int id, Vao model, ModelTexture texture, Joint rootJoint, int jointCount) {
+		super(id, model, texture);
 		this.rootJoint = rootJoint;
 		this.jointCount = jointCount;
 		this.animator = new Animator(this);
@@ -63,7 +63,7 @@ public class AnimatedModel extends TexturedModel {
 	}
 
 	public AnimatedModel(AnimatedModel model) {
-		this(model.getModel(), model.getTexture(), new Joint(model.rootJoint), model.jointCount);
+		this(model.getId(), model.getModel(), model.getTexture(), new Joint(model.rootJoint), model.jointCount);
 		this.animations = new HashMap<>(model.animations);
 	}
 

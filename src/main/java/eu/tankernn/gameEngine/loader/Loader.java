@@ -169,7 +169,7 @@ public class Loader {
 		boundingBoxes.put(model.id, new AABB(entityData.getMeshData()));
 		JointsData skeletonData = entityData.getJointsData();
 		Joint headJoint = new Joint(skeletonData.headJoint);
-		return new AnimatedModel(model, texture, headJoint, skeletonData.jointCount);
+		return new AnimatedModel(model.id, model, texture, headJoint, skeletonData.jointCount);
 	}
 	
 	public void readModelSpecification(InternalFile file) throws IOException {
@@ -227,13 +227,13 @@ public class Loader {
 			
 			if (cachedRawModels.containsKey(modelFile)) {
 				model = cachedRawModels.get(modelFile);
-				models.put(id, new TexturedModel(model, modelTexture));
+				models.put(id, new TexturedModel(id, model, modelTexture));
 			} else {
 				switch (modelFile.getExtension()) {
 				case "obj":
 					model = loadOBJ(modelFile);
 					cachedRawModels.put(modelFile, model);
-					models.put(id, new TexturedModel(model, modelTexture));
+					models.put(id, new TexturedModel(id, model, modelTexture));
 					break;
 				case "dae":
 					AnimatedModel animatedModel = loadDAE(modelFile, modelTexture);

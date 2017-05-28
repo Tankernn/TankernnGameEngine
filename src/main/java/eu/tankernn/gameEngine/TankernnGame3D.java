@@ -1,8 +1,7 @@
 package eu.tankernn.gameEngine;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL30;
@@ -10,10 +9,9 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity3D;
-import eu.tankernn.gameEngine.entities.ILight;
 import eu.tankernn.gameEngine.entities.Player;
-import eu.tankernn.gameEngine.entities.projectiles.Projectile;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
+import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.postProcessing.PostProcessor;
@@ -21,7 +19,6 @@ import eu.tankernn.gameEngine.renderEngine.Fbo;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.MultisampleMultitargetFbo;
 import eu.tankernn.gameEngine.renderEngine.Scene;
-import eu.tankernn.gameEngine.renderEngine.gui.floating.FloatingTexture;
 import eu.tankernn.gameEngine.renderEngine.gui.floating.FloatingTextureRenderer;
 import eu.tankernn.gameEngine.renderEngine.skybox.Skybox;
 import eu.tankernn.gameEngine.renderEngine.water.WaterMaster;
@@ -39,12 +36,8 @@ public class TankernnGame3D extends TankernnGame {
 	protected Camera camera;
 	protected Skybox sky;
 	protected MousePicker picker;
-
-	protected List<Entity3D> entities = new ArrayList<>();
-	protected List<Projectile> projectiles = new ArrayList<>();
-	protected List<ILight> lights = new ArrayList<>();
-	protected List<FloatingTexture> floatTextures = new ArrayList<>();
-	protected TerrainPack terrainPack;
+	
+	protected World world;
 	protected Player player;
 	
 	private MultisampleMultitargetFbo multisampleFbo = new MultisampleMultitargetFbo(Display.getWidth(),
@@ -54,6 +47,7 @@ public class TankernnGame3D extends TankernnGame {
 	
 	public TankernnGame3D(String name, String[] dayTextures, String[] nightTextures) {
 		super(name);
+		world = new World(loader);
 		try {
 			loader.readModelSpecification(new InternalFile("models.json"));
 		} catch (IOException e) {
@@ -65,19 +59,15 @@ public class TankernnGame3D extends TankernnGame {
 
 	public void update() {
 		super.update();
-		entities.forEach(Entity3D::update);
-		entities.removeIf(Entity3D::isDead);
 		
-		projectiles.forEach(Projectile::update);
-		projectiles.removeIf(Projectile::isDead);
-		projectiles.forEach((p) -> p.checkCollision(entities));
+		world.update();
 		
 		player.move();
-		picker.update(terrainPack, entities, guiMaster.getGuis());
+		picker.update(world.getTerrainPack(), world.getEntities().values(), guiMaster.getGuis());
 		camera.update();
-		terrainPack.update(player);
+		world.getTerrainPack().update(player);
 		particleMaster.update(camera);
-		DistanceSorter.sort(lights, camera);
+		DistanceSorter.sort(world.getLights(), camera);
 		
 		audioMaster.setListenerPosition(player.getPosition());
 	}
@@ -87,7 +77,7 @@ public class TankernnGame3D extends TankernnGame {
 	}
 	
 	protected void render() {
-		Scene scene = new Scene(entities, terrainPack, lights, camera, sky);
+		Scene scene = new Scene(world.getEntities().values(), world.getTerrainPack(), world.getLights(), camera, sky);
 
 		EnvironmentMapRenderer.renderEnvironmentMap(scene.getEnvironmentMap(), scene, player.getPosition(), renderer);
 
@@ -96,9 +86,9 @@ public class TankernnGame3D extends TankernnGame {
 		multisampleFbo.bindFrameBuffer();
 
 		renderer.renderScene(scene, new Vector4f(0, 1, 0, Float.MAX_VALUE));
-		waterMaster.renderWater(camera, lights);
+		waterMaster.renderWater(camera, world.getLights());
 		particleMaster.renderParticles(camera);
-		floatingRenderer.render(floatTextures, camera);
+		floatingRenderer.render(world.getFloatTextures(), camera);
 	}
 	
 	protected void postRender() {
@@ -119,7 +109,7 @@ public class TankernnGame3D extends TankernnGame {
 
 	public void cleanUp() {
 		super.cleanUp();
-		terrainPack.finalize();
+		world.finalize();
 		particleMaster.finalize();
 		postProcessor.finalize();
 		waterMaster.finalize();
@@ -129,7 +119,23 @@ public class TankernnGame3D extends TankernnGame {
 		renderer.finalize();
 	}
 
-	public List<Entity3D> getEntities() {
-		return entities;
+	public Collection<Entity3D> getEntities() {
+		return world.getEntities().values();
+	}
+
+	public Loader getLoader() {
+		return loader;
+	}
+
+	public TerrainPack getTerrain() {
+		return world.getTerrainPack();
+	}
+
+	public World getWorld() {
+		return world;
+	}
+
+	public Player getPlayer() {
+		return player;
 	}
 }

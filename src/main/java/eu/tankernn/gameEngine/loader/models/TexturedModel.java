@@ -4,10 +4,12 @@ import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.renderEngine.Vao;
 
 public class TexturedModel {
+	private final int id;
 	private Vao rawModel;
 	private ModelTexture texture;
 	
-	public TexturedModel(Vao rawModel, ModelTexture texture) {
+	public TexturedModel(int id, Vao rawModel, ModelTexture texture) {
+		this.id = id;
 		this.rawModel = rawModel;
 		this.texture = texture;
 	}
@@ -18,5 +20,9 @@ public class TexturedModel {
 
 	public ModelTexture getTexture() {
 		return texture;
+	}
+
+	public int getId() {
+		return id;
 	}
 }

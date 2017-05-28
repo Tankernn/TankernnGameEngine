@@ -46,7 +46,7 @@ public class PlayerCamera extends Camera {
 			if (Mouse.isButtonDown(1)) { // Right click
 				float targetRot = this.angleAroundPlayer + this.lockedPosition;
 				float delta = targetRot - rot.y;
-				player.increaseRotation(new Vector3f(0, delta, 0));
+				player.getState().increaseRotation(new Vector3f(0, delta, 0));
 			}
 		} else {
 			if (this.isLocked) {

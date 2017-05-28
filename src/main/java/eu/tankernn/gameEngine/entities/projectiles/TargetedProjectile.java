@@ -22,8 +22,10 @@ public class TargetedProjectile extends Projectile {
 	
 	@Override
 	public void update() {
-		Vector3f direction = (Vector3f) Vector3f.sub(target.getPosition(), this.getPosition(), null).normalise();
-		this.velocity = (Vector3f) direction.scale(speed);
+		// Store direction in velocity vector
+		Vector3f.sub(target.getPosition(), this.getPosition(), this.getVelocity());
+		// Normalize and scale velocity vector
+		getVelocity().normalise().scale(speed);
 		super.update();
 	}
 	

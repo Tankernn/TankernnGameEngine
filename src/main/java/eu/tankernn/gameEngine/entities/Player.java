@@ -30,13 +30,13 @@ public class Player extends Entity3D {
 
 	public void move() {
 		checkInputs();
-		super.increaseRotation(new Vector3f(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0));
-		super.generateVelocity(currentSpeed);
+		super.getState().increaseRotation(new Vector3f(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0));
+		super.getState().generateVelocity(currentSpeed);
 	}
 	
 	private void jump() {
 		if (!this.isInAir()) {
-			this.velocity.y = JUMP_POWER;
+			getVelocity().y = JUMP_POWER;
 			
 			// source.play(jumpSoundBuffer);
 		}
@@ -70,10 +70,6 @@ public class Player extends Entity3D {
 		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			this.currentSpeed = 5 * RUN_SPEED;
 		}
-	}
-	
-	public boolean isInAir() {
-		return this.position.y > terrain.getTerrainHeightByWorldPos(this.position.x, this.position.z);
 	}
 	
 	public float getHeight() {

@@ -1,5 +1,6 @@
 package eu.tankernn.gameEngine.util;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.lwjgl.input.Mouse;
@@ -48,7 +49,7 @@ public class MousePicker {
 		return currentGui;
 	}
 	
-	public void update(TerrainPack terrains, List<Entity3D> entities, List<GuiTexture> guis) {
+	public void update(TerrainPack terrains, Collection<Entity3D> collection, List<GuiTexture> guis) {
 		currentRay = calculateMouseRay();
 		currentGui = calculateGuiTexture(guis);
 		if (intersectionInRange(terrains, 0, RAY_RANGE, currentRay)) {
@@ -57,7 +58,7 @@ public class MousePicker {
 			currentTerrainPoint = null;
 		}
 		
-		for (Entity3D e: entities) {
+		for (Entity3D e: collection) {
 			if (entityInstersect(e)) {
 				currentEntity = e;
 				return;

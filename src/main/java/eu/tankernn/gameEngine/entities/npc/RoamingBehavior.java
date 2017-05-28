@@ -18,7 +18,7 @@ public class RoamingBehavior extends Behavior {
 	@Override
 	public void update() {
 		if (targetPosition == null) {
-			entity.generateVelocity(0);
+			entity.getState().generateVelocity(0);
 			if (standbyTime > 0f)
 				standbyTime -= DisplayManager.getFrameTimeSeconds();
 			else
@@ -30,7 +30,7 @@ public class RoamingBehavior extends Behavior {
 				standbyTime = (float) (Math.random() * 10);
 			}
 			entity.getRotation().y = (float) Math.toDegrees(Math.atan2(direction.x, direction.y));
-			entity.generateVelocity(speed);
+			entity.getState().generateVelocity(speed);
 		}
 	}
 	

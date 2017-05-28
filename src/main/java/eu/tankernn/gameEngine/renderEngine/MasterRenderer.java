@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,8 +156,8 @@ public class MasterRenderer {
 		terrains.add(terrain);
 	}
 
-	public void renderShadowMap(List<Entity3D> entityList, ILight sun) {
-		for (Entity3D e : entityList) {
+	public void renderShadowMap(Collection<Entity3D> collection, ILight sun) {
+		for (Entity3D e : collection) {
 			processEntity(e);
 		}
 		shadowMapRenderer.render(entities, sun);
