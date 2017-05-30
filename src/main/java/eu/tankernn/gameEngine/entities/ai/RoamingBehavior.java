@@ -1,10 +1,16 @@
-package eu.tankernn.gameEngine.entities.npc;
+package eu.tankernn.gameEngine.entities.ai;
 
 import org.lwjgl.util.vector.Vector2f;
 
+import eu.tankernn.gameEngine.entities.GameContext;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 
 public class RoamingBehavior extends Behavior {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6198784236364774890L;
 	
 	private Vector2f targetPosition;
 	private RoamingArea area;
@@ -16,9 +22,9 @@ public class RoamingBehavior extends Behavior {
 	}
 	
 	@Override
-	public void update() {
+	public void update(GameContext impl) {
 		if (targetPosition == null) {
-			entity.getState().generateVelocity(0);
+			entity.generateVelocity(0, impl.getTickLengthSeconds());
 			if (standbyTime > 0f)
 				standbyTime -= DisplayManager.getFrameTimeSeconds();
 			else
@@ -30,7 +36,7 @@ public class RoamingBehavior extends Behavior {
 				standbyTime = (float) (Math.random() * 10);
 			}
 			entity.getRotation().y = (float) Math.toDegrees(Math.atan2(direction.x, direction.y));
-			entity.getState().generateVelocity(speed);
+			entity.generateVelocity(speed, impl.getTickLengthSeconds());
 		}
 	}
 	

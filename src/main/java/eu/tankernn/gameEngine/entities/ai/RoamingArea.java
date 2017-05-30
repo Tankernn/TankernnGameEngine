@@ -1,4 +1,4 @@
-package eu.tankernn.gameEngine.entities.npc;
+package eu.tankernn.gameEngine.entities.ai;
 
 import java.util.Random;
 

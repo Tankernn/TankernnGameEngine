@@ -1,29 +1,26 @@
 package eu.tankernn.gameEngine.entities;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.util.vector.Vector3f;
 
-import eu.tankernn.gameEngine.loader.models.AABB;
-import eu.tankernn.gameEngine.loader.models.TexturedModel;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
-import eu.tankernn.gameEngine.terrains.TerrainPack;
 
-public class Car extends Player {
+public class CarBehavior extends PlayerBehavior {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6701432444282126422L;
+	
 	private static final float MAX_SPEED = 100.0f, ACCELERATION = 20.0f, DECELERATION = 10.0f, BRAKE = 40.0f,
 			TURN_FORCE = 160.0f;
 
-	public Car(TexturedModel model, Vector3f position, Vector3f rotation, Vector3f scale, AABB boundingBox, TerrainPack terrainPack) {
-		super(model, position, rotation, scale, boundingBox, terrainPack);
-	}
-
 	@Override
-	public void move() {
+	public void update(GameContext impl) {
+		if (!impl.isClient())
+			return;
 		checkInputs();
-		super.move();
 	}
 
-	@Override
 	protected void checkInputs() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			this.currentSpeed += ACCELERATION * DisplayManager.getFrameTimeSeconds();

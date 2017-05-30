@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 
 public class ParticleSystem {
-	private float pps, speed, gravityComplient, lifeLength;
+	private final float pps, speed, gravityComplient, lifeLength;
 	private Vector3f position;
 	
 	private ParticleTexture texture;
@@ -22,8 +22,12 @@ public class ParticleSystem {
 		this.lifeLength = lifeLength;
 	}
 	
+	public ParticleSystem(ParticleSystem system) {
+		this(system.texture, system.pps, system.speed, system.gravityComplient, system.lifeLength);
+	}
+	
 	public void setPosition(Vector3f systemCenter) {
-		this.position = systemCenter;
+		this.position = new Vector3f(systemCenter);
 	}
 	
 	public List<Particle> generateParticles() {

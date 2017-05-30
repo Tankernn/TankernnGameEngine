@@ -2,6 +2,7 @@ package eu.tankernn.gameEngine;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL30;
@@ -9,12 +10,14 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity3D;
-import eu.tankernn.gameEngine.entities.Player;
+import eu.tankernn.gameEngine.entities.GameContext;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.loader.Loader;
+import eu.tankernn.gameEngine.loader.models.AABB;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.particles.ParticleMaster;
 import eu.tankernn.gameEngine.postProcessing.PostProcessor;
+import eu.tankernn.gameEngine.renderEngine.DisplayManager;
 import eu.tankernn.gameEngine.renderEngine.Fbo;
 import eu.tankernn.gameEngine.renderEngine.MasterRenderer;
 import eu.tankernn.gameEngine.renderEngine.MultisampleMultitargetFbo;
@@ -36,18 +39,17 @@ public class TankernnGame3D extends TankernnGame {
 	protected Camera camera;
 	protected Skybox sky;
 	protected MousePicker picker;
-	
+
 	protected World world;
-	protected Player player;
-	
+	protected Entity3D player;
+
 	private MultisampleMultitargetFbo multisampleFbo = new MultisampleMultitargetFbo(Display.getWidth(),
 			Display.getHeight());
 	private Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE),
 			outputFbo2 = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
-	
+
 	public TankernnGame3D(String name, String[] dayTextures, String[] nightTextures) {
 		super(name);
-		world = new World(loader);
 		try {
 			loader.readModelSpecification(new InternalFile("models.json"));
 		} catch (IOException e) {
@@ -59,23 +61,41 @@ public class TankernnGame3D extends TankernnGame {
 
 	public void update() {
 		super.update();
-		
-		world.update();
-		
-		player.move();
+
+		GameContext ctx = new GameContext(true, DisplayManager.getFrameTimeSeconds(),
+				world.getEntities().values().stream().map(Entity3D::getState).collect(Collectors.toSet())) {
+
+			@Override
+			public float getTerrainHeight(float x, float z) {
+				return getTerrain().getTerrainHeightByWorldPos(x, z);
+			}
+
+			@Override
+			public float getHeight(int entityId) {
+				return world.getEntities().get(entityId).getHeight();
+			}
+
+			@Override
+			public AABB getBoundingBox(int entityId) {
+				return world.getEntities().get(entityId).getBoundingBox();
+			}
+		};
+
+		world.update(ctx);
+
 		picker.update(world.getTerrainPack(), world.getEntities().values(), guiMaster.getGuis());
 		camera.update();
 		world.getTerrainPack().update(player);
 		particleMaster.update(camera);
 		DistanceSorter.sort(world.getLights(), camera);
-		
+
 		audioMaster.setListenerPosition(player.getPosition());
 	}
-	
+
 	protected void preRender() {
-		
+
 	}
-	
+
 	protected void render() {
 		Scene scene = new Scene(world.getEntities().values(), world.getTerrainPack(), world.getLights(), camera, sky);
 
@@ -90,7 +110,7 @@ public class TankernnGame3D extends TankernnGame {
 		particleMaster.renderParticles(camera);
 		floatingRenderer.render(world.getFloatTextures(), camera);
 	}
-	
+
 	protected void postRender() {
 		multisampleFbo.unbindFrameBuffer();
 
@@ -100,7 +120,7 @@ public class TankernnGame3D extends TankernnGame {
 		postProcessor.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
 		super.render();
 	}
-	
+
 	public void fullRender() {
 		this.preRender();
 		this.render();
@@ -135,7 +155,7 @@ public class TankernnGame3D extends TankernnGame {
 		return world;
 	}
 
-	public Player getPlayer() {
+	public Entity3D getPlayer() {
 		return player;
 	}
 }

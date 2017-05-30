@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.lwjgl.util.vector.Vector3f;
 
 import eu.tankernn.gameEngine.animation.model.AnimatedModel;
 import eu.tankernn.gameEngine.animation.model.Joint;
@@ -26,6 +27,7 @@ import eu.tankernn.gameEngine.loader.models.obj.ObjLoader;
 import eu.tankernn.gameEngine.loader.textures.ModelTexture;
 import eu.tankernn.gameEngine.loader.textures.Texture;
 import eu.tankernn.gameEngine.loader.textures.TextureAtlas;
+import eu.tankernn.gameEngine.particles.ParticleSystem;
 import eu.tankernn.gameEngine.renderEngine.Vao;
 import eu.tankernn.gameEngine.util.InternalFile;
 
@@ -41,6 +43,7 @@ public class Loader {
 	private List<TextureAtlas> textures = new ArrayList<>();
 	private Map<Integer, TexturedModel> models = new HashMap<>();
 	private Map<Integer, AABB> boundingBoxes = new HashMap<>();
+	private Map<Integer, ParticleSystem> particleSystems = new HashMap<>();
 	
 	public Vao loadToVAO(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
 		return loadToVAO(vertices, textureCoords, normals, null, null, null, indices);
@@ -265,8 +268,18 @@ public class Loader {
 	}
 	
 	public AABB getBoundingBox(int vaoId) {
+		if (vaoId == -1)
+			return new AABB(new Vector3f(0, 0, 0), new Vector3f(0.1f, 0.1f, 0.1f));
 		if (!boundingBoxes.containsKey(vaoId))
 			throw new NullPointerException("Unable to find bounding box for vaoId " + vaoId);
 		return boundingBoxes.get(vaoId);
+	}
+	
+	public void registerParticleSystem(int id, ParticleSystem system) {
+		particleSystems.put(id, system);
+	}
+	
+	public ParticleSystem getParticleSystem(int particleSystemId) {
+		return particleSystems.get(particleSystemId);
 	}
 }

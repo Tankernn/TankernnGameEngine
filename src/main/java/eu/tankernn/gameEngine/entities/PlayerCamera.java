@@ -17,10 +17,10 @@ public class PlayerCamera extends Camera {
 	private float lockedPosition = 0;
 	private boolean isLocked = false;
 	
-	private Player player;
+	private Entity3D player;
 	private TerrainPack terrainPack;
 	
-	public PlayerCamera(Player player, TerrainPack terrainPack) {
+	public PlayerCamera(Entity3D player, TerrainPack terrainPack) {
 		super();
 		this.player = player;
 		this.terrainPack = terrainPack;
