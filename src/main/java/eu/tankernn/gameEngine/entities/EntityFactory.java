@@ -1,5 +1,7 @@
 package eu.tankernn.gameEngine.entities;
 
+import org.lwjgl.util.vector.Vector3f;
+
 import eu.tankernn.gameEngine.World;
 import eu.tankernn.gameEngine.loader.Loader;
 import eu.tankernn.gameEngine.loader.models.AABB;
@@ -24,7 +26,7 @@ public class EntityFactory {
 		ParticleSystem particleSystem = loader.getParticleSystem(state.getParticleSystemId());
 		if (particleSystem != null)
 			particleMaster.addSystem(particleSystem);
-		AABB boundingBox = loader.getBoundingBox(model.getModel().id);
+		AABB boundingBox = model != null ? loader.getBoundingBox(model.getModel().id) : new AABB(new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
 		return new Entity3D(state, model, particleSystem, boundingBox, world);
 	}
 }

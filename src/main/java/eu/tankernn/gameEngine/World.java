@@ -1,9 +1,9 @@
 package eu.tankernn.gameEngine;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import eu.tankernn.gameEngine.entities.Entity3D;
 import eu.tankernn.gameEngine.entities.EntityFactory;
@@ -17,7 +17,7 @@ import eu.tankernn.gameEngine.renderEngine.gui.floating.FloatingTexture;
 import eu.tankernn.gameEngine.terrains.TerrainPack;
 
 public class World {
-	private Map<Integer, Entity3D> entities = new HashMap<>();
+	private Map<Integer, Entity3D> entities = new ConcurrentHashMap<>();
 	private List<ILight> lights = new ArrayList<>();
 	private List<FloatingTexture> floatTextures = new ArrayList<>();
 	private TerrainPack terrainPack;
@@ -62,24 +62,23 @@ public class World {
 		for (EntityState s : state.getEntities()) {
 			updateEntityState(s);
 		}
-		this.lights = state.getLights();
+		this.lights = new ArrayList<>(state.getLights());
 	}
 
-	public void updateEntityState(EntityState s) {
-		if (entities.containsKey(s.getId()))
-			entities.get(s.getId()).setState(s);
-		else
-			spawnEntity(s);
+	public Entity3D updateEntityState(EntityState s) {
+		return updateEntityState(s, false);
 	}
 
-	public Entity3D spawnEntity(EntityState state) {
-		if (entities.containsKey(state.getId())) {
-			throw new RuntimeException("Entity with id " + state.getId() + " has already been spawned.");
+	public Entity3D updateEntityState(EntityState s, boolean forceRespawn) {
+		Entity3D e;
+		if (entities.containsKey(s.getId()) && !forceRespawn) {
+			e = entities.get(s.getId());
+			e.setState(s);
 		} else {
-			Entity3D e = entityFactory.getEntity(state);
-			entities.put(state.getId(), e);
-			return e;
+			e = entityFactory.getEntity(s);
+			entities.put(s.getId(), e);
 		}
+		return e;
 	}
 
 	public float getTerrainHeigh(float x, float z) {

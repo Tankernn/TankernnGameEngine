@@ -18,6 +18,6 @@ public abstract class CollisionBehavior extends Behavior {
 				.forEach(this::onCollision);
 	}
 
-	public abstract void onCollision(EntityState entity);
+	public abstract void onCollision(EntityState other);
 
 }

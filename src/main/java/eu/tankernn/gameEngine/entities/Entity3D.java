@@ -26,6 +26,7 @@ public class Entity3D implements IPositionable {
 		this.model = model;
 		this.particleSystem = particleSystem;
 		this.boundingBox = boundingBox;
+		this.boundingBox.updatePosition(getPosition());
 		this.world = world;
 	}
 

@@ -33,4 +33,6 @@ public abstract class GameContext {
 	public abstract float getTerrainHeight(float x, float z);
 
 	public abstract AABB getBoundingBox(int entityId);
+
+	public abstract EntityState getEntity(int id);
 }

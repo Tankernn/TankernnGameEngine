@@ -11,7 +11,7 @@ public class DieOnCollisionBehavior extends CollisionBehavior {
 
 	@Override
 	public void onCollision(EntityState entity) {
-		entity.setDead(true);
+		this.entity.setDead(true);
 	}
 
 }

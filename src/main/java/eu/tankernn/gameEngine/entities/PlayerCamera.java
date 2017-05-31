@@ -31,6 +31,8 @@ public class PlayerCamera extends Camera {
 	 */
 	@Override
 	public void update() {
+		if (player == null)
+			return;
 		Vector3f rot = player.getRotation();
 		calculateZoom();
 		if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
@@ -145,5 +147,9 @@ public class PlayerCamera extends Camera {
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setPlayer(Entity3D player) {
+		this.player = player;
 	}
 }

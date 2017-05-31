@@ -19,10 +19,10 @@ public class Scene {
 	
 	private Texture environmentMap;
 	
-	public Scene(Collection<Entity3D> entities, TerrainPack terrainPack, List<ILight> lights, Camera camera, Skybox sky) {
+	public Scene(Collection<Entity3D> entities, TerrainPack terrainPack, List<ILight> collection, Camera camera, Skybox sky) {
 		this.entities = entities;
 		this.terrainPack = terrainPack;
-		this.lights = lights;
+		this.lights = collection;
 		this.camera = camera;
 		this.sky = sky;
 		this.environmentMap = Texture.newEmptyCubeMap(128);

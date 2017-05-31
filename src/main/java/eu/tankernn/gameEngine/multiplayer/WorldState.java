@@ -2,6 +2,7 @@ package eu.tankernn.gameEngine.multiplayer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import eu.tankernn.gameEngine.entities.EntityState;
@@ -21,9 +22,9 @@ public class WorldState implements Serializable {
 		this.seed = seed;
 	}
 	
-	public WorldState(int seed, List<ILight> lights, List<EntityState> entities) {
+	public WorldState(int seed, List<ILight> collection, List<EntityState> entities) {
 		this(seed);
-		this.lights = lights;
+		this.lights = collection;
 		this.entities = entities;
 	}
 
@@ -31,7 +32,7 @@ public class WorldState implements Serializable {
 		return seed;
 	}
 
-	public List<ILight> getLights() {
+	public Collection<ILight> getLights() {
 		return lights;
 	}
 

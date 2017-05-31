@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 import eu.tankernn.gameEngine.entities.Camera;
 import eu.tankernn.gameEngine.entities.Entity3D;
+import eu.tankernn.gameEngine.entities.EntityState;
 import eu.tankernn.gameEngine.entities.GameContext;
 import eu.tankernn.gameEngine.environmentMap.EnvironmentMapRenderer;
 import eu.tankernn.gameEngine.loader.Loader;
@@ -61,6 +62,12 @@ public class TankernnGame3D extends TankernnGame {
 
 	public void update() {
 		super.update();
+		while (player == null)
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
 		GameContext ctx = new GameContext(true, DisplayManager.getFrameTimeSeconds(),
 				world.getEntities().values().stream().map(Entity3D::getState).collect(Collectors.toSet())) {
@@ -78,6 +85,11 @@ public class TankernnGame3D extends TankernnGame {
 			@Override
 			public AABB getBoundingBox(int entityId) {
 				return world.getEntities().get(entityId).getBoundingBox();
+			}
+
+			@Override
+			public EntityState getEntity(int id) {
+				return world.getEntities().get(id).getState();
 			}
 		};
 

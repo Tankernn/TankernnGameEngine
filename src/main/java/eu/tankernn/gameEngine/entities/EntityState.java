@@ -1,9 +1,9 @@
 package eu.tankernn.gameEngine.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -20,27 +20,28 @@ public class EntityState implements Serializable {
 
 	protected static final AtomicInteger ID_GEN = new AtomicInteger();
 
-	private final int id;
-	private int modelId;
-	private int systemId;
+	private int id;
+	private int modelId = -1;
+	private int systemId = -1;
 	private final Vector3f position;
 	private final Vector3f rotation;
 	private final Vector3f velocity;
 	private final Vector3f scale;
 	protected boolean dead = false;
 
-	private List<Behavior> behaviors;
+	private Set<Behavior> behaviors;
 
 	public EntityState(int id, int modelId, int systemId, Vector3f position, Vector3f rotation, Vector3f velocity,
 			Vector3f scale, Behavior... behaviors) {
 		this.id = id;
 		this.modelId = modelId;
+		this.systemId = systemId;
 		this.position = new Vector3f(position);
-		this.rotation = rotation;
-		this.velocity = velocity;
-		this.scale = scale;
+		this.rotation = new Vector3f(rotation);
+		this.velocity = new Vector3f(velocity);
+		this.scale = new Vector3f(scale);
 
-		this.behaviors = new ArrayList<Behavior>(Arrays.asList(behaviors));
+		this.behaviors = new HashSet<>(Arrays.asList(behaviors));
 		this.behaviors.forEach(b -> b.setEntity(this));
 	}
 
@@ -78,8 +79,6 @@ public class EntityState implements Serializable {
 			velocity.y = 0;
 			position.y = terrainHeight;
 		}
-
-		System.out.println(this);
 
 		Vector3f.add(position, (Vector3f) new Vector3f(velocity).scale(ctx.getTickLengthSeconds()), position);
 	}
@@ -129,15 +128,19 @@ public class EntityState implements Serializable {
 		return systemId;
 	}
 
-	public List<Behavior> getBehaviors() {
+	public Set<Behavior> getBehaviors() {
 		return behaviors;
 	}
 
-	public void setBehaviors(List<Behavior> behaviors) {
+	public void setBehaviors(Set<Behavior> behaviors) {
 		this.behaviors = behaviors;
 	}
 
 	public String toString() {
 		return String.format("Entity with id %d, modelId %d and position %s. List of behaviors: %s", id, modelId, position.toString(), behaviors.toString());
+	}
+
+	public void resetId() {
+		this.id = ID_GEN.getAndIncrement();
 	}
 }

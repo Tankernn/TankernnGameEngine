@@ -50,8 +50,9 @@ public class AABB {
 		this.relativeMiddlePos.z /= 2;
 	}
 
-	public void updatePosition(Vector3f pos) {
+	public AABB updatePosition(Vector3f pos) {
 		this.position = pos;
+		return this;
 	}
 
 	public static boolean collides(AABB a, AABB b) {
